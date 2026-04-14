@@ -31,13 +31,14 @@
 % Defino geometría para tener solo páginas impares
 \usepackage{geometry}
 \geometry{
-    b5paper,
-    inner=2.5cm,
-    outer=4.5cm,
+    paperwidth=18.5cm, 
+    paperheight=25cm,
+    inner=2.25cm,
+    outer=4.25cm,   
     top=2.5cm,
     bottom=2.5cm,
-    marginparwidth=3.5cm,
-    marginparsep=0.5cm
+    marginparwidth=3.5cm, 
+    marginparsep=0.4cm    
 }
 \raggedbottom
 
@@ -59,19 +60,20 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-% Encabezado sin número de página
-\fancyhead[L]{\footnotesize \textbf{ANTONIO MORALES GARCÍA}}
+
+% Header configuration
+\fancyhead[L]{\footnotesize \textbf{ANTONIO MORALES GARCIA}}
 \fancyhead[R]{\footnotesize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% Pie de página con el número centrado
-\fancyfoot[C]{\footnotesize \thepage}
+% Footer configuration (Page number aligned to the right of text block)
+\fancyfoot[R]{\footnotesize \thepage}
+\renewcommand{\footrulewidth}{0pt}
 
-% Redefinir el estilo 'plain' para que el inicio de capítulo 
-% también tenga el número centrado abajo
+% Redefine 'plain' style for chapter starts
 \fancypagestyle{plain}{
   \fancyhf{}
-  \fancyfoot[C]{\footnotesize \thepage}
+  \fancyfoot[R]{\footnotesize \thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
 
