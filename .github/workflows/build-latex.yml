@@ -1,0 +1,44 @@
+name: Build LaTeX PDFs
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile cover.tex
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: cover.tex
+
+      - name: Compile main.tex
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+
+      - name: Compile main_digital.tex
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main_digital.tex
+
+      - name: Upload PDF artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TFM-Compiled-PDFs
+          path: |
+            cover.pdf
+            main.pdf
+            main_digital.pdf
+          retention-days: 30
