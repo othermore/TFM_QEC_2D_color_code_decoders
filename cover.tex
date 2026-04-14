@@ -33,6 +33,8 @@
     };
 
     % --- LÍNEAS DE PLEGADO ---
+    % COMENTADAS (solo para pruebas)
+    \iffalse
     \draw [dashed, gray, line width=0.5pt] 
         ([xshift=-8.5mm]current page.center |- current page.north) -- 
         ([xshift=-8.5mm]current page.center |- current page.south);
@@ -41,7 +43,7 @@
         ([xshift=8.5mm]current page.center |- current page.north) -- 
         ([xshift=8.5mm]current page.center |- current page.south);
     % ----------------------------------------------------
-
+    \fi
 \end{tikzpicture}
 
 \end{document}
