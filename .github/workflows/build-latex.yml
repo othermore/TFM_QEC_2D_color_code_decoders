@@ -1,17 +1,17 @@
-name: Build LaTeX PDFs
+name: Build and Release LaTeX
 
 on:
   push:
     branches:
       - main
       - master
-  pull_request:
-    branches:
-      - main
-      - master
+  workflow_dispatch: # Allows manual trigger
+
+permissions:
+  contents: write # Required to create/update releases
 
 jobs:
-  build_latex:
+  build_and_release:
     runs-on: ubuntu-latest
     
     steps:
@@ -33,12 +33,17 @@ jobs:
         with:
           root_file: main_digital.tex
 
-      - name: Upload PDF artifacts
-        uses: actions/upload-artifact@v4
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: TFM-Compiled-PDFs
-          path: |
+          tag_name: latest
+          name: Latest Compiled PDFs
+          body: |
+            Automatic build of the Master's Thesis.
+            Last updated on ${{ github.event.head_commit.timestamp }}.
+          files: |
             cover.pdf
             main.pdf
             main_digital.pdf
-          retention-days: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
