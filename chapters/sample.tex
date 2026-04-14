@@ -1,0 +1,143 @@
+\chapter{Sample Chapter for Layout Testing}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+\section{Vestibulum Ante Ipsum}
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\section{Pellentesque Habitant Morbi}
+Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris. Integer in mauris eu nibh euismod gravida.
+
+En el siguiente fragmento inicializamos el circuito cuántico de demostración:
+
+\begin{lstlisting}[caption={Block code example}, label={lst:block_code_example}]
+
+       
+class Circuit:
+    def __init__(self, n_qubits, initial_states = []):
+        if isinstance(initial_states, str):
+            states = [s for s in reversed(initial_states)]
+            self.__init__(n_qubits, states)
+            return
+        if isinstance(initial_states, int):
+            states = [s for s in reversed(f"{initial_states:0{n_qubits}d}")]
+            self.__init__(n_qubits, states)
+            return       
+        self.n_qubits = n_qubits
+        self.q_state = []
+        if initial_states == []:
+            self.q_state = ket_n(n_qubits)
+        else:
+            for s in reversed(initial_states):
+                state = generate_state(s)
+                if len(self.q_state) == 0:
+                    self.q_state = state
+                else:
+                    self.q_state = np.kron(self.q_state, state)
+
+    def print_state(self):
+        n_bits = int(np.log2(len(self.q_state)))
+        decimal_space = int(np.log10(len(self.q_state))) + 20
+        binary_space = n_bits + 20
+        amplitude_space = 40
+    
+        print("Decimal".ljust(decimal_space, " ") + "Binario".ljust(binary_space, " ") + "Amplitud".ljust(amplitude_space, " "))
+        print("".ljust(decimal_space + binary_space + amplitude_space, "-"))
+        for i in range(len(self.q_state)):        
+            print(str(i).ljust(decimal_space, " ") + 
+                  ('{0:0'+str(n_bits)+'b}').format(i).ljust(binary_space, " ") + 
+                  str(self.q_state[i]).ljust(amplitude_space, " "))
+
+    def plot_state(self):
+        n_bits = int(np.log2(len(self.q_state)))
+        decimal_space = int(np.log10(len(self.q_state))) + 20
+
+        labels = [f"|{i:0{n_bits}b}>" for i in range(len(self.q_state))]
+        probs =  [abs(self.q_state[i, 0].item())**2 for i in range(len(self.q_state))]
+        fig, ax = plt.subplots(figsize=(7, 5))
+        ax.bar(labels, probs)
+        
+        plt.show()
+\end{lstlisting}
+
+Como podemos ver en el Código \ref{lst:block_code_example}, es facil citar y meter código en bloques coloreados.
+
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Donec ullamcorper nulla non metus auctor fringilla.
+
+\notatfm{Cras mattis consectetur purus sit amet fermentum. Nulla vitae elit libero, a pharetra augue.}
+
+Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Sed posuere consectetur est at lobortis.
+
+\section{Quantum Circuit Generation}
+A continuación, se muestra un ejemplo de cómo generar diagramas de circuitos cuánticos directamente en LaTeX utilizando la librería \texttt{quantikz2}.
+
+\begin{figure}[H]
+    \centering
+    \begin{quantikz}
+        \lstick{$\ket{0}$} & \gate{H} & \ctrl{1} & \qw & \meter{} \\
+        \lstick{$\ket{0}$} & \qw      & \targ{}  & \qw & \meter{}
+    \end{quantikz}
+    \caption{Preparación de un estado de Bell (entrelazamiento)}
+    \label{fig:bell_state}
+\end{figure}
+
+Phasellus id scelerisque nisl. Etiam mattis tristique imperdiet. Vivamus interdum purus sed sapien accumsan, nec luctus justo tristique.
+
+\notatfm{Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Aenean eu leo quam.}
+
+Donec sed odio dui. Maecenas sed diam eget risus varius blandit sit amet non magna. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.
+
+\begin{lstlisting}[caption={Block code example}, label={lst:block_code_example_2}]
+import numpy as np
+import random
+import matplotlib.pyplot as plt
+
+
+X = np.matrix([[0, 1], [1, 0]])
+Y = np.matrix([[0, -1j], [1j, 0]])
+Z = np.matrix([[1, 0], [0, -1]])
+H = (1 / np.sqrt(2)) * np.matrix([[1, 1], [1, -1]])
+
+def pretty_print_matrix(matrix, title="Matrix Output"):
+    """
+    Prints a numpy matrix or array in a readable format, rounding values
+    and suppressing tiny numbers.
+    
+    Args:
+        matrix (np.matrix | np.ndarray): The matrix to print.
+        title (str): A header for the print output.
+    """
+    # Configure numpy to round to 3 decimal places and suppress scientific notation
+    # precision: decimal places
+    # suppress: True prevents 1.23e-15 and shows 0.0
+    # linewidth: adjusts the width before wrapping to a new line
+    np.set_printoptions(precision=3, suppress=True, linewidth=100)
+    
+    print(f"=== {title} ===")
+    print(matrix)
+    print("=" * (len(title) + 8))
+
+
+def generate_state(state):
+    match state:
+        case '0' | 0:
+            return np.matrix([[1],[0]])
+        case '1' | 1:
+            return np.matrix([[0],[1]])
+        case '+':
+            return np.matrix([[1/np.sqrt(2)],[1/np.sqrt(2)]])
+        case '-':     
+            return np.matrix([[1/np.sqrt(2)],[-1/np.sqrt(2)]])
+        case 'i':
+            return np.matrix([[0],[1j]])
+        case '-i':
+            return np.matrix([[0],[-1j]])     
+
+ket_0 = generate_state(0)
+ket_1 = generate_state(1)
+
+ket_plus = generate_state('+')
+ket_minus = generate_state('-')
+\end{lstlisting}
+\notatfm{Cras mattis consectetur purus sit amet fermentum. Nulla vitae elit libero, a pharetra augue.}
+Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.

@@ -1,0 +1,39 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+% Ancho total = 176mm (back) + 15mm (canto) + 176mm (front) = 367mm
+\usepackage[paperwidth=367mm, paperheight=250mm, margin=0cm]{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{nebrijared}{HTML}{C2002F}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{tikzpicture}[remember picture, overlay]
+    \fill[white] (current page.north west) rectangle (current page.south east);
+    
+    \fill[nebrijared] ([xshift=-30mm]current page.center |- current page.north) rectangle ([xshift=30mm]current page.center |- current page.south);
+    
+    % Canto
+    \node[rotate=-90, text=white] at (current page.center) {
+        \fontsize{14}{16}\selectfont\bfseries 
+        QEC DECODERS FOR 2D COLOR CODES \hspace{2cm} ANTONIO MORALES GARCÍA
+    };
+
+    % Back Cover
+    \node[text width=11cm, align=justify] at ([xshift=-103.5mm, yshift=0cm]current page.center) {
+        \input{cover_back}
+    };
+
+    % Front Cover
+    \node[text width=14cm, align=center] at ([xshift=103.5mm, yshift=0cm]current page.center) {
+        \input{cover_front}
+    };
+\end{tikzpicture}
+
+\end{document}
