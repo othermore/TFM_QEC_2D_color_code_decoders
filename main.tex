@@ -30,13 +30,14 @@
 
 \usepackage{geometry}
 \geometry{
-    b5paper,
+    paperwidth=18.5cm, 
+    paperheight=25cm,
     inner=2.25cm,
-    outer=4.5cm,
+    outer=4.25cm,   
     top=2.5cm,
     bottom=2.5cm,
-    marginparwidth=3.5cm,
-    marginparsep=0.5cm
+    marginparwidth=3.5cm, 
+    marginparsep=0.4cm    
 }
 \raggedbottom
 
@@ -58,16 +59,20 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-% Configuración para páginas normales
-\fancyhead[LE]{\footnotesize \thepage \quad \textbf{ANTONIO MORALES GARCÍA}}
-\fancyhead[RO]{\footnotesize \textbf{QEC DECODERS FOR 2D COLOR CODES} \quad \thepage}
+
+% Header configuration
+\fancyhead[LE]{\footnotesize \textbf{ANTONIO MORALES GARCIA}}
+\fancyhead[RO]{\footnotesize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
 \renewcommand{\headrulewidth}{0.4pt}
 
-% Redefinir el estilo 'plain' para que las páginas de inicio de capítulo 
-% también tengan el número en el margen exterior (abajo)
+% Footer configuration (Page number at text block corners)
+\fancyfoot[LE,RO]{\footnotesize \thepage}
+\renewcommand{\footrulewidth}{0pt}
+
+% Redefine 'plain' style for chapter starts
 \fancypagestyle{plain}{
   \fancyhf{}
-  \fancyfoot[LE,RO]{\footnotesize \thepage} % Número en el exterior del pie de página
+  \fancyfoot[LE,RO]{\footnotesize \thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
 

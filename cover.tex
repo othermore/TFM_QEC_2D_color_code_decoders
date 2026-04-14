@@ -1,8 +1,8 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-% Ancho total = 176mm (back) + 15mm (canto) + 176mm (front) = 367mm
-\usepackage[paperwidth=367mm, paperheight=250mm, margin=0cm]{geometry}
+% Nuevo Ancho total = 185mm (back) + 17mm (lomo) + 185mm (front) = 387mm
+\usepackage[paperwidth=387mm, paperheight=250mm, margin=0cm]{geometry}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{tikz}
@@ -16,24 +16,32 @@
 
 \begin{tikzpicture}[remember picture, overlay]
     \fill[white] (current page.north west) rectangle (current page.south east);
-    
+
     \fill[nebrijared] ([xshift=-30mm]current page.center |- current page.north) rectangle ([xshift=30mm]current page.center |- current page.south);
     
-    % Canto
     \node[rotate=-90, text=white] at (current page.center) {
         \fontsize{14}{16}\selectfont\bfseries 
         QEC DECODERS FOR 2D COLOR CODES \hspace{2cm} ANTONIO MORALES GARCÍA
     };
 
-    % Back Cover
-    \node[text width=11cm, align=justify] at ([xshift=-103.5mm, yshift=0cm]current page.center) {
+    \node[text width=11cm, align=justify] at ([xshift=-110mm, yshift=0cm]current page.center) {
         \input{cover_back}
     };
 
-    % Front Cover
-    \node[text width=14cm, align=center] at ([xshift=103.5mm, yshift=0cm]current page.center) {
+    \node[text width=14cm, align=center] at ([xshift=110mm, yshift=0cm]current page.center) {
         \input{cover_front}
     };
+
+    % --- LÍNEAS DE PLEGADO ---
+    \draw [dashed, gray, line width=0.5pt] 
+        ([xshift=-8.5mm]current page.center |- current page.north) -- 
+        ([xshift=-8.5mm]current page.center |- current page.south);
+    
+    \draw [dashed, gray, line width=0.5pt] 
+        ([xshift=8.5mm]current page.center |- current page.north) -- 
+        ([xshift=8.5mm]current page.center |- current page.south);
+    % ----------------------------------------------------
+
 \end{tikzpicture}
 
 \end{document}
