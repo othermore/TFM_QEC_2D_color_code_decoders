@@ -123,15 +123,15 @@ It is natural to assume we could simply apply these classical techniques to quan
 \notatfm{A qubit state, $|\psi\rangle$, is a vector in a two-dimensional complex Hilbert space, defined by continuous amplitudes $\alpha|0\rangle + \beta|1\rangle$, with $\alpha$ and $\beta$ being complex numbers. Such state can be represented in the Bloch Sphere. Because of this continuity, an error can be an arbitrarily small rotation.}
 \begin{figure}[hbt!]
 \centering
-\begin{tikzpicture}[line cap=round, line join=round, >=Stealth, scale=3.5]
+\begin{tikzpicture}[line cap=round, line join=round, >=Stealth, scale=2]
     \tikzstyle{axis} = [->, thick, gray!80]
-    \tikzstyle{back_axis} = [dotted, very thin, gray!40] 
+    \tikzstyle{back_axis} = [dotted,  thin, gray!60] 
     \tikzstyle{vector} = [->, very thick, red]
     \tikzstyle{projection} = [dashed, gray!70, thin] 
     \tikzstyle{label_state} = [font=\small, black]
     
     \draw[gray!30] (0,0) circle (1); 
-    \draw[gray!30, loosely dotted, very thin] (0,0) ellipse (1 and 0.25); 
+    \draw[gray!70,  dotted, very thin] (0,0) ellipse (1 and 0.25); 
     \draw[gray!60] (1,0) arc (0:-180:1 and 0.25);      
 
     \draw[axis] (0,0) -- (0,1.2) node[anchor=south, label_state]{$|0\rangle$};
@@ -157,7 +157,7 @@ It is natural to assume we could simply apply these classical techniques to quan
     \draw[->, thick, blue] (-0.25,-0.07) to [bend right=20] (0.28,-0.04);
     \node[blue, font=\footnotesize] at (0.05, -0.2) {$\phi$};
 
-    \node[draw, fill=white, rounded corners, align=left, font=\small] at (1.3, 0.8) {
+    \node[draw, fill=white, rounded corners, align=left, font=\small] at (1.7, 0.8) {
         $|\psi\rangle = \alpha|0\rangle + \beta|1\rangle$ \\
         $\alpha = \cos(\frac{\theta}{2})$ \\
         $\beta = e^{i\phi}\sin(\frac{\theta}{2})$
