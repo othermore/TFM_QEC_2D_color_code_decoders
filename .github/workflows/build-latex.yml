@@ -5,15 +5,15 @@ on:
     branches:
       - main
       - master
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
 
 permissions:
-  contents: write # Required to create/update releases
+  contents: write
 
 jobs:
   build_and_release:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,17 +21,31 @@ jobs:
       - name: Compile cover.tex
         uses: xu-cheng/latex-action@v3
         with:
+          working_directory: thesis
           root_file: cover.tex
 
       - name: Compile main.tex
         uses: xu-cheng/latex-action@v3
         with:
+          working_directory: thesis
           root_file: main.tex
 
       - name: Compile main_digital.tex
         uses: xu-cheng/latex-action@v3
         with:
+          working_directory: thesis
           root_file: main_digital.tex
+
+      - name: Prepare PDF directory
+        run: |
+          mkdir -p thesis_pdf
+          mv thesis/*.pdf thesis_pdf/
+
+      - name: Commit PDF files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update compiled PDFs"
+          file_pattern: "thesis_pdf/*.pdf"
 
       - name: Create or Update Release
         uses: softprops/action-gh-release@v2
@@ -42,8 +56,8 @@ jobs:
             Automatic build of the Master's Thesis.
             Last updated on ${{ github.event.head_commit.timestamp }}.
           files: |
-            cover.pdf
-            main.pdf
-            main_digital.pdf
+            thesis_pdf/cover.pdf
+            thesis_pdf/main.pdf
+            thesis_pdf/main_digital.pdf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
