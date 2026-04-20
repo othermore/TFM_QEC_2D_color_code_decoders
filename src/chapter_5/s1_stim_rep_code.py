@@ -3,10 +3,10 @@ import pymatching
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> None:
+def sample_repetition_code_mwpm(distance: int = 3, shots: int = 10000) -> None:
     """
     Simulates a repetition code over a range of physical error rates,
-    decodes using PyMatching, and plots the logical error rate.
+    using the pymatching MWPM decoder.
     """
     physical_error_rates = np.linspace(0.01, 0.15, 10)
     logical_error_rates = []
@@ -33,13 +33,21 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
         num_errors = np.sum(predicted_observables != actual_observables)
         logical_error_rates.append(num_errors / shots)
 
+    return physical_error_rates, logical_error_rates
+
+
+def plot_repetition_code_mwpm_performance(distance: int = 3, shots: int = 10000) -> None:
+    """
+    Simulates a repetition code over a range of physical error rates,
+    decodes using PyMatching, and plots the logical error rate.
+    """
+    physical_error_rates, logical_error_rates = sample_repetition_code_mwpm(distance, shots)
     # Plotting the results
     plt.figure(figsize=(8, 6))
     plt.plot(physical_error_rates, logical_error_rates, marker='o', label=f'Distance {distance}')
     
     # Reference line to show the break-even point where QEC stops helping
     plt.plot(physical_error_rates, physical_error_rates, linestyle='--', color='gray', label='No QEC')
-    
     plt.title('Repetition Code Performance (Code-Capacity, MWPM Decoder)')
     plt.xlabel('Physical Error Rate (p)')
     plt.ylabel('Logical Error Rate ($p_L$)')
@@ -47,4 +55,5 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
     plt.grid(True, linestyle=':', alpha=0.7)
 
 # Execute to input the main parameters
-plot_repetition_code_performance(distance=3, shots=10000)
+if __name__ == "__main__":
+    plot_repetition_code_mwpm_performance(distance=3, shots=10000)

@@ -1,10 +1,9 @@
 import stim
 import numpy as np
 import matplotlib.pyplot as plt
-
 from s2_majority_vote_decoder import decode_batch_majority_vote
 
-def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> None:
+def sample_repetition_code_mv(distance: int = 3, shots: int = 10000) -> None:
     """
     Simulates a repetition code over a range of physical error rates,
     decodes using PyMatching, and plots the logical error rate.
@@ -31,6 +30,14 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
         # actual observables differ from the predicted ones
         num_errors = np.sum(predicted_observables != actual_observables)
         logical_error_rates.append(num_errors / shots)
+    return physical_error_rates, logical_error_rates
+
+def plot_repetition_code_mv_performance(distance: int = 3, shots: int = 10000) -> None:
+    """
+    Simulates and plots a repetition code over a range of physical error rates,
+    using the majority vote decoder.
+    """
+    physical_error_rates, logical_error_rates = sample_repetition_code_mv(distance, shots)
 
     # Plotting the results
     plt.figure(figsize=(8, 6))
@@ -46,4 +53,5 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
     plt.grid(True, linestyle=':', alpha=0.7)
 
 # Execute to input the main parameters
-plot_repetition_code_performance(distance=3, shots=10000)
+if __name__ == "__main__":
+    plot_repetition_code_mv_performance(distance=3, shots=10000)
