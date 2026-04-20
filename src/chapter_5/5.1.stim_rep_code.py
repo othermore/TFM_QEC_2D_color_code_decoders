@@ -45,7 +45,6 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
     plt.ylabel('Logical Error Rate ($p_L$)')
     plt.legend()
     plt.grid(True, linestyle=':', alpha=0.7)
-    plt.show()
 
 # Execute to input the main parameters
 plot_repetition_code_performance(distance=3, shots=10000)
