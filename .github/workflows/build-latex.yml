@@ -1,10 +1,8 @@
 name: Build and Release LaTeX
 
 on:
-  push:
-    branches:
-      - main
-      - master
+  schedule:
+    - cron: '0 1 * * *'
   workflow_dispatch:
 
 permissions:
@@ -17,44 +15,61 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify recent commits
+        id: verify_commits
+        run: |
+          commits=$(git log --since="24 hours" --oneline)
+          if [ -z "$commits" ]; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Compile cover.tex
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: thesis
           root_file: cover.tex
 
       - name: Compile main.tex
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: thesis
           root_file: main.tex
 
       - name: Compile main_digital.tex
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: thesis
           root_file: main_digital.tex
 
       - name: Prepare PDF directory
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p thesis_pdf
           mv thesis/*.pdf thesis_pdf/
 
       - name: Commit PDF files
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update compiled PDFs"
           file_pattern: "thesis_pdf/*.pdf"
 
       - name: Create or Update Release
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest Compiled PDFs
           body: |
             Automatic build of the Master's Thesis.
-            Last updated on ${{ github.event.head_commit.timestamp }}.
           files: |
             thesis_pdf/cover.pdf
             thesis_pdf/main.pdf
