@@ -40,12 +40,11 @@ def plot_repetition_code_performance(distance: int = 3, shots: int = 10000) -> N
     # Reference line to show the break-even point where QEC stops helping
     plt.plot(physical_error_rates, physical_error_rates, linestyle='--', color='gray', label='No QEC')
     
-    plt.title('Repetition Code Performance (Code-Capacity)')
+    plt.title('Repetition Code Performance (Code-Capacity, MWPM Decoder)')
     plt.xlabel('Physical Error Rate (p)')
     plt.ylabel('Logical Error Rate ($p_L$)')
     plt.legend()
     plt.grid(True, linestyle=':', alpha=0.7)
-    plt.show()
 
 # Execute to input the main parameters
 plot_repetition_code_performance(distance=3, shots=10000)
