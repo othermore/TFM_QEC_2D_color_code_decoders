@@ -1,13 +1,109 @@
 \chapter{Implementation and simulation of QEC codes: Framework setup and baseline models}
 \label{chap:implementation_and_simulation}
 
-\section{Simulating QEC codes and decoders with stim}
+We have so far conducted a profound theoretical study of the different QEC codes, decoders, and error models. Moving from theory to practice requires specialized computational tools capable of simulating quantum systems efficiently. 
 
-\subsection{Simulating the repetition code and MWPM decoder}
 
-\subsection{Implementing a Majority Vote decoder}
+
+\notatfm{The Gottesman-Knill theorem is referred to in the original Gottesman paper simply as Knill's theorem, as it was initially only privately communicated. It is now commonly known as the Gottesman-Knill theorem to recognize both Knill's original insight and the subsequent formal proof by Gottesman using his Stabilizer formalism.}
+Simulating arbitrary quantum circuits is exponentially hard for classical computers; however, the Gottesman-Knill theorem \cite{gottesman1998heisenberg} guarantees that circuits restricted to Clifford group operations (which include stabilizer measurements, CNOTs, and Pauli gates) can be simulated efficiently in polynomial time. 
+
+In this chapter, we establish our experimental framework using \texttt{stim} \cite{gidney2021stim}, a high-performance Clifford simulator that relies on the referred Gottesman-Knill theorem and its subsequent improvements by Aaronson and Gottesman\cite{aaronson2004improved}, and incorporates some additional improvements. We will build our simulations progressively: starting with a basic repetition code to understand the mechanics of syndrome extraction and decoding, moving through different noise models, and finally implementing the 9-qubit Shor code to empirically demonstrate the Threshold Theorem.
+
+\section{Simulating QEC codes and decoders with \texttt{stim}}
+\label{sec:simulating_with_stim}
+
+Stim is a QEC specialized simulator. The primary advantage of \texttt{stim} is its ability to sample detection events (syndromes) and logical observables (necessary corrections) extremely fast. Instead of tracking the full state vector, it tracks how Pauli errors propagate through the circuit. To utilize this tool, a QEC simulation requires three main components: a circuit defining the code structure, a noise model that injects errors, and a classical decoder that interprets the syndromes.
+
+\subsection{Simulating the repetition code under code-capacity noise}
+\label{subsec:repetition_code_sim}
+
+To introduce the simulation pipeline, we begin with the simplest QEC protocol: the distance-$d$ repetition code. As discussed in Chapter \ref{chap:introduction}, this code protects against a single type of error (e.g., bit-flips) by encoding one logical qubit into $d$ physical data qubits, requiring $d-1$ additional ancilla qubits to perform parity measurements.
+
+\notatfm{The depolarizing channel is a standard symmetric noise model where a qubit has a probability $p$ of suffering an error, with the error being equally likely to be the Pauli $X$, $Y$, or $Z$ operator ($p/3$ each). This contrasts with asymmetric noise models, such as pure phase-damping or amplitude-damping channels.}
+For our baseline simulation, we use a \textbf{code-capacity noise model}. As seen in Chapter \ref{chap:modeling_quantum_error}, this is a highly idealized model where perfect, noiseless gates are used for encoding and syndrome extraction, and errors are only artificially injected into the data qubits (typically via a depolarizing channel) to simulate decoherence over time.
+
+The simplest way to implement this simulation requires:
+\begin{itemize}
+    \item \textbf{Building the QEC code circuit}. \texttt{stim}'s library already provides a method to easily generate a basic repetition code.
+    \item \textbf{Injecting the error}. \texttt{stim} does provide automated ways to inject different error types.
+    \item \textbf{Decoding the error}. The \texttt{pymatching} library will allow us to decode the error. 
+\end{itemize}
+
+Let's illustrate it with a very basic example:
+
+\lstinputlisting[language=Python, caption={Generating a basic repetition code circuit in stim with code-capacity noise.}, label={lst:stim_rep_code}]{../src/chapter_5/5.1.stim_rep_code.py}
+
+
+\subsection{Decoders: From Minimum Weight Perfect Matching to Custom Logic}
+\label{subsec:decoders_intro}
+
+Once the circuit is executed and noise is applied, \texttt{stim} outputs an array of detection events. The role of the decoder is to map these events to a predicted logical error. 
+
+The standard approach for 1D repetition codes and 2D surface codes is the \textbf{Minimum Weight Perfect Matching (MWPM)} algorithm. MWPM constructs a graph where nodes are detection events and edges are the probability of an error connecting them. It then finds the most probable set of errors that explains the syndrome. In our framework, we implement this using the \texttt{PyMatching} library.
+
+To better understand the internal workings of a decoder, we also implemented a custom \textbf{Majority Vote Decoder}. Unlike the graph-based approach of MWPM, this decoder resolves errors by directly evaluating the local parity checks and "voting" on the most likely state of the data qubits.
+
+% Aquí incluiremos el snippet de la clase BaseDecoder y MajorityVote
+\begin{lstlisting}[language=Python, caption={Implementation of a custom Majority Vote decoder extending the BaseDecoder interface.}, label={lst:majority_vote}]
+# TODO: Insert snippet from decoders.py showing the MajorityVote logic
+\end{lstlisting}
+
+As expected for simple repetition codes under basic noise models, both decoders perform similarly, effectively suppressing physical errors below the logical threshold.
+
+% Aquí incluiremos la primera gráfica comparando MWPM y MajorityVote
+\begin{figure}[hbt!]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/repetition_decoders_comparison.png}
+    \caption{Logical error rate vs. Physical error rate for a $d=3$ repetition code. The performance of the MWPM decoder and the custom Majority Vote decoder are strictly comparable under a code-capacity noise model.}
+    \label{fig:rep_code_decoders}
+\end{figure}
+
+\subsection{Introducing circuit-level noise}
+\label{subsec:circuit_level_noise}
+
+While the code-capacity model is useful for validating decoders, it does not reflect physical reality. In a real quantum computer, the gates used to entangle the qubits and the measurements used to extract the syndrome are themselves noisy.
+
+To illustrate this, we expand our simulation to include \textbf{circuit-level noise}. In this model, we inject depolarizing noise into single-qubit and two-qubit gates, and we add a finite probability of measurement readout errors. 
+
+% Aquí incluiremos una gráfica comparando Code Capacity vs Circuit Level
+\begin{figure}[hbt!]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{figures/noise_models_comparison.png}
+    \caption{Impact of noise models on the repetition code performance. Introducing circuit-level noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline.}
+    \label{fig:noise_models}
+\end{figure}
+
+As shown in Figure \ref{fig:noise_models}, realistic noise drastically reduces the effectiveness of the code. Handling circuit-level noise requires complex spatial-temporal decoding graphs (e.g., repeating measurement rounds to gain confidence). To maintain focus on the architectural advantages of 2D color codes and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
 
 \subsection{Implementing the 9-qubit Shor code}
+\label{subsec:shor_implementation}
+
+Having established the simulation and decoding pipeline, we proceed to implement the 9-qubit Shor code ($[[9, 1, 3]]$). As theoretically detailed in Section \ref{sec:shor_codes}, this code concatenates phase-flip and bit-flip protection. 
+
+Using \texttt{stim}, we defined the encoding circuit, applied independent code-capacity noise, and extracted the $X$-type and $Z$-type syndromes. We evaluated this code using the previously validated MWPM decoder.
+
+% Aquí incluiremos snippet de Shor
+\begin{lstlisting}[language=Python, caption={Main loop for evaluating the 9-qubit Shor code stability across all cardinal basis states.}, label={lst:shor_simulation}]
+# TODO: Insert snippet from shor_9_code_simulation.py showing the states loop
+\end{lstlisting}
+
+\subsection{Visualizing the Threshold Theorem}
+\label{subsec:threshold_visualization}
+
+A theoretical QEC code is only viable if it exhibits a physical threshold. According to the Threshold Theorem, scaling up the distance $d$ of a code should only decrease the logical error rate if the underlying physical error rate $p$ is below a specific critical value $p_{th}$.
+
+To empirically demonstrate this, we simulated our baseline codes at various distances (e.g., $d=3, 5, 7, 9$). By plotting the logical error rate $p_L$ against the physical error rate $p$ for each distance, we can visually identify the threshold as the intersection point of all curves.
+
+% Aquí incluiremos la gráfica clave del Threshold
+\begin{figure}[hbt!]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{figures/threshold_plot.png}
+    \caption{Empirical demonstration of the Threshold Theorem. The curves represent different code distances ($d$). For physical error rates $p < p_{th}$ (left of the intersection), increasing distance exponentially suppresses the logical error. For $p > p_{th}$, adding qubits degrades performance.}
+    \label{fig:threshold_plot}
+\end{figure}
+
+The accurate identification of this threshold validates our simulation framework, allowing us to confidently move forward to the complex geometries of 2D Color Codes in the next chapters.
 
 \section{Beyond stim: Experimental setup for implementation and simulation}
 
