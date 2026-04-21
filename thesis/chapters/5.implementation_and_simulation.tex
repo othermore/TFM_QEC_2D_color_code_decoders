@@ -11,9 +11,9 @@ In this chapter, we establish our experimental framework using \texttt{stim} \ci
 \begin{notebox}[Source code and repository structure]
 The code required to execute the simulations presented in this work is available in a git repository at \url{https://github.com/othermore/TFM_QEC_2D_color_code_decoders}.
 
-The code is located in the \texttt{src} directory. Each chapter has its own directory and python notebook. The specific code snippets are located in separate files and included in the notebook. 
+The code is located in the \texttt{src} directory. Each chapter has its own directory and python notebook. The specific code for each simulation is located in separate files (starting with \texttt{s} and the number of the simulation) and included in the notebook. 
 
-Libraries and resources required for multiple experiments are located in the directory \texttt{src/lib}.
+Libraries and resources required for multiple simulations are located in the directory \texttt{src/lib}.
 \end{notebox}
 
 \section{Simulating QEC codes and decoders with \texttt{stim}}
@@ -40,11 +40,12 @@ Stim makes it exceptionally easy to implement a basic repetition code. The build
     \centering
     \tablenote{The x=y dotted line helps comparing the QEC protocol to not implementing any QEC. If the logical error rate is above the physical error rate, the QEC protocol is adding errors.}
     \includegraphics[width=0.67\linewidth]{figures/stim_rep_plot.png}
-    \caption{Logical error for a basic repetition code using the MWPM decoder}
+    \caption{Simulation 1: Logical error for a basic repetition code using the MWPM decoder}
     \label{fig:stim_rep_plot}
 \end{figure}
 
 The code in Listing \ref{lst:stim_rep_code} illustrates how this simulation can be performed. It is important to understand how \texttt{stim} works.  The \texttt{sample} method returns two things:
+
 \begin{enumerate}
     \item A binary array of detection events (in the code, \texttt{syndromes}). It contains one value for each measured detector. The value is $0$ if the detector observed the expected parity, and $1$ if the detector was activated, indicating the presence of an error.
     \item A binary array of logical outcomes (in the code, \texttt{actual\_observables}). Rather than representing logical states, these values act as boolean flags. A value of $1$ indicates that the accumulated physical errors during that shot successfully flipped the corresponding logical observable.
@@ -55,7 +56,7 @@ During the simulation, errors can occur with a certain probability $p$. When the
 
 Figure \ref{fig:stim_rep_plot} shows the resulting plot, displaying the logical error rate as a function of the physical error rate. It is worth noting that, as a basic repetition code, this code only corrects for bit-flip errors.
 
-\lstinputlisting[language=Python, caption={Basic repetition code simulation}, label={lst:stim_rep_code}]{../src/chapter_5/s1_stim_rep_code.py}
+\lstinputlisting[language=Python, caption={Simulation 1: Basic repetition code simulation}, label={lst:stim_rep_code}]{../src/chapter_5/s1_stim_rep_code.py}
 
 
 \subsection{Decoders: From Minimum Weight Perfect Matching to Custom Logic}
@@ -69,24 +70,15 @@ To better understand the internal workings of a decoder, we implement a custom \
 
 The code Listing \ref{lst:majority_vote_decoder} shows a very simple implementation of such decoder, which can be used with the same repetition circuit created in Listing \ref{lst:stim_rep_code}.
 
-\lstinputlisting[language=Python, caption={Implementation of a simple Majority Vote decoder for a repetition code}, label={lst:majority_vote_decoder}]{../src/chapter_5/s2_majority_vote_decoder.py}
+\lstinputlisting[language=Python, caption={Simulation 2: Implementation of a simple Majority Vote decoder for a repetition code}, label={lst:majority_vote_decoder}]{../src/chapter_5/s2_majority_vote_decoder.py}
 
-As seen in Figure \ref{fig:stim_rep_vote_plot}, for simple repetition codes under basic noise models, both decoders perform similarly, effectively reducing physical errors.
+As seen in Figure \ref{fig:stim_rep_compare_plot}, for simple repetition codes under basic noise models, both decoders perform similarly, effectively reducing physical errors. In the following section we will stress-test our decoders to see how their efficiency decays with different noise models.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.67\linewidth]{figures/stim_rep_vote_plot.png}
-    \caption{Logical error for a basic repetition code using our Majority Vote decoder}
-    \label{fig:stim_rep_vote_plot}
-\end{figure}
-
-
-% Aquí incluiremos la primera gráfica comparando MWPM y MajorityVote
-\begin{figure}[hbt!]
-    \centering
-    % \includegraphics[width=0.8\textwidth]{figures/repetition_decoders_comparison.png}
-    \caption{Logical error rate vs. Physical error rate for a $d=3$ repetition code. The performance of the MWPM decoder and the custom Majority Vote decoder are strictly comparable under a code-capacity noise model.}
-    \label{fig:rep_code_decoders}
+    \includegraphics[width=0.6\linewidth]{figures/stim_rep_comparison_plot.png}
+    \caption{Simulation 3: Comparisong of logical error for a basic repetition code using Majority Vote and MWPM decoders}
+    \label{fig:stim_rep_compare_plot}
 \end{figure}
 
 \subsection{Introducing circuit-level noise}
@@ -94,9 +86,8 @@ As seen in Figure \ref{fig:stim_rep_vote_plot}, for simple repetition codes unde
 
 While the code-capacity model is useful for validating decoders, it does not reflect physical reality. In a real quantum computer, the gates used to entangle the qubits and the measurements used to extract the syndrome are themselves noisy.
 
-To illustrate this, we expand our simulation to include \textbf{circuit-level noise}. In this model, we inject depolarizing noise into single-qubit and two-qubit gates, and we add a finite probability of measurement readout errors. 
+To illustrate this, we expand our simulation to include \textbf{circuit-level noise} and \textbf{phenomenological noise}. As seen in Chapter \ref{chap:modeling_quantum_error}, in this model, we inject depolarizing noise into single-qubit and two-qubit gates, and we add a probability of measurement readout errors. 
 
-% Aquí incluiremos una gráfica comparando Code Capacity vs Circuit Level
 \begin{figure}[hbt!]
     \centering
     % \includegraphics[width=0.8\textwidth]{figures/noise_models_comparison.png}
