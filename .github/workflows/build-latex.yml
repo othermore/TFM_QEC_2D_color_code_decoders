@@ -18,27 +18,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Lógica de ejecución (Cron vs Manual)
+      - name: Execution logic
         id: check
         run: |
-          # Si es una ejecución programada, comprobamos los commits
           if [ "${{ github.event_name }}" == "schedule" ]; then
             commits=$(git log --since="24 hours" --oneline)
             if [ -z "$commits" ]; then
-              echo "No hay cambios en las últimas 24h. Cancelando build."
+              echo "No changes in the last 24h. Canceling build."
               echo "run_build=false" >> "$GITHUB_OUTPUT"
               exit 0
             fi
           fi
-          # Si hay cambios o es una ejecución manual, damos luz verde
           echo "run_build=true" >> "$GITHUB_OUTPUT"
 
-      - name: Preparar entorno (Copiar figuras)
+      - name: Prepare environment
         if: steps.check.outputs.run_build == 'true'
         run: |
-          echo "=== Copiando carpeta figures dentro de thesis ==="
-          cp -R figures thesis/
-          echo "=== Verificando que las imágenes están en su sitio ==="
+          echo "=== Cleaning and copying figures ==="
+          mkdir -p thesis/figures
+          cp -a figures/. thesis/figures/
+          echo "=== Verifying content ==="
           ls -la thesis/figures/
 
       - name: Compile cover.tex
@@ -66,7 +65,6 @@ jobs:
         if: steps.check.outputs.run_build == 'true'
         run: |
           mkdir -p thesis_pdf
-          # El 2>/dev/null evita que el comando falle si algún PDF no se generó
           mv thesis/*.pdf thesis_pdf/ 2>/dev/null || true
 
       - name: Commit PDF files
