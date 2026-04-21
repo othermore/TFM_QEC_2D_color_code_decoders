@@ -2,7 +2,6 @@ name: Build and Release LaTeX
 
 on:
   schedule:
-    # Ejecución a la 1:00 AM UTC (3:00 AM CEST en España)
     - cron: '0 1 * * *'
   workflow_dispatch:
 
@@ -22,7 +21,6 @@ jobs:
       - name: Verify recent commits
         id: verify_commits
         run: |
-          # Busca si ha habido cambios en las últimas 24 horas
           commits=$(git log --since="24 hours" --oneline)
           if [ -z "$commits" ]; then
             echo "has_changes=false" >> "$GITHUB_OUTPUT"
@@ -30,15 +28,18 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Sync figures to thesis folder
+        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          # Copiamos la carpeta figures dentro de thesis para que sea local al compilador
+          cp -r figures thesis/
+
       - name: Compile cover.tex
         if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: xu-cheng/latex-action@v3
         with:
           working_directory: thesis
           root_file: cover.tex
-        env:
-          # Permite buscar archivos en la raíz (..) desde la carpeta thesis
-          TEXINPUTS: ".:..:"
 
       - name: Compile main.tex
         if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
@@ -46,8 +47,6 @@ jobs:
         with:
           working_directory: thesis
           root_file: main.tex
-        env:
-          TEXINPUTS: ".:..:"
 
       - name: Compile main_digital.tex
         if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
@@ -55,14 +54,11 @@ jobs:
         with:
           working_directory: thesis
           root_file: main_digital.tex
-        env:
-          TEXINPUTS: ".:..:"
 
       - name: Prepare PDF directory
         if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           mkdir -p thesis_pdf
-          # Mueve los PDFs generados en 'thesis/' a la carpeta de salida
           mv thesis/*.pdf thesis_pdf/
 
       - name: Commit PDF files
@@ -80,7 +76,6 @@ jobs:
           name: Latest Compiled PDFs
           body: |
             Automatic build of the Master's Thesis.
-            Last update check: ${{ github.event.head_commit.timestamp }}
           files: |
             thesis_pdf/cover.pdf
             thesis_pdf/main.pdf
