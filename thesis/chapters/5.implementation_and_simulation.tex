@@ -90,7 +90,7 @@ To illustrate this, we expand our simulation to include \textbf{circuit-level no
 
 \begin{figure}[hbt!]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_noise_plot.png}
+    \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_noise_plot.png}
     \caption{Simulation 4: Impact of circuit-level and phenomenological noise on the repetition code performance. Introducing more complex noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline. With this additional noise, MWPM shows its advantage over the Majority Vote because of its capacity to consider the probabilities of each error to select the most probable set of errors that could have caused the observed syndrome.}
     \label{fig:stim_rep_circuit_noise_plot}
 \end{figure}
@@ -108,38 +108,23 @@ circuit = stim.Circuit.generated(
 
 As shown in Figure \ref{fig:stim_rep_circuit_noise_plot}, realistic noise drastically reduces the effectiveness of the code, but it also shows the importance of the decoder. Handling circuit-level noise requires complex spatial-temporal decoding graphs, which makes MWPM a better solution than a basic Majority Vote decoder. 
 
-At this point, we can also study the effect of distance increases in the code. 
+At this point, we can also study the effect of distance increases in the code. Figure \ref{fig:stim_rep_circuit_distance_plot} shows how increasing the distance improves the results of the MWPM decoder, but it degrades the result of the Majority Vote decoder. This means that, for this specific noise model, MWPM is operating under the threshold, so the error correcting capacity of the protocol can be increased by increasing the distance. However, our Majority Vote decoder operates above the threshold.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_distance_plot.png}
+    \caption{Simulation 5: Under a complex noise model (code-capacity, circuit-level and phenomenological) increasing the distance of the code has the opposite effect for each of the decoders.}
+    \label{fig:stim_rep_circuit_distance_plot}
+\end{figure}
 
 To maintain focus on the architectural advantages of QEC codes (and, more specifically, 2D color codes) and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
 
 \subsection{Implementing the 9-qubit Shor code}
 \label{subsec:shor_implementation}
 
-Having established the simulation and decoding pipeline, we proceed to implement the 9-qubit Shor code ($[[9, 1, 3]]$). As theoretically detailed in Section \ref{sec:shor_codes}, this code concatenates phase-flip and bit-flip protection. 
-
-Using \texttt{stim}, we defined the encoding circuit, applied independent code-capacity noise, and extracted the $X$-type and $Z$-type syndromes. We evaluated this code using the previously validated MWPM decoder.
-
-% Aquí incluiremos snippet de Shor
-\begin{lstlisting}[language=Python, caption={Main loop for evaluating the 9-qubit Shor code stability across all cardinal basis states.}, label={lst:shor_simulation}]
-# TODO: Insert snippet from shor_9_code_simulation.py showing the states loop
-\end{lstlisting}
 
 \subsection{Visualizing the Threshold Theorem}
 \label{subsec:threshold_visualization}
-
-A theoretical QEC code is only viable if it exhibits a physical threshold. According to the Threshold Theorem, scaling up the distance $d$ of a code should only decrease the logical error rate if the underlying physical error rate $p$ is below a specific critical value $p_{th}$.
-
-To empirically demonstrate this, we simulated our baseline codes at various distances (e.g., $d=3, 5, 7, 9$). By plotting the logical error rate $p_L$ against the physical error rate $p$ for each distance, we can visually identify the threshold as the intersection point of all curves.
-
-% Aquí incluiremos la gráfica clave del Threshold
-\begin{figure}[hbt!]
-    \centering
-    % \includegraphics[width=0.9\textwidth]{figures/threshold_plot.png}
-    \caption{Empirical demonstration of the Threshold Theorem. The curves represent different code distances ($d$). For physical error rates $p < p_{th}$ (left of the intersection), increasing distance exponentially suppresses the logical error. For $p > p_{th}$, adding qubits degrades performance.}
-    \label{fig:threshold_plot}
-\end{figure}
-
-The accurate identification of this threshold validates our simulation framework, allowing us to confidently move forward to the complex geometries of 2D Color Codes in the next chapters.
 
 \section{Beyond stim: Experimental setup for implementation and simulation}
 
