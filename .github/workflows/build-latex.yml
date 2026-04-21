@@ -18,63 +18,71 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify recent commits
-        id: verify_commits
+      - name: Lógica de ejecución (Cron vs Manual)
+        id: check
         run: |
-          # Verificamos si hay commits en las últimas 24 horas
-          commits=$(git log --since="24 hours" --oneline)
-          if [ -z "$commits" ]; then
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          # Si es una ejecución programada, comprobamos los commits
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            commits=$(git log --since="24 hours" --oneline)
+            if [ -z "$commits" ]; then
+              echo "No hay cambios en las últimas 24h. Cancelando build."
+              echo "run_build=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
           fi
+          # Si hay cambios o es una ejecución manual, damos luz verde
+          echo "run_build=true" >> "$GITHUB_OUTPUT"
 
-      - name: Sync figures
-        # Esta es la corrección: aseguramos que si el job corre, las fotos se copien
-        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      - name: Preparar entorno (Copiar figuras)
+        if: steps.check.outputs.run_build == 'true'
         run: |
-          # Creamos el directorio por si no existe y copiamos el contenido
-          mkdir -p thesis/figures
-          cp -v figures/* thesis/figures/
-          echo "Contenido de thesis/figures preparado."
+          echo "=== Copiando carpeta figures dentro de thesis ==="
+          cp -R figures thesis/
+          echo "=== Verificando que las imágenes están en su sitio ==="
+          ls -la thesis/figures/
 
-      - name: Compile LaTeX documents
-        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+      - name: Compile cover.tex
+        if: steps.check.outputs.run_build == 'true'
         uses: xu-cheng/latex-action@v3
         with:
-          # Compilamos desde thesis para mantener tus rutas de Overleaf
           working_directory: thesis
-          # Compilamos los tres ficheros en un solo paso de la acción para mayor eficiencia
-          root_file: |
-            cover.tex
-            main.tex
-            main_digital.tex
+          root_file: cover.tex
+
+      - name: Compile main.tex
+        if: steps.check.outputs.run_build == 'true'
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: thesis
+          root_file: main.tex
+
+      - name: Compile main_digital.tex
+        if: steps.check.outputs.run_build == 'true'
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: thesis
+          root_file: main_digital.tex
 
       - name: Prepare PDF directory
-        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.run_build == 'true'
         run: |
           mkdir -p thesis_pdf
-          # Movemos solo los resultados finales
-          mv thesis/cover.pdf thesis_pdf/ 2>/dev/null || true
-          mv thesis/main.pdf thesis_pdf/ 2>/dev/null || true
-          mv thesis/main_digital.pdf thesis_pdf/ 2>/dev/null || true
+          # El 2>/dev/null evita que el comando falle si algún PDF no se generó
+          mv thesis/*.pdf thesis_pdf/ 2>/dev/null || true
 
       - name: Commit PDF files
-        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.run_build == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update compiled PDFs"
           file_pattern: "thesis_pdf/*.pdf"
 
       - name: Create or Update Release
-        if: steps.verify_commits.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
+        if: steps.check.outputs.run_build == 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: Latest Compiled PDFs
-          body: |
-            Automatic build of the Master's Thesis.
-            Generated on: $(date +'%Y-%m-%d %H:%M:%S')
+          body: "Automatic build of the Master's Thesis."
           files: |
             thesis_pdf/cover.pdf
             thesis_pdf/main.pdf
