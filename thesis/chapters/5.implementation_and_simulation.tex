@@ -77,7 +77,7 @@ As seen in Figure \ref{fig:stim_rep_compare_plot}, for simple repetition codes u
 \begin{figure}[hbt!]
     \centering
     \includegraphics[width=0.6\linewidth]{figures/stim_rep_comparison_plot.png}
-    \caption{Simulation 3: Comparisong of logical error for a basic repetition code using Majority Vote and MWPM decoders}
+    \caption{Simulation 3: Comparison of logical error for a basic repetition code using Majority Vote and MWPM decoders}
     \label{fig:stim_rep_compare_plot}
 \end{figure}
 
@@ -86,16 +86,31 @@ As seen in Figure \ref{fig:stim_rep_compare_plot}, for simple repetition codes u
 
 While the code-capacity model is useful for validating decoders, it does not reflect physical reality. In a real quantum computer, the gates used to entangle the qubits and the measurements used to extract the syndrome are themselves noisy.
 
-To illustrate this, we expand our simulation to include \textbf{circuit-level noise} and \textbf{phenomenological noise}. As seen in Chapter \ref{chap:modeling_quantum_error}, in this model, we inject depolarizing noise into single-qubit and two-qubit gates, and we add a probability of measurement readout errors. 
+To illustrate this, we expand our simulation to include \textbf{circuit-level noise} and \textbf{phenomenological noise}. As seen in Chapter \ref{chap:modeling_quantum_error}, in this model, we inject depolarizing noise into single-qubit and two-qubit gates, and we add a probability of measurement readout errors. For the purpose of this test, we will use a very simple noise model, where the three types of noise added to the circuit have the same probability (ratio 1:1:1). Figure \ref{fig:stim_rep_circuit_noise_plot} shows the result of the simulation. This is easily implemented with \texttt{stim} in the circuit creation, as seen in Listing \ref{lst:stim_rep_code_noise}.
 
 \begin{figure}[hbt!]
     \centering
-    % \includegraphics[width=0.8\textwidth]{figures/noise_models_comparison.png}
-    \caption{Impact of noise models on the repetition code performance. Introducing circuit-level noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline.}
-    \label{fig:noise_models}
+    % \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_noise_plot.png}
+    \caption{Simulation 4: Impact of circuit-level and phenomenological noise on the repetition code performance. Introducing more complex noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline. With this additional noise, MWPM shows its advantage over the Majority Vote because of its capacity to consider the probabilities of each error to select the most probable set of errors that could have caused the observed syndrome.}
+    \label{fig:stim_rep_circuit_noise_plot}
 \end{figure}
 
-As shown in Figure \ref{fig:noise_models}, realistic noise drastically reduces the effectiveness of the code. Handling circuit-level noise requires complex spatial-temporal decoding graphs (e.g., repeating measurement rounds to gain confidence). To maintain focus on the architectural advantages of 2D color codes and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
+\begin{lstlisting}[caption={Generation of a repetition code circuit using Stim.},label={lst:stim_rep_code_noise}]
+circuit = stim.Circuit.generated(
+    "repetition_code:memory",
+    distance=distance,
+    rounds=1,
+    before_round_data_depolarization=p,
+    after_clifford_depolarization=p,
+    before_measure_flip_probability=p
+)
+\end{lstlisting}
+
+As shown in Figure \ref{fig:stim_rep_circuit_noise_plot}, realistic noise drastically reduces the effectiveness of the code, but it also shows the importance of the decoder. Handling circuit-level noise requires complex spatial-temporal decoding graphs, which makes MWPM a better solution than a basic Majority Vote decoder. 
+
+At this point, we can also study the effect of distance increases in the code. 
+
+To maintain focus on the architectural advantages of QEC codes (and, more specifically, 2D color codes) and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
 
 \subsection{Implementing the 9-qubit Shor code}
 \label{subsec:shor_implementation}
