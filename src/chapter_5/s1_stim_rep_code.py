@@ -3,6 +3,7 @@ import pymatching
 import numpy as np
 import matplotlib.pyplot as plt
 
+#BEGIN S1_SAMPLE
 def sample_repetition_code_mwpm(distance: int = 3, shots: int = 10000) -> None:
     """
     Simulates a repetition code over a range of physical error rates,
@@ -34,7 +35,7 @@ def sample_repetition_code_mwpm(distance: int = 3, shots: int = 10000) -> None:
         logical_error_rates.append(num_errors / shots)
 
     return physical_error_rates, logical_error_rates
-
+#END S1_SAMPLE
 
 def plot_repetition_code_mwpm_performance(distance: int = 3, shots: int = 10000) -> None:
     """
