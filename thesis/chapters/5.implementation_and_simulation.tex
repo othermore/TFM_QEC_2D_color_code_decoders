@@ -56,7 +56,8 @@ During the simulation, errors can occur with a certain probability $p$. When the
 
 Figure \ref{fig:stim_rep_plot} shows the resulting plot, displaying the logical error rate as a function of the physical error rate. It is worth noting that, as a basic repetition code, this code only corrects for bit-flip errors.
 
-\lstinputlisting[language=Python, caption={Simulation 1: Basic repetition code simulation}, label={lst:stim_rep_code}]{../src/chapter_5/s1_stim_rep_code.py}
+
+\includesnippet[caption={Simulation 1: Basic repetition code simulation}, label={lst:stim_rep_code}]{S1_SNIPPET}{../src/chapter_5/s1_stim_rep_code.py}
 
 
 \subsection{Decoders: From Minimum Weight Perfect Matching to Custom Logic}
@@ -68,9 +69,10 @@ As seen in Chapter \ref{chap:qec_decoders}, the standard approach for 1D repetit
 
 To better understand the internal workings of a decoder, we implement a custom \textbf{Majority Vote Decoder}. Unlike the graph-based approach of MWPM, this decoder resolves errors by directly evaluating the local parity checks and "voting" on the most likely state of the data qubits. 
 
-The code Listing \ref{lst:majority_vote_decoder} shows a very simple implementation of such decoder, which can be used with the same repetition circuit created in Listing \ref{lst:stim_rep_code}.
+\notatfm{Note that we show here the specific part of the code that decodes a single shot of the sampling. When the circuit is simulated,  multiple shots are run to get statistically significant information}
+The code Listing \ref{lst:majority_vote_decoder} shows a very simple implementation of such decoder, which can be used with the same repetition circuit created in Listing \ref{lst:stim_rep_code}. 
 
-\lstinputlisting[language=Python, caption={Simulation 2: Implementation of a simple Majority Vote decoder for a repetition code}, label={lst:majority_vote_decoder}]{../src/chapter_5/s2_majority_vote_decoder.py}
+\includesnippet[caption={Simulation 2: Implementation of a simple Majority Vote decoder for a repetition code}, label={lst:majority_vote_decoder}]{S2_SNIPPET}{../src/chapter_5/s2_majority_vote_decoder.py}
 
 As seen in Figure \ref{fig:stim_rep_compare_plot}, for simple repetition codes under basic noise models, both decoders perform similarly, effectively reducing physical errors. In the following section we will stress-test our decoders to see how their efficiency decays with different noise models.
 

@@ -83,17 +83,32 @@
 }
 \lstset{style=mystyle}
 
-\newcommand{\includesnippet}[2]{%
+\usepackage{pgfkeys}
+\pgfkeys{
+ /snippet/.is family, /snippet,
+ caption/.estore in = \snippetcaption,
+ label/.estore in = \snippetlabel,
+ caption={}, 
+ label={}    
+}
+
+
+\newcommand{\includesnippet}[3][]{%
+    \begingroup 
+    \pgfkeys{/snippet, #1}% 
     \lstinputlisting[%
         style=mystyle,
         rangebeginprefix=\#BEGIN\ ,
         rangebeginsuffix=,
         rangeendprefix=\#END\ ,
         rangeendsuffix=,
-        includerangemarkers=false,
-        linerange=#1-#1,
+        includerangemarker=false, 
+        linerange=#2-#2,
         autogobble=true,
-    ]{#2}%
+        caption={\snippetcaption},
+        label={\snippetlabel}
+    ]{#3}%
+    \endgroup
 }
 
 
