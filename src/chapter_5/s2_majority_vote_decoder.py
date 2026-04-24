@@ -6,7 +6,7 @@ def decode_single_shot(shot_syndrome, num_observables, detectors_per_observable,
     Decodes a single 1D array of detectors using majority vote.
     """
     shot_predictions = []
-    
+    #BEGIN S2_SNIPPET
     # We iterate over each observable, which corresponds to a block of detectors
     # This would allow codes encoding multiple logical qubits
     for i in range(num_observables):
@@ -61,7 +61,7 @@ def decode_single_shot(shot_syndrome, num_observables, detectors_per_observable,
             local_prediction = qubits_state[-1]
             
         shot_predictions.append(local_prediction)
-        
+    #END S2_SNIPPET 
     return shot_predictions
 
 def decode_batch_majority_vote(syndromes, circuit, distance):
