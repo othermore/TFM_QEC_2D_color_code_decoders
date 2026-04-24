@@ -83,7 +83,72 @@
 }
 \lstset{style=mystyle}
 
-\usepackage{pgfkeys}
+% --- Lógica de validación y Extracción Regex (LaTeX3) ---
+\ExplSyntaxOn
+\ior_new:N \g_snippet_in_ior
+\iow_new:N \g_snippet_out_iow
+\bool_new:N \l_in_snippet_bool
+\bool_new:N \l_tag_found_bool
+\seq_new:N \l_snippet_match_seq
+\tl_new:N \l_snippet_indent_tl
+\tl_new:N \l_current_line_tl
+
+\msg_new:nnnn { snippet } { missing-tag }
+  { Snippet~tag~'#1'~not~found~in~file~'#2'. }
+  { Verify~\#BEGIN~#1~and~\#END~#1~exist~in~the~source. }
+
+\msg_new:nnnn { snippet } { missing-file }
+  { Source~file~'#1'~not~found. }
+  { Check~the~file~path. }
+
+\NewDocumentCommand{\extractsnippet}{m m}{
+  \file_if_exist:nTF { #2 }
+    {
+      \ior_open:Nn \g_snippet_in_ior { #2 }
+      \iow_open:Nn \g_snippet_out_iow { \jobname.snippet.tmp }
+      \bool_set_false:N \l_in_snippet_bool
+      \bool_set_false:N \l_tag_found_bool
+
+      \ior_str_map_inline:Nn \g_snippet_in_ior
+        {
+          % 1. Comprobamos si llegamos al tag END (con o sin espacios)
+          \regex_match:nnTF { \A \s* \#END \s+ #1 \s* \Z } { ##1 }
+            {
+              \bool_set_false:N \l_in_snippet_bool
+            }
+            {
+              % 2. Comprobamos si es el BEGIN. Usamos (\s*) para CAPTURAR su indentación
+              \regex_extract_once:nnNTF { \A (\s*) \#BEGIN \s+ #1 \s* \Z } { ##1 } \l_snippet_match_seq
+                {
+                  \bool_set_true:N \l_in_snippet_bool
+                  \bool_set_true:N \l_tag_found_bool
+                  % Guardamos los espacios capturados (están en la posición 2 del resultado)
+                  \tl_set:Nx \l_snippet_indent_tl { \seq_item:Nn \l_snippet_match_seq { 2 } }
+                }
+                {
+                  % 3. Si estamos dentro del código del snippet
+                  \bool_if:NT \l_in_snippet_bool
+                    {
+                      \tl_set:Nn \l_current_line_tl { ##1 }
+                      % MAGIA: Eliminamos del inicio de la línea exactamente la indentación del #BEGIN
+                      \regex_replace_once:nnN { \A \u{l_snippet_indent_tl} } { } \l_current_line_tl
+                      % Escribimos la línea desindentada en el archivo temporal
+                      \exp_args:NNV \iow_now:Nn \g_snippet_out_iow \l_current_line_tl
+                    }
+                }
+            }
+        }
+      \iow_close:N \g_snippet_out_iow
+      \ior_close:N \g_snippet_in_ior
+
+      \bool_if:NF \l_tag_found_bool
+        { \msg_error:nnnn { snippet } { missing-tag } { #1 } { #2 } }
+    }
+    { \msg_error:nnnn { snippet } { missing-file } { #2 } { } }
+}
+\ExplSyntaxOff
+
+% Key-value configuration for snippets
 \pgfkeys{
  /snippet/.is family, /snippet,
  caption/.estore in = \snippetcaption,
@@ -92,22 +157,18 @@
  label={}    
 }
 
-
+% Comando final limpio
 \newcommand{\includesnippet}[3][]{%
     \begingroup 
     \pgfkeys{/snippet, #1}% 
+    % 1. Generamos el archivo .tmp perfectamente limpio y desindentado
+    \extractsnippet{#2}{#3}%
+    % 2. Lo cargamos de forma normal sin hacks adicionales
     \lstinputlisting[%
         style=mystyle,
-        rangebeginprefix=\#BEGIN\ ,
-        rangebeginsuffix=,
-        rangeendprefix=\#END\ ,
-        rangeendsuffix=,
-        includerangemarker=false, 
-        linerange=#2-#2,
-        autogobble=true,
         caption={\snippetcaption},
         label={\snippetlabel}
-    ]{#3}%
+    ]{\jobname.snippet.tmp}%
     \endgroup
 }
 
