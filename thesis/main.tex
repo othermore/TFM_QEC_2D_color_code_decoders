@@ -2,10 +2,29 @@
 \WarningFilter{latex}{Command \showhyphens has changed.}
 \documentclass[10pt, twoside]{book}
 
-% Load common formatting
 \input{frontmatter/format}
 
-% Header and footer layout configuration - PRINT VERSION
+\geometry{
+    paperwidth=18.5cm, 
+    paperheight=25cm,
+    inner=2.25cm,
+    outer=4.25cm,   
+    top=2.5cm,
+    bottom=2.5cm,
+    marginparwidth=3.3cm, 
+    marginparsep=0.4cm    
+}
+
+\newcommand{\setfrontgeometry}{
+    \newgeometry{inner=2.5cm, outer=2.5cm, top=3cm, bottom=3cm}
+    \setlength{\headwidth}{\textwidth}
+}
+
+\newcommand{\setmaingeometry}{
+    \restoregeometry
+    \setlength{\headwidth}{\textwidth}
+}
+
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}

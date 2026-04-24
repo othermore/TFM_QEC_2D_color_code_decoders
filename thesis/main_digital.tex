@@ -2,10 +2,28 @@
 \WarningFilter{latex}{Command \showhyphens has changed.}
 \documentclass[10pt, oneside, openany]{book}
 
-% Load common formatting
 \input{frontmatter/format}
 
-% Header and footer layout configuration - DIGITAL VERSION
+\geometry{
+    a4paper,
+    left=2.5cm,
+    right=5cm,   
+    top=3cm,
+    bottom=3cm,
+    marginparwidth=4cm, 
+    marginparsep=0.5cm    
+}
+
+\newcommand{\setfrontgeometry}{
+    \newgeometry{left=3cm, right=3cm, top=3cm, bottom=3cm}
+    \setlength{\headwidth}{\textwidth}
+}
+
+\newcommand{\setmaingeometry}{
+    \restoregeometry
+    \setlength{\headwidth}{\textwidth}
+}
+
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -25,7 +43,6 @@
 
 \begin{document}
 
-% Digital Covers
 \pagestyle{empty}
 \begin{tikzpicture}[remember picture, overlay]
     \node[text width=14cm, align=center] at (current page.center) {
