@@ -12,6 +12,7 @@ def sample_repetition_code_mv(distance: int = 3, shots: int = 10000) -> None:
 
     for p in physical_error_rates:
         # Define the circuit
+        #BEGIN S4_SAMPLE
         circuit = stim.Circuit.generated(
             "repetition_code:memory",
             distance=distance,
@@ -20,7 +21,7 @@ def sample_repetition_code_mv(distance: int = 3, shots: int = 10000) -> None:
             after_clifford_depolarization=p,
             before_measure_flip_probability=p
         )
-        
+        #END S4_SAMPLE
         # Sample the circuit to get syndromes and actual observables
         sampler = circuit.compile_detector_sampler()
         syndromes, actual_observables = sampler.sample(shots, separate_observables=True)
