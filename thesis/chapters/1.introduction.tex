@@ -373,7 +373,7 @@ The 9-qubit Shor code works well precisely because it separates bit-flip and pha
 
 This ability to uniquely map syndromes to the appropriate recovery operation is what makes a QEC code successful. However, analyzing these subspaces manually becomes unsustainable for larger, more complex quantum codes. This scalability problem motivates the need for a robust, algebraic framework, leading directly to the Stabilizer Formalism that we discuss in the next section.
 
-\subsection{The Stabilizer Formalism}
+\section{The Stabilizer Formalism}
 \label{sec:stabilizer_formalism}
 
 As quantum codes scale, representing the logical state as a vector of $2^n$ amplitudes becomes computationally intractable. Tracking the evolution of a highly entangled state qubit by qubit is unsustainable. The Stabilizer Formalism, introduced by Daniel Gottesman in 1997 \cite{gottesman1997stabilizer}, offers an elegant workaround: instead of describing the quantum state directly, we describe the set of operators that leave the state unchanged. More specifically, we focus on the operators that leave unchanged a valid state (i.e. a state where no error has occurred) but modify an erroneous state.
@@ -448,7 +448,7 @@ The distance directly determines the error-handling capabilities of the code thr
 
 For the Shor code ($d=3$), these rules imply that the code can detect up to 2 errors and correct $t=1$ error. If two errors occur simultaneously, the syndrome would cause a wrong correction. This is a permanent trade-off in QEC: increasing the correction threshold $t$, requires increasing the distance $d$, which requires more physical qubits $n$.
 
-\subsubsection{The Threshold Theorem}
+\section{The Threshold Theorem}
 Proven by Aharonov and Ben-Or \cite{aharonov1997fault}, the Threshold Theorem gives us a framework for arbitrarily long quantum computations. 
 
 We have seen so far that through QEC we can effectively lower down the logical error rate (i.e. the error introduced by the overhead QEC in the circuit is lower than the error effectively corrected, so the resulting logical error is below the physical error rate).
