@@ -1,7 +1,6 @@
 import stim
 import pymatching
 import numpy as np
-import matplotlib.pyplot as plt
 
 #BEGIN S6_SNIPPET_NOISY_GATE
 def append_noisy_gate(circuit: stim.Circuit, gate: str, targets: list, noise: float) -> None:
@@ -65,7 +64,7 @@ def build_shor_circuit(
         if before_round_data_depolarization > 0:
             circuit.append("DEPOLARIZE1", range(9), before_round_data_depolarization)
     #END S6_SNIPPET_ROUND_NOISE
-        # Bit-flip syndromes (Z-ancillas 9-14)
+        # Bit-flip syndromes (Z-ancillas 9-14 measuring X stabilizers which are pairs of data qubits)
         z_targets = [0,9, 1,9, 1,10, 2,10, 3,11, 4,11, 4,12, 5,12, 6,13, 7,13, 7,14, 8,14]
         circuit.append("R", range(9, 15))
         append_noisy_gate(circuit, "CX", z_targets, after_clifford_depolarization)
@@ -77,7 +76,7 @@ def build_shor_circuit(
         #END S6_SNIPPET_MEASURE_DETECTORS
         circuit.append("TICK")
 
-        # Phase-flip syndromes (X-ancillas 15-16)
+        # Phase-flip syndromes (X-ancillas 15-16 measuring Z stabilizers which are qubits 1-6 and 3-9)
         circuit.append("R", [15, 16])
         append_noisy_gate(circuit, "H", [15, 16], after_clifford_depolarization)
         x_targets = []
@@ -91,7 +90,7 @@ def build_shor_circuit(
             else: circuit.append("DETECTOR", [stim.target_rec(-2 + i), stim.target_rec(-2 + i - 8)])
         circuit.append("TICK")
 
-    # Final Measurement and Observable logic
+    # Final Measurement rotations
     if before_round_data_depolarization > 0:
         circuit.append("DEPOLARIZE1", range(9), before_round_data_depolarization)
 
@@ -100,71 +99,88 @@ def build_shor_circuit(
     elif basis == "Y":
         append_noisy_gate(circuit, "S_DAG", range(9), after_clifford_depolarization)
         append_noisy_gate(circuit, "H", range(9), after_clifford_depolarization)
-
+    
     #BEGIN S6_SNIPPET_FINAL_MEASUREMENT
     append_noisy_measurement(circuit, range(9), before_measure_flip_probability)
 
-    # Boundary detectors
+    # Boundary detectors and observables
     if basis == "X":
         for i, targets in enumerate([(0,1), (1,2), (3,4), (4,5), (6,7), (7,8)]):
             circuit.append("DETECTOR", [stim.target_rec(-17 + i), stim.target_rec(-9 + targets[0]), stim.target_rec(-9 + targets[1])])
-    else:
+        # Logical X Distinguishes + and - (Measure Z0*Z3*Z6)
+        circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-9), stim.target_rec(-6), stim.target_rec(-3)], 0)
+    elif basis == "Z":
         circuit.append("DETECTOR", [stim.target_rec(-11)] + [stim.target_rec(-i) for i in range(4, 10)])
         circuit.append("DETECTOR", [stim.target_rec(-10)] + [stim.target_rec(-i) for i in range(1, 7)])
-
-    # Logical Observable
-    if basis == "X":
-        circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-9), stim.target_rec(-6), stim.target_rec(-3)], 0)
+        # Logical Z Distinguishes 0 and 1 (Measure transversal X parity)
+        circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-i) for i in range(1, 10)], 0)
     else:
+        # For basis Y, we just measure transversal parity
         circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-i) for i in range(1, 10)], 0)
     #END S6_SNIPPET_FINAL_MEASUREMENT
 
     return circuit
 
-def sample_shor_code_mwpm(shots: int = 10000):
-    """Simulates the Shor code over error rates and cardinal states, returning all results."""
-    physical_error_rates = np.linspace(0.01, 0.12, 8)
-    states = ["0", "1", "+", "-", "+i", "-i"]
-    state_results = {state: [] for state in states}
-
-    for p in physical_error_rates:
+def sample_shor_code_mwpm(shots=10000, rounds=1, states=["0"], p_rates=None, noise_ratios=(1,0,0)):
+    """General purpose sampling for Shor code MWPM decoding."""
+    if p_rates is None: p_rates = np.linspace(0.01, 0.12, 8)
+    l_rates = []
+    r_data, r_gate, r_measure = noise_ratios
+    
+    for p in p_rates:
+        errors = 0
+        shots_per_state = shots // len(states)
         for state in states:
             circuit = build_shor_circuit(
-                rounds=3, state=state,
-                before_round_data_depolarization=p,
-                after_clifford_depolarization=p,
-                before_measure_flip_probability=p
+                rounds=rounds, state=state,
+                before_round_data_depolarization=p*r_data,
+                after_clifford_depolarization=p*r_gate,
+                before_measure_flip_probability=p*r_measure
             )
             sampler = circuit.compile_detector_sampler()
-            syndromes, actual_observables = sampler.sample(shots, separate_observables=True)
+            syndromes, obs = sampler.sample(shots_per_state, separate_observables=True)
             matcher = pymatching.Matching.from_stim_circuit(circuit)
-            predicted_observables = matcher.decode_batch(syndromes)
-            num_errors = np.sum(predicted_observables != actual_observables)
-            state_results[state].append(num_errors / shots)
+            predicted = matcher.decode_batch(syndromes)
+            errors += np.sum(predicted != obs)
+        l_rates.append(errors / (shots_per_state * len(states)))
+    return p_rates, l_rates
 
-    # Calculate mean logical error rate across all states
-    mean_results = np.mean([state_results[s] for s in states], axis=0)
-    return physical_error_rates, state_results, mean_results
+def run_shor_simulations(shots: int = 2000):
+    """Executes the three main comparative simulations for Chapter 5 and prints a text summary."""
+    print("Executing Shor 9-qubit comprehensive simulations...")
+    p_rates = np.linspace(0.01, 0.12, 8)
 
-def plot_shor_code_mwpm_performance(shots: int = 5000) -> None:
-    """Plots performance for each cardinal state and their average."""
-    p_rates, state_l_rates, mean_l_rates = sample_shor_code_mwpm(shots)
+    # 1. Noise Model Comparison
+    print("\n--- Simulation: Noise Models (1 Round, State |0>) ---")
+    models = {
+        "L1: $E_{data}$": (1, 0, 0),
+        "L2: $E_{data} + E_{meas}$": (1, 0, 1),
+        "L3: $E_{data} + E_{meas} + E_{gates}$": (1, 1, 1)
+    }
+    for label, ratios in models.items():
+        _, l_rates = sample_shor_code_mwpm(shots=shots, rounds=1, states=["0"], p_rates=p_rates, noise_ratios=ratios)
+        mean_pl = np.mean(l_rates)
+        print(f"{label:25} | Mean pL: {mean_pl:.4f} | Max pL: {max(l_rates):.4f}")
+
+    # 2. Rounds Comparison
+    print("\n--- Simulation: Rounds Comparison (Code Capacity, State |0>) ---")
+    for r in [1, 3, 5]:
+        _, l_rates = sample_shor_code_mwpm(shots=shots, rounds=r, states=["0"], p_rates=p_rates, noise_ratios=(1, 0, 0))
+        mean_pl = np.mean(l_rates)
+        print(f"{r} Rounds                  | Mean pL: {mean_pl:.4f} | Max pL: {max(l_rates):.4f}")
+
+    # 3. Cardinal States Comparison
+    print("\n--- Simulation: Cardinal States (Code Capacity, 1 Round) ---")
+    states_list = ["0", "1", "+", "-", "+i", "-i"]
+    for state in states_list:
+        _, l_rates = sample_shor_code_mwpm(shots=shots, rounds=1, states=[state], p_rates=p_rates, noise_ratios=(1, 0, 0))
+        mean_pl = np.mean(l_rates)
+        print(f"State |{state:2}>                | Mean pL: {mean_pl:.4f}")
     
-    plt.figure(figsize=(10, 7))
-    for state, l_rates in state_l_rates.items():
-        plt.plot(p_rates, l_rates, label=f'State |{state}>', alpha=0.6, linestyle=':')
+    _, mean_l_rates = sample_shor_code_mwpm(shots=shots, rounds=1, states=states_list, p_rates=p_rates, noise_ratios=(1, 0, 0))
+    print(f"{'Overall Mean':25} | Mean pL: {np.mean(mean_l_rates):.4f}")
     
-    plt.plot(p_rates, mean_l_rates, marker='o', color='black', linewidth=2, label='Mean Performance')
-    plt.plot(p_rates, p_rates, linestyle='--', color='gray', label='Physical Limit')
-    
-    plt.title('Shor 9-qubit Code: Cardinal States Performance (MWPM)')
-    plt.xlabel('Physical Error Rate (p)')
-    plt.ylabel('Logical Error Rate ($p_L$)')
-    plt.yscale('log')
-    plt.xscale('log')
-    plt.legend()
-    plt.grid(True, which="both", linestyle=':', alpha=0.7)
-    plt.savefig('../../figures/shor_9_code_plot.png')
+    print("\nSimulations complete.")
 
 if __name__ == "__main__":
-    plot_shor_code_mwpm_performance()
+    run_shor_simulations(shots=2000)
