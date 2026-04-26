@@ -83,12 +83,15 @@
 }
 \lstset{style=mystyle}
 
-% --- Lógica de validación y Extracción Regex (LaTeX3) ---
+
+% --- Sistema de gestión de Snippets con desindentación y depuración visual ---
 \ExplSyntaxOn
 \ior_new:N \g_snippet_in_ior
 \iow_new:N \g_snippet_out_iow
 \bool_new:N \l_in_snippet_bool
 \bool_new:N \l_tag_found_bool
+\bool_gset_false:N \g_snippet_error_bool
+\tl_gset:Nn \g_snippet_error_msg_tl { }
 \seq_new:N \l_snippet_match_seq
 \tl_new:N \l_snippet_indent_tl
 \tl_new:N \l_current_line_tl
@@ -102,6 +105,9 @@
   { Check~the~file~path. }
 
 \NewDocumentCommand{\extractsnippet}{m m}{
+  \bool_gset_false:N \g_snippet_error_bool
+  \tl_gset:Nn \g_snippet_error_msg_tl { }
+  
   \file_if_exist:nTF { #2 }
     {
       \ior_open:Nn \g_snippet_in_ior { #2 }
@@ -111,28 +117,20 @@
 
       \ior_str_map_inline:Nn \g_snippet_in_ior
         {
-          % 1. Comprobamos si llegamos al tag END (con o sin espacios)
           \regex_match:nnTF { \A \s* \#END \s+ #1 \s* \Z } { ##1 }
+            { \bool_set_false:N \l_in_snippet_bool }
             {
-              \bool_set_false:N \l_in_snippet_bool
-            }
-            {
-              % 2. Comprobamos si es el BEGIN. Usamos (\s*) para CAPTURAR su indentación
               \regex_extract_once:nnNTF { \A (\s*) \#BEGIN \s+ #1 \s* \Z } { ##1 } \l_snippet_match_seq
                 {
                   \bool_set_true:N \l_in_snippet_bool
                   \bool_set_true:N \l_tag_found_bool
-                  % Guardamos los espacios capturados (están en la posición 2 del resultado)
                   \tl_set:Nx \l_snippet_indent_tl { \seq_item:Nn \l_snippet_match_seq { 2 } }
                 }
                 {
-                  % 3. Si estamos dentro del código del snippet
                   \bool_if:NT \l_in_snippet_bool
                     {
                       \tl_set:Nn \l_current_line_tl { ##1 }
-                      % MAGIA: Eliminamos del inicio de la línea exactamente la indentación del #BEGIN
                       \regex_replace_once:nnN { \A \u{l_snippet_indent_tl} } { } \l_current_line_tl
-                      % Escribimos la línea desindentada en el archivo temporal
                       \exp_args:NNV \iow_now:Nn \g_snippet_out_iow \l_current_line_tl
                     }
                 }
@@ -142,13 +140,30 @@
       \ior_close:N \g_snippet_in_ior
 
       \bool_if:NF \l_tag_found_bool
-        { \msg_error:nnnn { snippet } { missing-tag } { #1 } { #2 } }
+        { 
+          \bool_gset_true:N \g_snippet_error_bool
+          % Usamos \tl_to_str:n para convertir posibles guiones bajos (_) en texto seguro
+          \tl_gset:Nx \g_snippet_error_msg_tl { Snippet~tag~'#1'~not~found~in~file~'\tl_to_str:n{#2}' }
+          \msg_warning:nnnn { snippet } { missing-tag } { #1 } { #2 } 
+        }
     }
-    { \msg_error:nnnn { snippet } { missing-file } { #2 } { } }
+    { 
+      \bool_gset_true:N \g_snippet_error_bool
+      % Saneamos la ruta del fichero
+      \tl_gset:Nx \g_snippet_error_msg_tl { Source~file~'\tl_to_str:n{#2}'~not~found }
+      \msg_warning:nnnn { snippet } { missing-file } { #2 } { } 
+    }
+}
+
+\NewExpandableDocumentCommand{\ifsnipterror}{m m}{
+  \bool_if:NTF \g_snippet_error_bool { #1 } { #2 }
+}
+
+\NewExpandableDocumentCommand{\getsnipterror}{}{
+  \tl_use:N \g_snippet_error_msg_tl
 }
 \ExplSyntaxOff
 
-% Key-value configuration for snippets
 \pgfkeys{
  /snippet/.is family, /snippet,
  caption/.estore in = \snippetcaption,
@@ -157,27 +172,34 @@
  label={}    
 }
 
-% Comando final limpio
 \newcommand{\includesnippet}[3][]{%
     \begingroup 
     \pgfkeys{/snippet, #1}% 
-    % 1. Generamos el archivo .tmp perfectamente limpio y desindentado
     \extractsnippet{#2}{#3}%
-    % 2. Lo cargamos de forma normal sin hacks adicionales
-    \lstinputlisting[%
-        style=mystyle,
-        caption={\snippetcaption},
-        label={\snippetlabel}
-    ]{\jobname.snippet.tmp}%
+    \ifsnipterror{%
+        \begin{notebox}
+            % Usamos \color en lugar de \textcolor para evitar fallos de parseo
+            \ttfamily\getsnipterror
+        \end{notebox}
+    }{%
+        \lstinputlisting[%
+            style=mystyle,
+            caption={\snippetcaption},
+            label={\snippetlabel}
+        ]{\jobname.snippet.tmp}%
+    }%
     \endgroup
 }
+
+
 
 
 \newtcolorbox{notebox}[1]{
     colback=red!2!white,
     colframe=nebrijared,
     title=#1,
-    fonttitle=\bfseries
+    fonttitle=\bfseries,
+    before upper={\setlength{\parskip}{6pt plus 2pt minus 1pt}}
 }
 
 \hypersetup{
