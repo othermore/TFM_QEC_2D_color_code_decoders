@@ -77,49 +77,6 @@ To illustrate this, we expand our simulation to include \textbf{circuit-level no
 
 As shown in Figure \ref{fig:stim_rep_circuit_distance_plot}, realistic noise drastically reduces the effectiveness of the code, but it also shows the importance of the decoder. Handling circuit-level noise requires complex spatial-temporal decoding graphs, which makes MWPM a better solution than a basic Majority Vote decoder. The figure also shows how increasing the distance improves the results of the MWPM decoder, but it degrades the result of the Majority Vote decoder. This means that, for this specific noise model and the MWPM decoder, the system is operating under the threshold, so the error correcting capacity of the protocol can be increased by increasing the distance. However, with our Majority Vote decoder, the system operates above the threshold.
 
-\begin{figure}[hbt!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_distance_plot.png}
-    \caption{\textbf{Simulation 4}: Impact of circuit-level and phenomenological noise on the repetition code performance. Introducing more complex noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline. With this additional noise, MWPM shows its advantage over the Majority Vote because of its capacity to consider the probabilities of each error to select the most probable set of errors that could have caused the observed syndrome. 
-    \textbf{Simulation 5}: Under a complex noise model (code-capacity, circuit-level and phenomenological) increasing the distance of the code has the opposite effect for each of the decoders.}
-    \label{fig:stim_rep_circuit_distance_plot}
-\end{figure}
-
-\begin{figure}[hbt!]
-      \centering
-      \begin{subfigure}[b]{0.48\textwidth}
-          \centering
-          \includegraphics[width=\textwidth]{figures/shor_9_noise_models.png}
-          \caption{Noise Model Comparison}
-          \label{fig:shor_9_noise_models}
-      \end{subfigure}
-      \hfill
-      \begin{subfigure}[b]{0.48\textwidth}
-          \centering
-          \includegraphics[width=\textwidth]{figures/shor_9_rounds.png}
-          \caption{Rounds Comparison}
-          \label{fig:shor_9_rounds}
-      \end{subfigure}
-      \vskip\baselineskip
-      \begin{subfigure}[b]{0.6\textwidth}
-          \centering
-          \includegraphics[width=\textwidth]{figures/shor_9_states.png}
-          \caption{State Dependency}
-          \label{fig:shor_9_states}
-      \end{subfigure}
-      \caption{\textbf{Simulation 6}: Performance analysis of the Shor 9-qubit code using the MWPM decoder. 
-      \textbf{(a) Comparison of noise models}: Three levels of noise complexity are evaluated: 1) \textit{Code-capacity}, where noise is only applied to data
-  qubits while gates and measurements remain ideal; 2) \textit{Phenomenological}, which adds bit-flip errors to the measurement outcomes; and 3)
-  \textit{Circuit-level} (or Circuit-capacity), the most realistic model where depolarizing noise is applied after every Clifford gate and bit-flip noise is
-  applied to every measurement. The results show that circuit-level noise significantly increases the logical error rate ($p_L$).
-      \textbf{(b) Rounds Comparison}: Evaluates the accumulation of errors as the number of syndrome measurement rounds increases. 
-      \textbf{(c) State Dependency}: Shows the performance for different cardinal states ($|0\rangle, |1\rangle, |+\rangle, |-\rangle, |+i\rangle,
-  |-i\rangle$). The Shor code provides protection by concatenating a 3-qubit bit-flip code (inner) with a 3-qubit phase-flip code (outer). This structure
-  allows the code to correct a single bit-flip ($X$) within each of the three 3-qubit blocks and a single phase-flip ($Z$) across the three blocks. This
-  hierarchical protection leads to slight variations in $p_L$ depending on whether the state is more sensitive to $X$ or $Z$ noise components.}
-      \label{fig:simulation_6_shor}
-  \end{figure}
-
 \subsection{Implementing the 9-qubit Shor code}
 \label{subsec:shor_implementation}
 
@@ -128,7 +85,47 @@ In our previous simulations, we relied on \texttt{stim}'s built-in circuit gener
 
 First, the circuit is declared and initialized, followed by the application of the necessary gates to encode the logical state and extract the stabilizer operators. A crucial step in custom \texttt{stim} circuits is explicitly tracking the outcomes: stabilizer measurements must be labeled as \texttt{DETECTOR}s (Listing \ref{lst:stim_detector}), while the final measurements of the data qubits are targeted by \texttt{OBSERVABLE\_INCLUDE} instructions to track the logical state parity (Listing \ref{lst:stim_boundary_detector_and_observable}). This strict labeling allows the simulator to decouple the syndrome extraction—which provides the inputs for the decoder—from the logical observable tracking, which is ultimately compared against the expected baseline to determine if a logical failure occurred.
 
+\begin{figure}[hbt!] 
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/shor_9_noise_models.png}
+        \caption{Noise Models}
+        \label{fig:shor_9_noise_models}
+    \end{subfigure}% 
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/shor_9_rounds.png}
+        \caption{Rounds}
+        \label{fig:shor_9_rounds}
+    \end{subfigure}
+
+    \vspace{1ex} 
+
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/shor_9_states.png}
+        \caption{State Dependency}
+        \label{fig:shor_9_states}
+    \end{subfigure}
+
+    \caption{\textbf{Simulation 6}: Performance analysis of the Shor 9-qubit code using the MWPM decoder. 
+    \textbf{(a) Noise models}: Comparison between Code-capacity, Phenomenological, and Circuit-level noise. 
+    \textbf{(b) Rounds}: Accumulation of errors over syndrome measurement rounds. 
+    \textbf{(c) State Dependency}: Performance for different initial states. When measuring in the $Z$-basis ($\ket{0}$ or $\ket{1}$), the logical outcome is insensitive to logical phase-flips (physical $X$ errors) but vulnerable to logical bit-flips (physical $Z$ errors). Conversely, measurements in the $X$-basis ($\ket{+}$ or $\ket{-}$) are vulnerable to logical phase-flips but insensitive to logical bit-flips. Due to the code's concatenated structure, there are fewer fatal combinations for physical $X$ errors than for physical $Z$ errors, resulting in higher logical protection for the $\ket{\pm}$ states. Finally, measurements in the $Y$-basis ($\ket{\pm i}$) are vulnerable to fatal combinations of both physical $X$ and physical $Z$ errors, effectively accumulating the vulnerabilities of both previous cases and resulting in the highest logical failure rate.}
+    \label{fig:simulation_6_shor}
+\end{figure}
+
 Finally, to evaluate the code under realistic conditions, noise must be integrated into the circuit. Unlike the automated generator, building a circuit from scratch requires manually injecting specific noise channels-such as gate depolarization, measurement flips, or idle decoherence-at the exact coordinates where they occur (Listings \ref{lst:stim_noisy_gate}, \ref{lst:stim_noisy_measurement}, and \ref{lst:stim_noisy_round}).
+
+To illustrate the impact of different noise models, our initial analysis compares the performance of the Shor code under code-capacity, phenomenological, and circuit-level noise. The results demonstrate how it is highly vulnerable to error from noisy gates and faulty measurements, degrading its error-correcting capabilities.
+
+We also analyze the accumulation of errors across multiple syndrome extraction rounds. Our results show that the logical error rate scales rapidly with each round, making the code unsuitable for long computations. While the standard solution to this would be increasing the distance, the Shor code does not scale well: increasing the distance increases the number of necessary qubits exponentially and also increases the number of qubits that must be measured by a single detector. Furthermore, the code is not robust against noisy gates or measurements. Topological codes, which we simulate in the following sections, offer solutions to these problems through improved scaling and the capacity to handle time-dependent noise.
+
+
+\notatfm{To evaluate how the code performs against different error types, we could have explicitly biased the physical noise channels. However, by injecting uniform depolarizing noise and altering the initial states instead, we preserve a standardized noise model while probing specific vulnerabilities.}
+Finally, by preparing the system in different cardinal states before measurement, we expose the logical observable to different types of uncorrected physical errors. This methodological choice empirically reveals how the code performs asymmetrically due to the inherent characteristics of its concatenated structure.
 
 \includesnippet[caption={Simulation 6: Injecting circuit-level noise by appending error channels to quantum gates.}, label={lst:stim_noisy_gate}]{S6_SNIPPET_NOISY_GATE}{../src/chapter_5/s6_shor_9_code.py}
 
