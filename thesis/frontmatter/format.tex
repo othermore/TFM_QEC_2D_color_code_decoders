@@ -83,8 +83,7 @@
 }
 \lstset{style=mystyle}
 
-
-% --- Sistema de gestión de Snippets con desindentación y depuración visual ---
+% Snippet management system with auto-dedent and visual debugging capabilities
 \ExplSyntaxOn
 \ior_new:N \g_snippet_in_ior
 \iow_new:N \g_snippet_out_iow
@@ -142,14 +141,12 @@
       \bool_if:NF \l_tag_found_bool
         { 
           \bool_gset_true:N \g_snippet_error_bool
-          % Usamos \tl_to_str:n para convertir posibles guiones bajos (_) en texto seguro
-          \tl_gset:Nx \g_snippet_error_msg_tl { Snippet~tag~'#1'~not~found~in~file~'\tl_to_str:n{#2}' }
+          \tl_gset:Nx \g_snippet_error_msg_tl { Snippet~tag~'\tl_to_str:n{#1}'~not~found~in~file~'\tl_to_str:n{#2}' }
           \msg_warning:nnnn { snippet } { missing-tag } { #1 } { #2 } 
         }
     }
     { 
       \bool_gset_true:N \g_snippet_error_bool
-      % Saneamos la ruta del fichero
       \tl_gset:Nx \g_snippet_error_msg_tl { Source~file~'\tl_to_str:n{#2}'~not~found }
       \msg_warning:nnnn { snippet } { missing-file } { #2 } { } 
     }
@@ -178,7 +175,6 @@
     \extractsnippet{#2}{#3}%
     \ifsnipterror{%
         \begin{notebox}
-            % Usamos \color en lugar de \textcolor para evitar fallos de parseo
             \ttfamily\getsnipterror
         \end{notebox}
     }{%
