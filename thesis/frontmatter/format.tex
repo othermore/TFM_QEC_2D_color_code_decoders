@@ -23,6 +23,8 @@
 \usepackage{booktabs}
 \renewcommand{\familydefault}{\sfdefault}
 
+\usepackage{subcaption}
+
 \usepackage{geometry}
 
 \linespread{0.96}
@@ -183,11 +185,10 @@
 \NewDocumentCommand{\snippetsprintcaption}{}{
   \tl_if_empty:NF \snippetcaption
    {
-    \vspace{-1.5ex}
+    \vspace{-0.8ex} 
     \captionsetup{type=lstlisting, hypcap=false}
     \captionof{lstlisting}{\snippetcaption}
     \tl_if_empty:NF \snippetlabel { \label{\snippetlabel} }
-    \vspace{1.5ex}
    }
 }
 \ExplSyntaxOff
@@ -204,42 +205,204 @@
     \begingroup 
     \pgfkeys{/snippet, #1}% 
     \extractsnippet{#2}{#3}%
-    \ifsnipterror{%
-        \begin{notebox}
-            \ttfamily\getsnipterror
-        \end{notebox}
-    }{%
-        \par\vspace{1ex}\noindent
-        \begin{tcolorbox}[
-            enhanced,
-            boxrule=0.5pt,
-            colframe=black!20,
-            colback=backcolour,
-            coltitle=nebrijared,
-            colbacktitle=backcolour,
-            fonttitle=\small\sffamily\bfseries,
-            title={Source:\ \textcolor{black}{\ttfamily\getsnippetfilename}},
-            titlerule=0.5pt,
-            titlerule style={black!20},
-            arc=3pt,
-            left=4pt, right=4pt, top=2pt, bottom=2pt,
-            toptitle=4pt, bottomtitle=4pt,
-            boxsep=0pt,
-            width=\linewidth
-        ]
-        \lstinputlisting[%
-            style=mystyle,
-            frame=none,
-            backgroundcolor={},
-            aboveskip=0pt,
-            belowskip=0pt,
-            firstnumber=\getsnippetfirstline 
-        ]{\jobname.snippet.tmp}%
-        \end{tcolorbox}%
-        \snippetsprintcaption
-    }%
+    \par\addvspace{1.5ex} 
+    \noindent
+    \begin{minipage}{\linewidth}
+        \ifsnipterror{%
+            \begin{notebox}
+                \ttfamily\getsnipterror
+            \end{notebox}
+        }{%
+            \begin{tcolorbox}[
+                enhanced,
+                boxrule=0.5pt,
+                colframe=black!20,
+                colback=backcolour,
+                coltitle=nebrijared,
+                colbacktitle=backcolour,
+                fonttitle=\small\sffamily\bfseries,
+                title={Source:\ \textcolor{black}{\ttfamily\getsnippetfilename}},
+                titlerule=0.5pt,
+                titlerule style={black!20},
+                arc=3pt,
+                left=4pt, right=4pt, top=2pt, bottom=2pt,
+                toptitle=3pt, bottomtitle=3pt,
+                boxsep=0pt,
+                width=\linewidth
+            ]
+            \lstinputlisting[%
+                style=mystyle,
+                frame=none,
+                backgroundcolor={},
+                aboveskip=0pt,
+                belowskip=0pt,
+                firstnumber=\getsnippetfirstline 
+            ]{\jobname.snippet.tmp}%
+            \end{tcolorbox}%
+            \snippetsprintcaption
+        }%
+    \end{minipage}
+    \par\addvspace{1.5ex} 
     \endgroup
 }
+
+
+% \ExplSyntaxOn
+% \ior_new:N \g_snippet_in_ior
+% \iow_new:N \g_snippet_out_iow
+% \bool_new:N \l_in_snippet_bool
+% \bool_new:N \l_tag_found_bool
+% \bool_gset_false:N \g_snippet_error_bool
+% \tl_gset:Nn \g_snippet_error_msg_tl { }
+% \seq_new:N \l_snippet_match_seq
+% \tl_new:N \l_snippet_indent_tl
+% \tl_new:N \l_current_line_tl
+
+% \int_new:N \l_current_line_int
+% \int_new:N \g_snippet_start_line_int
+% \tl_new:N \g_snippet_clean_file_tl
+
+% \msg_new:nnnn { snippet } { missing-tag }
+%   { Snippet~tag~'#1'~not~found~in~file~'#2'. }
+%   { Verify~\#BEGIN~#1~and~\#END~#1~exist~in~the~source. }
+
+% \msg_new:nnnn { snippet } { missing-file }
+%   { Source~file~'#1'~not~found. }
+%   { Check~the~file~path. }
+
+% \NewDocumentCommand{\extractsnippet}{m m}{
+%   \bool_gset_false:N \g_snippet_error_bool
+%   \tl_gset:Nn \g_snippet_error_msg_tl { }
+%   \int_zero:N \l_current_line_int
+%   \int_gzero:N \g_snippet_start_line_int
+  
+%   \tl_gset:Nn \g_snippet_clean_file_tl { #2 }
+%   \regex_replace_once:nnN { \A (\.\./)+ } { } \g_snippet_clean_file_tl
+  
+%   \file_if_exist:nTF { #2 }
+%     {
+%       \ior_open:Nn \g_snippet_in_ior { #2 }
+%       \iow_open:Nn \g_snippet_out_iow { \jobname.snippet.tmp }
+%       \bool_set_false:N \l_in_snippet_bool
+%       \bool_set_false:N \l_tag_found_bool
+
+%       \ior_str_map_inline:Nn \g_snippet_in_ior
+%         {
+%           \int_incr:N \l_current_line_int 
+
+%           \regex_match:nnTF { \A \s* \#END \s+ #1 \s* \Z } { ##1 }
+%             { \bool_set_false:N \l_in_snippet_bool }
+%             {
+%               \regex_extract_once:nnNTF { \A (\s*) \#BEGIN \s+ #1 \s* \Z } { ##1 } \l_snippet_match_seq
+%                 {
+%                   \bool_set_true:N \l_in_snippet_bool
+%                   \bool_set_true:N \l_tag_found_bool
+%                   \tl_set:Nx \l_snippet_indent_tl { \seq_item:Nn \l_snippet_match_seq { 2 } }
+%                   \int_gset:Nn \g_snippet_start_line_int { \l_current_line_int + 1 }
+%                 }
+%                 {
+%                   \bool_if:NT \l_in_snippet_bool
+%                     {
+%                       \tl_set:Nn \l_current_line_tl { ##1 }
+%                       \regex_replace_once:nnN { \A \u{l_snippet_indent_tl} } { } \l_current_line_tl
+%                       \exp_args:NNV \iow_now:Nn \g_snippet_out_iow \l_current_line_tl
+%                     }
+%                 }
+%             }
+%         }
+%       \iow_close:N \g_snippet_out_iow
+%       \ior_close:N \g_snippet_in_ior
+
+%       \bool_if:NF \l_tag_found_bool
+%         { 
+%           \bool_gset_true:N \g_snippet_error_bool
+%           \tl_gset:Nx \g_snippet_error_msg_tl { Snippet~tag~'\tl_to_str:n{#1}'~not~found~in~file~'\tl_to_str:n{#2}' }
+%           \msg_warning:nnnn { snippet } { missing-tag } { #1 } { #2 } 
+%         }
+%     }
+%     { 
+%       \bool_gset_true:N \g_snippet_error_bool
+%       \tl_gset:Nx \g_snippet_error_msg_tl { Source~file~'\tl_to_str:n{#2}'~not~found }
+%       \msg_warning:nnnn { snippet } { missing-file } { #2 } { } 
+%     }
+% }
+
+% \NewDocumentCommand{\ifsnipterror}{ +m +m }{
+%   \bool_if:NTF \g_snippet_error_bool { #1 } { #2 }
+% }
+
+% \NewExpandableDocumentCommand{\getsnipterror}{}{
+%   \tl_use:N \g_snippet_error_msg_tl
+% }
+
+% \NewExpandableDocumentCommand{\getsnippetfirstline}{}{
+%   \int_use:N \g_snippet_start_line_int
+% }
+
+% \NewExpandableDocumentCommand{\getsnippetfilename}{}{
+%   \tl_to_str:V \g_snippet_clean_file_tl 
+% }
+
+% \NewDocumentCommand{\snippetsprintcaption}{}{
+%   \tl_if_empty:NF \snippetcaption
+%    {
+%     \vspace{-1.5ex}
+%     \captionsetup{type=lstlisting, hypcap=false}
+%     \captionof{lstlisting}{\snippetcaption}
+%     \tl_if_empty:NF \snippetlabel { \label{\snippetlabel} }
+%     \vspace{1.5ex}
+%    }
+% }
+% \ExplSyntaxOff
+
+% \pgfkeys{
+%  /snippet/.is family, /snippet,
+%  caption/.estore in = \snippetcaption,
+%  label/.estore in = \snippetlabel,
+%  caption={}, 
+%  label={}    
+% }
+
+% \newcommand{\includesnippet}[3][]{%
+%     \begingroup 
+%     \pgfkeys{/snippet, #1}% 
+%     \extractsnippet{#2}{#3}%
+%     \ifsnipterror{%
+%         \begin{notebox}
+%             \ttfamily\getsnipterror
+%         \end{notebox}
+%     }{%
+%         \par\vspace{1ex}\noindent
+%         \begin{tcolorbox}[
+%             enhanced,
+%             boxrule=0.5pt,
+%             colframe=black!20,
+%             colback=backcolour,
+%             coltitle=nebrijared,
+%             colbacktitle=backcolour,
+%             fonttitle=\small\sffamily\bfseries,
+%             title={Source:\ \textcolor{black}{\ttfamily\getsnippetfilename}},
+%             titlerule=0.5pt,
+%             titlerule style={black!20},
+%             arc=3pt,
+%             left=4pt, right=4pt, top=2pt, bottom=2pt,
+%             toptitle=4pt, bottomtitle=4pt,
+%             boxsep=0pt,
+%             width=\linewidth
+%         ]
+%         \lstinputlisting[%
+%             style=mystyle,
+%             frame=none,
+%             backgroundcolor={},
+%             aboveskip=0pt,
+%             belowskip=0pt,
+%             firstnumber=\getsnippetfirstline 
+%         ]{\jobname.snippet.tmp}%
+%         \end{tcolorbox}%
+%         \snippetsprintcaption
+%     }%
+%     \endgroup
+% }
 
 
 
