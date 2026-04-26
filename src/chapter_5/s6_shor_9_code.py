@@ -101,6 +101,7 @@ def build_shor_circuit(
         append_noisy_gate(circuit, "S_DAG", range(9), after_clifford_depolarization)
         append_noisy_gate(circuit, "H", range(9), after_clifford_depolarization)
 
+    #BEGIN S6_SNIPPET_FINAL_MEASUREMENT
     append_noisy_measurement(circuit, range(9), before_measure_flip_probability)
 
     # Boundary detectors
@@ -112,12 +113,11 @@ def build_shor_circuit(
         circuit.append("DETECTOR", [stim.target_rec(-10)] + [stim.target_rec(-i) for i in range(1, 7)])
 
     # Logical Observable
-    #BEGIN S6_SNIPPET_OBSERVABLES
     if basis == "X":
         circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-9), stim.target_rec(-6), stim.target_rec(-3)], 0)
     else:
         circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-i) for i in range(1, 10)], 0)
-    #BEGIN S6_SNIPPET_OBSERVABLES
+    #END S6_SNIPPET_FINAL_MEASUREMENT
 
     return circuit
 
@@ -168,4 +168,3 @@ def plot_shor_code_mwpm_performance(shots: int = 5000) -> None:
 
 if __name__ == "__main__":
     plot_shor_code_mwpm_performance()
-#END S6_SNIPPET
