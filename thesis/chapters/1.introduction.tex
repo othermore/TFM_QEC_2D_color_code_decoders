@@ -15,8 +15,7 @@ We refer to this reality as the era of Noisy Intermediate-Scale Quantum (NISQ) t
 
 As we will see later in this chapter, unlike classical bits, quantum information cannot be protected by just copying it, due to the no-cloning theorem. To overcome this, the field of Quantum Error Correction (QEC) was pioneered by Peter Shor \cite{shor1995scheme} and Andrew Steane \cite{steane1996error}. They demonstrated that a single "logical" qubit can be represented with multiple "physical" qubits. More formally, the logical qubit is encoded in a larger Hilbert space of multiple physical qubits, allowing for the detection and correction of errors without destroying the underlying quantum state.
 
-\notatfm{The Threshold Theorem \cite{aharonov1997fault} states that arbitrarily long quantum computation is only possible if the physical error rate is strictly below a certain critical value, known as the threshold.}
-As we will see in the following chapters, while Shor's code proves that QEC can be theoretically implemented, it is unable to effectively mitigate error, as the added complexity of the code causes more errors than it can prevent. This occurs when the physical error rate is above the fault-tolerance threshold, a regime known as "operating above the threshold". The fault-tolerance threshold depends on the specific QEC protocol, including the mechanism to encode the information and detect errors (known as \textbf{syndrome extraction}) and the algorithm used to infer the corrections (known as \textbf{the decoder}). On the other hand, the physical error rate depends on the specific hardware used.
+While Shor's solution (known as Shor's code) proves that QEC can be theoretically implemented, it is unable to effectively mitigate error, as the added complexity of the code causes more errors than it can prevent. 
 
 A significant milestone in QEC was the introduction of topological codes by Alexei Kitaev \cite{kitaev2003fault}, which will be discussed in Chapter \ref{chap:state_of_the_art}. Kitaev's Toric Code and subsequent Surface Codes presented a new paradigm of local, lattice-based architectures where errors are detected by measuring local parities (stabilizers). These types of codes became leading candidates for scalable hardware due to their high error thresholds and two-dimensional physical layouts, which map well to the most common realizations of quantum computers.
 
@@ -170,7 +169,7 @@ It is natural to assume we could simply apply these classical techniques to quan
 
 The solution to these three fundamental barriers was formulated by Peter Shor, leading to the creation of the first true quantum error correction code, which we explore in the next section.
 
-\section{Shor codes}
+\section{Shor code}
 \label{sec:shor_codes}
 
 The transition from classical to quantum error correction was made possible by Peter Shor's 1995 proposal \cite{shor1995scheme}. His approach demonstrated that the three barriers of quantum mechanics mentioned above could be bypassed using entanglement, parity-based measurements and concatenation of QEC codes.
@@ -204,7 +203,7 @@ To solve the measurement problem, Shor introduced the concept of \textbf{syndrom
         \lstick{Ancilla $s_A$} & \targ{}  & \qw      & \meter{} & \qw \rstick{bit $a$} \\
         \lstick{Ancilla $s_B$} & \qw      & \targ{}  & \meter{} & \qw \rstick{bit $b$}
     \end{quantikz}
-    \caption{Syndrome measurement: The ancilla qubits are activated when the two qubits that they monitor are different. Depending on which of the two ancilla qubits are activated, we can determine which of the qubits has flipped.}
+    \caption{Syndrome measurement: The ancilla qubits are activated when the two qubits that they monitor are different. Depending on which of the two ancilla qubits are activated, we can determine which of the qubits has flipped. This is known as a Z-type detector}
     \label{fig:3-qubit-syndrome}
 \end{figure}
 
@@ -248,37 +247,40 @@ The encoding circuit entangles the qubits using the CNOT structure of the bit-fl
 \label{fig:phase_flip_encoding}
 \end{figure}
 
-Applying the same measuring technique to these three qubits in pairs, allows determining the syndrome, which in this case will point to a $Z$ error. The Figure \ref{fig:3-qubit-phase-syndrome} shows the corresponding circuit.
+\notatfm{To measure the relative phases of the data qubits (implementing a X-type detector), the phase-kickback technique is used: the ancilla is put on a $|+\rangle$ state and CNOT gates are run with the ancilla as control qubit.}
+Applying the same measuring technique to these three qubits in pairs, allows determining the syndrome, which in this case will point to a $Z$ error. 
 
-\begin{figure}[H]
-    \centering
-    \begin{quantikz}
-        \lstick{Data $q_0$} & \qw & \targ{} & \qw & \qw & \qw & \qw & \qw \\
-        \lstick{Data $q_1$} & \qw & \qw & \targ{} & \targ{} & \qw & \qw & \qw \\
-        \lstick{Data $q_2$} & \qw & \qw & \qw & \qw & \targ{} & \qw & \qw \\
-        \lstick{Ancilla $s_A$ $\ket{0}$} & \gate{H} & \ctrl{-3} & \ctrl{-2} & \qw & \qw & \gate{H} & \meter{} \rstick{bit $a$} \\
-        \lstick{Ancilla $s_B$ $\ket{0}$} & \gate{H} & \qw & \qw & \ctrl{-3} & \ctrl{-2} & \gate{H} & \meter{} \rstick{bit $b$}
-    \end{quantikz}
-    \caption{Phase-flip syndrome measurement: The ancilla qubits are initialized in the $\ket{+}$ state using Hadamard gates. To perform the measurement in the $X$ basis, CNOT gates are applied in reverse (ancilla as control, data as target) to exploit phase kickback. A final Hadamard gate returns the ancillas to the computational basis before measurement.}
-    \label{fig:3-qubit-phase-syndrome}
-\end{figure}
+% Figure \ref{fig:3-qubit-phase-syndrome} shows the corresponding circuit.
 
-The following table shows how each of the possible syndromes points to one specific error correction: 
+% \begin{figure}[H]
+%     \centering
+%     \begin{quantikz}
+%         \lstick{Data $q_0$} & \qw & \targ{} & \qw & \qw & \qw & \qw & \qw \\
+%         \lstick{Data $q_1$} & \qw & \qw & \targ{} & \targ{} & \qw & \qw & \qw \\
+%         \lstick{Data $q_2$} & \qw & \qw & \qw & \qw & \targ{} & \qw & \qw \\
+%         \lstick{Ancilla $s_A$ $\ket{0}$} & \gate{H} & \ctrl{-3} & \ctrl{-2} & \qw & \qw & \gate{H} & \meter{} \rstick{bit $a$} \\
+%         \lstick{Ancilla $s_B$ $\ket{0}$} & \gate{H} & \qw & \qw & \ctrl{-3} & \ctrl{-2} & \gate{H} & \meter{} \rstick{bit $b$}
+%     \end{quantikz}
+%     \caption{Phase-flip syndrome measurement: The ancilla qubits are initialized in the $\ket{+}$ state using Hadamard gates. To perform the measurement in the $X$ basis, CNOT gates are applied in reverse (ancilla as control, data as target) to exploit phase kickback. A final Hadamard gate returns the ancillas to the computational basis before measurement.}
+%     \label{fig:3-qubit-phase-syndrome}
+% \end{figure}
 
-\begin{table}[H]
-    \centering
-    \small
-    \renewcommand{\arraystretch}{1.2} 
-    \begin{tabular}{@{}ccccl@{}}
-        \hline
-        \textbf{$X_1 X_2$} & \textbf{$X_2 X_3$} & \textbf{Error Location} & \textbf{Correction} \\
-        0 & 0 & None & No correction ($I$) \\
-        1 & 0 & Qubit 1 & Apply $Z_1$ \\
-        1 & 1 & Qubit 2 & Apply $Z_2$ \\
-        0 & 1 & Qubit 3 & Apply $Z_3$ \\ \hline
-    \end{tabular}
-    \label{tab:3-qubit-z-syndrome}
-\end{table}
+% The following table shows how each of the possible syndromes points to one specific error correction: 
+
+% \begin{table}[H]
+%     \centering
+%     \small
+%     \renewcommand{\arraystretch}{1.2} 
+%     \begin{tabular}{@{}ccccl@{}}
+%         \hline
+%         \textbf{$X_1 X_2$} & \textbf{$X_2 X_3$} & \textbf{Error Location} & \textbf{Correction} \\
+%         0 & 0 & None & No correction ($I$) \\
+%         1 & 0 & Qubit 1 & Apply $Z_1$ \\
+%         1 & 1 & Qubit 2 & Apply $Z_2$ \\
+%         0 & 1 & Qubit 3 & Apply $Z_3$ \\ \hline
+%     \end{tabular}
+%     \label{tab:3-qubit-z-syndrome}
+% \end{table}
 
 \subsection*{The 9-qubit Shor Code: Correcting Arbitrary Errors}
 The 3-qubit code provides a solution to the first two challenges, but it only corrects one type of error (either bit-flip or phase-flip). To be able to correct flips in any of the three axis, Shor's proposed the \textbf{concatenation} of a bit-flip code and a phase-flip code. By nesting them, we create a 9-qubit block that protects against both bit-flips ($X$) and phase-flips ($Z$) simultaneously. 
@@ -306,7 +308,6 @@ $$|1\rangle_L = \frac{(|000\rangle - |111\rangle)(|000\rangle - |111\rangle)(|00
     \label{fig:shor_9qubit_circuit}
 \end{figure}
 
-\notatfm{Z-type detectors are implemented with CNOT gates that have the ancilla as target and the data qubits as controls. X-type detectors are implemented using phase kickback: CNOT gates that have the ancilla as control and the data qubits as target.}
 To extract the syndrome of the 9-qubit Shor code, a total of 8 ancilla qubits are needed, 6 of them monitoring pairs of qubits to detect bit flips inside the clusters (Z-type detectors), and 2 of them monitoring full clusters to detect phase flips between two clusters (X-type detectors). The Table \ref{tab:9-shor-ancilla} shows the ancilla qubits and the data qubits they monitor.
 
 \begin{table}[hbt!]
@@ -369,9 +370,9 @@ By designing a quantum error correction code capable of detecting and correcting
 The fundamental requirement for a quantum error correction code is that errors that require different recovery operations must result in distinct syndromes. In formal terms, this means that the errors must map the logical state into orthogonal, distinguishable subspaces. If two physical errors produce the same syndrome but result in fundamentally different corrupted states, the decoder will not know which correction to apply, leading to a logical failure.
 
 \notatfm{Any qubit within a cluster suffering a phase-flip error in the 9-qubit Shor code results in the same syndrome. However, an operation on any of the three qubits of the cluster will fix the state of the logical qubit. This is known as degeneracy, and we say that the three phase-flip errors that can affect a cluster are \textbf{degenerated errors}.}
-The 9-qubit Shor code works well precisely because it separates bit-flip and phase-flip errors into distinct, non-overlapping parity checks. For example, any bit-flip error in a single qubit will activate either one or two of the first 6 ancillas (see Table \ref{tab:9-shor-syndrome}), which can map uniquely to the specific qubit that flipped. Similarly, any phase-flip error in a single qubit will activate one or two of the last 2 ancillas, which maps to the specific cluster that requires correction.
+The 9-qubit Shor code works well precisely because it separates bit-flip and phase-flip errors into distinct, non-overlapping parity checks. For example, any bit-flip error in a single qubit will activate either one or two of the first 6 ancillas (see Table \ref{tab:9-shor-syndrome}), which can map uniquely to the specific qubit that flipped. 
 
-This ability to uniquely map syndromes to the appropriate recovery operation is what makes a QEC code successful. However, analyzing these subspaces manually becomes unsustainable for larger, more complex quantum codes. This scalability problem motivates the need for a robust, algebraic framework, leading directly to the Stabilizer Formalism that we discuss in the next section.
+Analyzing these subspaces manually becomes unsustainable for larger, more complex quantum codes. This scalability problem motivates the need for a robust, algebraic framework.
 
 \section{The Stabilizer Formalism}
 \label{sec:stabilizer_formalism}
@@ -390,7 +391,7 @@ In practice, a stabilizer operator is simply a combination of Pauli matrices ($X
 
 Note that an error affecting the qubits can also be represented as an operator (e.g. a bit-flip is a $X$ Pauli matrix applied to the flipping qubit).
 
-We can \textbf{measure} a stabilizer operator. Such measurement is implemented as a parity check on the data qubits that are connected to this operator, with the result being reflected in the state of an ancilla qubit. In the prior section, we saw how:
+We can \textbf{measure} a stabilizer operator. Such measurement is implemented as a parity check on the data qubits that are connected to this operator, with the result being reflected in the state of an ancilla qubit:
 \begin{itemize}
     \item $Z$-type stabilizers, which detect bit-flip errors, are measured with a $\text{CNOT}$ gate that has the data qubits as source and the ancilla qubit as target.
     \item $X$-type stabilizers, which detect phase-flip errors, are measured with a $\text{CNOT}$ gate that has the data qubits as target and the ancilla qubit as source, which produces a \textit{phase kickback}.
@@ -449,21 +450,21 @@ The distance directly determines the error-handling capabilities of the code thr
 For the Shor code ($d=3$), these rules imply that the code can detect up to 2 errors and correct $t=1$ error. If two errors occur simultaneously, the syndrome would cause a wrong correction. This is a permanent trade-off in QEC: increasing the correction threshold $t$, requires increasing the distance $d$, which requires more physical qubits $n$.
 
 \section{The Threshold Theorem}
+For a QEC code to effectively mitigate the errors, the error introduced by the overhead QEC in the circuit must be lower than the error effectively corrected, so the resulting logical error is below the physical error rate.
+
+The distance of a code relates to the capacity of the code to reduce the error rate, but it is also correlated with the code overhead: to increase the distance, we need to add more physical qubits, $n$, to codify the same number of logical qubits, $k$.
+
+As we increase the complexity of quantum computations, we need quantum circuits that are wider (more qubits) and deeper (more steps in the calculation). Because the probability of error is constant through the execution, during the execution of an arbitrarily deep circuit, a non-recoverable error will eventually happen. 
+
 Proven by Aharonov and Ben-Or \cite{aharonov1997fault}, the Threshold Theorem gives us a framework for arbitrarily long quantum computations. 
 
-We have seen so far that through QEC we can effectively lower down the logical error rate (i.e. the error introduced by the overhead QEC in the circuit is lower than the error effectively corrected, so the resulting logical error is below the physical error rate).
-
-We have also seen how a fundamental parameter of a code is the distance, $d$. It determines the ability of the code to correct simultaneous errors and, therefore, it relates to the capacity of the code to reduce the error rate. And we know that the distance of a code is correlated with the code overhead: to increase the distance, we need to add more physical qubits, $n$, to codify the same number of logical qubits, $k$.
-
-However, as we increase the complexity of quantum computations, we need quantum circuits that are wider (more qubits) and deeper (more steps in the calculation). Because the probability of error is constant through the execution, during the execution of an arbitrarily deep circuit, a non-recoverable error will eventually happen. 
-
-The Threshold Theorem combines all this to provide a foundational proof of the usefulness of Quantum Error Correction. It proves that when we increase the distance of a code, hence introducing overhead but improving the code capacity, the logical noise rate that we obtain behaves differently depending on the physical error rate that our hardware has:
+It proves that when we increase the distance of a code, hence introducing overhead but improving the code capacity, the logical noise rate that we obtain behaves differently depending on the physical error rate that our hardware has:
 
 \begin{itemize}
-    \item If the physical error rate, $p$ is below a certain value, $p_{th}$, which depends on the code itself, increasing the distance reduces the logical noise. That is, the benefit of increasing the code capacity is greater than the drawback of increasing the circuit overhead.
+    \item If the physical error rate, $p$ is below a certain value, $p_{th}$, which depends on the correction protocol itself, increasing the distance reduces the logical noise. That is, the benefit of increasing the code capacity is greater than the drawback of increasing the circuit overhead.
     \item If $p$ is above $p_{th}$, increasing the distance increases the logical noise. That is, the benefit of increasing the code capacity is smaller than the drawback of increasing the circuit overhead.
 \end{itemize}
 
-\notatfm{Note that the threshold, $p_{th}$, of a given code is not an isolated property of the code. It depends on the actual implementation of the code in a certain hardware. In Chapter \ref{chap:state_of_the_art} we will show how mapping a given code to a given system (a set of qubits with a given interconnectivity) adds overhead that change the Threshold of the result.}The value at which the behaviour change is what we call the Threshold, $p_{th}$, of a QEC code. We can conclude that, if we have hardware whose physical error rate $p$ is below the threshold $p_{th}$ of a certain code, we can arbitrarily increase the distance of such code to reduce the effective noise. This compensates the increase in the chances of a non-recoverable error (when a circuit depth increases) by increasing the distance of the code.
+\notatfm{Note that the threshold, $p_{th}$, of a given code is not an isolated property of the code. It depends on the actual implementation of the code in a certain hardware. In Chapter \ref{chap:state_of_the_art} we will show how mapping a given code to a given system (a set of qubits with a given inter-connectivity) adds overhead that change the Threshold of the result.}The value at which the behavior changes is what we call the Threshold, $p_{th}$, of a QEC code. We can conclude that, if we have hardware whose physical error rate $p$ is below the threshold $p_{th}$ of a certain code, we can arbitrarily increase the distance of such code to reduce the effective noise. This compensates the increase in the chances of a non-recoverable error (when a circuit depth increases) by increasing the distance of the code.
 
 In Chapter \ref{chap:implementation_and_simulation}, we will simulate various QEC codes to visualize this phase transition. By plotting the logical error rate $p_L$ as a function of the physical error rate $p$ for different distances, we will numerically identify the threshold $p_{th}$ as the precise crossing point where scaling the distance inverts its effect on logical noise.
