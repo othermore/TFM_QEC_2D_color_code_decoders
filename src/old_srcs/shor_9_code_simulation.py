@@ -229,8 +229,15 @@ def build_shor_circuit(rounds: int,
     # No boundary detectors are added for Y basis because transversal Y measurements
     # destroy both X and Z stabilizers.
 
-    # Logical Observable
-    circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-i) for i in range(1, 10)], 0)
+    # Logical Observable (Only ONE is added to ensure determinism in Stim)
+    if basis == "X":
+        # Measure Bit-flips using Z0*Z3*Z6 (Physical parity of these qubits in Z)
+        # Note: Since we measure in Z-basis at the end, these recs correspond to data qubits.
+        circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-9), stim.target_rec(-6), stim.target_rec(-3)], 0)
+    else:
+        # Measure Phase-flips using X_L (Total parity in X)
+        # In basis Z/Y, we apply H to all qubits, so measuring them in Z gives the X parity.
+        circuit.append("OBSERVABLE_INCLUDE", [stim.target_rec(-i) for i in range(1, 10)], 0)
 
     return circuit
 
@@ -337,7 +344,7 @@ def run_shor_simulation() -> None:
     Returns:
         None
     """
-    print("Starting 9-Qubit Shor Code simulation...\n")
+    print("Starting 9-Qubit Shor Code simulation (Code Capacity Model)...\n")
     num_shots_per_state = 2000
     noise = 0.02
     
@@ -346,7 +353,8 @@ def run_shor_simulation() -> None:
     total_shots = num_shots_per_state * len(states)
     total_errors = 0
 
-    print(f"Physical noise injected: {noise * 100:.2f}%")
+    print(f"Physical noise (Data Depolarization): {noise * 100:.2f}%")
+    print(f"Noise on Gates/Measurements: 0.00%")
     print(f"Shots per state: {num_shots_per_state}")
     print("Running simulations...\n")
 
@@ -356,7 +364,10 @@ def run_shor_simulation() -> None:
             state=state,
             num_shots=num_shots_per_state, 
             noise=noise, 
-            decoder_class=MWPMLibraryDecoder
+            decoder_class=MWPMLibraryDecoder,
+            before_round_data_depolarization_noise=noise,
+            after_clifford_depolarization_noise=0,
+            before_measure_flip_probability_noise=0
         )
         errors_for_state = (logical_error_rate / 100.0) * num_shots_per_state
         total_errors += errors_for_state

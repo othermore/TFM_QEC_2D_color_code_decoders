@@ -203,18 +203,10 @@ class Shor9MajorityVoteDecoder:
     def decode(self, syndrome: np.ndarray) -> np.ndarray:
         """
         Decodes the Shor code by counting detector activations across all rounds,
-        reconstructing the absolute state, and then predicting the exact physical 
-        parity of the 9-qubit observable to match Stim's evaluation protocol.
-
-        Args:
-            syndrome (np.ndarray): 1D boolean array of detection events.
-
-        Returns:
-            np.ndarray: 1D boolean array predicting the physical parity flip.
+        reconstructing the absolute state, and then predicting logical flips.
         """
-        detectors_per_observable = self.num_detectors // self.num_observables
-        predictions = []
-        
+        # In Shor code, all observables share the same syndrome detectors, 
+        # so we process the full syndrome once.
         DETECTORS_PER_ROUND = 8
         Z_DETECTORS_PER_ROUND = 6
         X_DETECTORS_PER_ROUND = 2
@@ -222,91 +214,78 @@ class Shor9MajorityVoteDecoder:
         NUM_INNER_BLOCKS = 3
         Z_DETECT_PER_BLOCK = 2
 
-        for i in range(self.num_observables):
-            start_index = i * detectors_per_observable
-            end_index = start_index + detectors_per_observable
-            local_syndrome = syndrome[start_index:end_index]
+        z_activation_count = np.zeros(Z_DETECTORS_PER_ROUND, dtype=int)
+        x_activation_count = np.zeros(X_DETECTORS_PER_ROUND, dtype=int)
+        
+        num_full_rounds = len(syndrome) // DETECTORS_PER_ROUND
+        
+        # 1. Process measurement rounds
+        for round_index in range(num_full_rounds):
+            start_of_round = round_index * DETECTORS_PER_ROUND
+            round_data = syndrome[start_of_round:start_of_round + DETECTORS_PER_ROUND]
             
-            z_activation_count = np.zeros(Z_DETECTORS_PER_ROUND, dtype=int)
-            x_activation_count = np.zeros(X_DETECTORS_PER_ROUND, dtype=int)
+            for k in range(Z_DETECTORS_PER_ROUND):
+                z_activation_count[k] += round_data[k]
+            for k in range(X_DETECTORS_PER_ROUND):
+                x_activation_count[k] += round_data[Z_DETECTORS_PER_ROUND + k]
+                
+        # 2. Process boundary detectors (final measurements)
+        boundary_detectors_count = len(syndrome) % DETECTORS_PER_ROUND
+        start_of_boundary = num_full_rounds * DETECTORS_PER_ROUND
+        boundary_data = syndrome[start_of_boundary:]
+        
+        if boundary_detectors_count == Z_DETECTORS_PER_ROUND:
+            for k in range(Z_DETECTORS_PER_ROUND):
+                z_activation_count[k] += boundary_data[k]
+        elif boundary_detectors_count == X_DETECTORS_PER_ROUND:
+            for k in range(X_DETECTORS_PER_ROUND):
+                x_activation_count[k] += boundary_data[k]
             
-            num_full_rounds = len(local_syndrome) // DETECTORS_PER_ROUND
+        absolute_z_syndrome = z_activation_count % 2
+        absolute_x_syndrome = x_activation_count % 2
             
-            for round_index in range(num_full_rounds):
-                start_of_round = round_index * DETECTORS_PER_ROUND
-                end_of_round = start_of_round + DETECTORS_PER_ROUND
-                round_data = local_syndrome[start_of_round:end_of_round]
-                
-                for k in range(Z_DETECTORS_PER_ROUND):
-                    z_activation_count[k] += round_data[k]
-                    
-                for k in range(X_DETECTORS_PER_ROUND):
-                    x_activation_count[k] += round_data[Z_DETECTORS_PER_ROUND + k]
-                    
-            boundary_detectors_count = len(local_syndrome) % DETECTORS_PER_ROUND
-            start_of_boundary = num_full_rounds * DETECTORS_PER_ROUND
-            boundary_data = local_syndrome[start_of_boundary:]
+        # 3. INNER CODE EVALUATION (Detect Bit-flips / Predict Z-Parity for Z0, Z3, Z6)
+        total_predicted_z_parity = 0
+        for block_id in range(NUM_INNER_BLOCKS):
+            start_z = block_id * Z_DETECT_PER_BLOCK
+            block_syndrome = absolute_z_syndrome[start_z:start_z + Z_DETECT_PER_BLOCK]
             
-            if boundary_detectors_count == Z_DETECTORS_PER_ROUND:
-                for k in range(Z_DETECTORS_PER_ROUND):
-                    z_activation_count[k] += boundary_data[k]
-                    
-            elif boundary_detectors_count == X_DETECTORS_PER_ROUND:
-                for k in range(X_DETECTORS_PER_ROUND):
-                    x_activation_count[k] += boundary_data[k]
-            else:
-                predictions.append(0)
-                continue
-                
-            absolute_z_syndrome = z_activation_count % 2
-            absolute_x_syndrome = x_activation_count % 2
-                
-            # INNER CODE EVALUATION
-            total_predicted_z_parity = 0
-            
-            for block_id in range(NUM_INNER_BLOCKS):
-                start_z = block_id * Z_DETECT_PER_BLOCK
-                end_z = start_z + Z_DETECT_PER_BLOCK
-                block_syndrome = absolute_z_syndrome[start_z:end_z]
-                
-                qubits_state = [0]
-                current_relative_state = 0
-                
-                for detector_value in block_syndrome:
-                    if detector_value == 1:
-                        current_relative_state = 1 - current_relative_state
-                    qubits_state.append(current_relative_state)
-                
-                num_ones = sum(qubits_state)
-                num_zeros = len(qubits_state) - num_ones
-                
-                block_has_error = 1 if num_ones > num_zeros else 0
-                
-                # Calculate physical parity of the 3 qubits based on prediction
-                block_physical_parity = (num_ones % 2) ^ block_has_error
-                total_predicted_z_parity ^= block_physical_parity
-            
-            # OUTER CODE EVALUATION
-            blocks_relative_state = [0]
-            current_block_state = 0
-            
-            for detector_value in absolute_x_syndrome:
+            qubits_state = [0]
+            current_relative_state = 0
+            for detector_value in block_syndrome:
                 if detector_value == 1:
-                    current_block_state = 1 - current_block_state
-                blocks_relative_state.append(current_block_state)
-                
-            num_block_ones = sum(blocks_relative_state)
-            num_block_zeros = len(blocks_relative_state) - num_block_ones
+                    current_relative_state = 1 - current_relative_state
+                qubits_state.append(current_relative_state)
             
-            outer_phase_flip = 1 if num_block_ones > num_block_zeros else 0
+            num_ones = sum(qubits_state)
+            num_zeros = len(qubits_state) - num_ones
+            block_has_error = 1 if num_ones > num_zeros else 0
             
-            # Calculate physical parity of the outer blocks based on prediction
-            total_predicted_x_parity = (num_block_ones % 2) ^ outer_phase_flip
+            # Predict if the anchor qubit of this block is flipped
+            # (Q0 for block 0, Q3 for block 1, Q6 for block 2)
+            total_predicted_z_parity ^= block_has_error
+        
+        # 4. OUTER CODE EVALUATION (Detect Phase-flips / Predict X-Parity)
+        blocks_relative_state = [0]
+        current_block_state = 0
+        for detector_value in absolute_x_syndrome:
+            if detector_value == 1:
+                current_block_state = 1 - current_block_state
+            blocks_relative_state.append(current_block_state)
             
-            # FINAL PREDICTION: MATCH STIM'S OBSERVABLE BEHAVIOR
-            if boundary_detectors_count == Z_DETECTORS_PER_ROUND:
-                predictions.append(total_predicted_z_parity)
-            else:
-                predictions.append(total_predicted_x_parity)
-            
-        return np.array(predictions)
+        num_block_ones = sum(blocks_relative_state)
+        num_block_zeros = len(blocks_relative_state) - num_block_ones
+        outer_phase_flip = 1 if num_block_ones > num_block_zeros else 0
+        
+        total_predicted_x_parity = (num_block_ones % 2) ^ outer_phase_flip
+        
+        # 5. FINAL PREDICTION: Return array matching the number of observables
+        if self.num_observables == 2:
+            # Matches simulation order: Obs 0 (X_L), Obs 1 (Z_L)
+            return np.array([total_predicted_x_parity, total_predicted_z_parity])
+        
+        # Fallback for single observable logic
+        if boundary_detectors_count == Z_DETECTORS_PER_ROUND:
+            return np.array([total_predicted_z_parity])
+        else:
+            return np.array([total_predicted_x_parity])
