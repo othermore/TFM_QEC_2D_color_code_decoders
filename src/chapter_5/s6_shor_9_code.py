@@ -89,11 +89,11 @@ def build_shor_circuit(
             if r == 0: circuit.append("DETECTOR", [stim.target_rec(-2 + i)])
             else: circuit.append("DETECTOR", [stim.target_rec(-2 + i), stim.target_rec(-2 + i - 8)])
         circuit.append("TICK")
-
+    '''
     # Final Measurement rotations
     if before_round_data_depolarization > 0:
         circuit.append("DEPOLARIZE1", range(9), before_round_data_depolarization)
-
+    '''
     if basis == "Z":
         append_noisy_gate(circuit, "H", range(9), after_clifford_depolarization)
     elif basis == "Y":
