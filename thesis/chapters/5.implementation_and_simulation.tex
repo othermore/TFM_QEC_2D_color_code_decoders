@@ -24,7 +24,7 @@ Stim makes it exceptionally easy to implement a basic repetition code. The build
 \begin{itemize}
     \item \textbf{The QEC code circuit}. \texttt{stim}'s library already provides a method to easily generate a basic repetition code. This generates not only the circuit for the encoding, but the necessary ancilla qubits and measurements for syndrome extraction.
     \item \textbf{Injecting the error}. As part of building the circuit, \texttt{stim} allows inputing the physical error rates for different types of noise. In this case, to simulate code-capacity noise, we use the parameter \verb|before_round_data_depolarization|.
-    \item \textbf{Decoding the error}. The \texttt{pymatching} library will allow us to decode the error using the MWPM algorithm that we discussed in Chapter \ref{chap:qec_decoders}. For such decoding to happen, \texttt{stim} requires the circuit to have specific tags appended (\texttt{DETECTORS}) to specific measures. In this example, the generated circuit already contains them.
+    \item \textbf{Decoding the error}. The \texttt{pymatching} library \cite{higgott2022pymatching} will allow us to decode the error using the MWPM algorithm that we discussed in Chapter \ref{chap:qec_decoders}. For such decoding to happen, \texttt{stim} requires the circuit to have specific tags appended (\texttt{DETECTORS}) to specific measures. In this example, the generated circuit already contains them.
 \end{itemize}
 
 The code in Listing \ref{lst:stim_rep_code} illustrates how this simulation can be performed. It is important to understand how \texttt{stim} works.  The \texttt{sample} method returns two things:
@@ -201,7 +201,7 @@ Listing \ref{lst:sinter_snippet} illustrates how to configure and execute a mass
 
 While \texttt{stim} includes built-in generators for Surface Codes, it lacks native support to generate Color Codes. Constructing a generic topological code directly in \texttt{stim} requires manually managing numerical qubit indices and their intricate spatial interactions, a process that is highly error-prone.
 
-To overcome this limitation, we utilize \textbf{\texttt{cirq}}, Google's high-level framework for quantum circuits. \texttt{cirq} provides critical advantages for QEC design:
+To overcome this limitation, we utilize \textbf{\texttt{cirq}} \cite{cirq_developers}, Google's high-level framework for quantum circuits. \texttt{cirq} provides critical advantages for QEC design:
 \begin{itemize}
     \item \textbf{Geometric layout}: Qubits can be defined using planar coordinates (e.g., \texttt{cirq.GridQubit(x, y)}). This will allow us to map the hexagonal or triangular faces of a Color Code directly into the circuit's architecture.
     \item \textbf{High-level abstractions}: Because of the mentioned geometric layout, operations can be designed geometrically, making syndrome extraction routines more intuitive.
