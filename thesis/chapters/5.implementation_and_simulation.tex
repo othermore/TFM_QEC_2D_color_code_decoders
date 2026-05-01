@@ -153,12 +153,27 @@ Finally, by preparing the system in different cardinal states before measurement
 \includesnippet[caption={Simulation 6: Final destructive measurement of the data qubits, including the explicit declaration of boundary detectors and the logical observable target.}, label={lst:stim_boundary_detector_and_observable}]{S6_SNIPPET_FINAL_MEASUREMENT}{../src/chapter_5/s6_shor_9_code.py}
 
 
+\subsection{Visualizing the Threshold Theorem}
+\label{subsec:threshold_visualization}
+
+To conclude our exploration of baseline models, we return to the repetition code to visually demonstrate one of the most fundamental concepts in quantum error correction: the Threshold Theorem. As discussed theoretically in Chapter \ref{chap:introduction}, this theorem guarantees that if the physical error rate is below a certain threshold $p_{th}$, we can arbitrarily reduce the logical error rate by increasing the distance of the code.
+
+\notatfm{The noise model in this simulation has been specifically selected to cause a visible threshold while having a logical error rate that is lower than the physical error rate. Circuit-level noise is required for the code to have a visible threshold. Such noise needs to be at a very low rate because a simple repetition code does not perform well and quickly saturates at the maximum logical noise.}
+To observe this transition clearly in a simulation, two critical adjustments are required. First, we must adopt an appropriate noise model. Under pure code-capacity noise, the 1D repetition code lacks a standard visible threshold because the decoder can adapt to extreme error rates with perfect syndromes. We opt for a noise model that is fundamentally code-capacity, but we inject small rates of circuit-level noise (specifically, small probabilities of measurement and gate errors, at a 1:0.05:0.05 ratio). This forces the decoder to handle imperfect syndromes, allowing us to see exactly how the code behaves when its limits are tested. 
+
+Second, we must ensure that the number of syndrome extraction rounds grows proportionally with the code distance (setting \texttt{rounds = d}). Fault tolerance must be achieved in both space (number of qubits) and time (measurement rounds). If we were to increase the number of qubits but only measure the syndrome once, the code would be heavily protected spatially but extremely fragile temporally. By increasing the rounds along with the distance, we force the larger codes to survive the noise for a longer period. While this might intuitively seem unfair—giving larger codes more opportunities to fail—the power of the Threshold Theorem is that, below the threshold, the error suppression is so strong that the larger code still achieves a lower total error rate despite enduring more rounds of noise.
+Figure \ref{fig:threshold_theorem_plot} demonstrates this effect perfectly. 
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figures/s7_threshold_theorem.png}
+    \caption{Simulation 7: Visualizing the Threshold Theorem using a repetition code under a predominantly code-capacity noise model with small rates of circuit-level noise (ratio 1:0.05:0.05). For physical error rates below the threshold (the point where the curves intersect), increasing the distance of the code strictly improves its performance, driving the logical error rate down. Conversely, for physical error rates above the threshold, the noise overwhelms the system, and adding more qubits only introduces more errors, degrading the overall performance.}
+    \label{fig:threshold_theorem_plot}
+\end{figure}
+
+
 \begin{notebox}{Default noise model for this thesis}
 To maintain focus on the architectural advantages of QEC codes (and, more specifically, 2D color codes) and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
 \end{notebox}
-
-\subsection{Visualizing the Threshold Theorem}
-\label{subsec:threshold_visualization}
 
 \section{Beyond stim: Experimental setup for implementation and simulation}
 
