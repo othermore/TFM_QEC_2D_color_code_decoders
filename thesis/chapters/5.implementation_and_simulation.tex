@@ -177,6 +177,39 @@ To maintain focus on the architectural advantages of QEC codes (and, more specif
 
 \section{Beyond stim: Experimental setup for implementation and simulation}
 
-\subsection{Sampling technologies: sinter}
+As demonstrated in the previous sections, \texttt{stim} is an exceptionally powerful tool for defining and sampling quantum circuits. However, when transitioning from baseline models to complex, scalable topological codes like the Surface Code or the Color Code, relying solely on \texttt{stim} becomes insufficient. 
 
-\subsection{High level circuit design for quantum error correction: cirq and stimcirq}
+To efficiently perform large-scale research, we must introduce two additional abstraction layers on top of \texttt{stim}: one for orchestrating massive parallel simulations, and another for procedurally generating highly complex, geometrically constrained circuits. 
+
+\subsection{Sampling technologies: \texttt{sinter}}
+
+When evaluating QEC protocols below their threshold, the logical error rate decays exponentially. To observe statistically significant failure rates at extremely low physical error probabilities (e.g., $10^{-6}$), billions of circuit shots must be sampled. Executing these operations sequentially in standard Python loops is computationally unfeasible.
+
+To solve this, we use \textbf{\texttt{sinter}}, a specialized tool designed to orchestrate and parallelize \texttt{stim} simulations. Sinter's primary advantages are:
+\begin{itemize}
+    \item \textbf{Automatic parallelization}: It seamlessly distributes the sampling tasks across all available CPU cores.
+    \item \textbf{Dynamic stopping criteria}: Instead of executing a fixed number of shots, \texttt{sinter} allows defining a maximum number of logical errors (e.g., \texttt{max\_errors=500}). The simulation will automatically halt for a given data point once sufficient statistical confidence is reached, saving immense computational time.
+    \item \textbf{Data management}: It automatically aggregates the results into structured CSV files, mitigating the risk of data loss during long-running simulations.
+\end{itemize}
+
+Listing \ref{lst:sinter_snippet} illustrates how to configure and execute a massively parallel simulation using \texttt{sinter}. 
+
+\includesnippet[caption={Simulation 8: Executing a large-scale parallel simulation using \texttt{sinter}. The tool dynamically samples up to a million shots or halts early if 500 errors are found, automatically distributing the workload across available CPU cores.}, label={lst:sinter_snippet}]{S8_SNIPPET_SINTER}{../src/chapter_5/s8_beyond_stim.py}
+
+
+\subsection{High level circuit design for quantum error correction: \texttt{cirq} and \texttt{stimcirq}}
+
+While \texttt{stim} includes built-in generators for Surface Codes, it lacks native support for procedurally generating Color Codes. Constructing a generic topological code in raw \texttt{stim} requires manually managing numerical qubit indices and their intricate spatial interactions, a process that is highly error-prone.
+
+To overcome this limitation, we utilize \textbf{\texttt{cirq}}, Google's high-level framework for quantum circuits. \texttt{cirq} provides critical advantages for QEC design:
+\begin{itemize}
+    \item \textbf{Geometric layout}: Qubits can be defined using planar coordinates (e.g., \texttt{cirq.GridQubit(x, y)}). This allows us to map the hexagonal or triangular faces of a Color Code directly into the circuit's architecture.
+    \item \textbf{High-level abstractions}: Operations can be reasoned about geometrically, making syndrome extraction routines intuitive to program.
+\end{itemize}
+
+However, mapping a high-level \texttt{cirq} circuit into a fault-tolerant simulation requires strict temporal alignment and metadata tracking. As shown in Listing \ref{lst:cirq_snippet}, we must use the \textbf{\texttt{stimcirq}} integration library to manually annotate the circuit. This involves defining unique string keys for every measurement, strictly ordering \texttt{cirq.Moment} boundaries to prevent compilation errors, and explicitly declaring \texttt{stimcirq.DetAnnotation} to compare parity checks across rounds.
+
+Once the circuit is constructed and annotated, it compiles into an ultra-fast \texttt{stim} circuit, granting us both the expressive power of \texttt{cirq} and the raw performance of \texttt{stim}.
+
+\includesnippet[caption={Simulation 8: Using \texttt{cirq} to procedurally generate a fully functional fault-tolerant Repetition Code. The circuit is manually annotated with noise models, \texttt{stimcirq.DetAnnotation}, and \texttt{stimcirq.CumulativeObservableAnnotation} to define the spatial-temporal parity checks required by decoders, ensuring the translation to \texttt{stim} is exact.}, label={lst:cirq_snippet}]{S8_SNIPPET_CIRQ_BUILDER}{../src/chapter_5/s8_beyond_stim.py}
+
