@@ -136,7 +136,6 @@ def plot_sinter_simulation(stats, distances, physical_errors):
     plt.grid(True, linestyle=':', alpha=0.7)
 
 if __name__ == "__main__":
-    # For standalone execution, just validate the script with a quick run
     print("Validating Sinter setup with a small text run...")
     stats, dists, errs = sample_sinter_simulation(distances=[3], physical_errors=[0.01, 0.1], max_shots=10000, num_workers=1)
     print("\nSimulation successful! Results:")
