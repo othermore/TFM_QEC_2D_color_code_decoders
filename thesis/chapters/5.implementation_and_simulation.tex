@@ -194,22 +194,22 @@ To solve this, we use \textbf{\texttt{sinter}}, a specialized tool designed to o
 
 Listing \ref{lst:sinter_snippet} illustrates how to configure and execute a massively parallel simulation using \texttt{sinter}. 
 
-\includesnippet[caption={Simulation 8: Executing a large-scale parallel simulation using \texttt{sinter}. The tool dynamically samples up to a million shots or halts early if 500 errors are found, automatically distributing the workload across available CPU cores.}, label={lst:sinter_snippet}]{S8_SNIPPET_SINTER}{../src/chapter_5/s8_beyond_stim.py}
+\includesnippet[caption={Simulation 8: Executing a large-scale parallel simulation using sinter. The tool samples up to a million shots, but halts early if 500 errors are found. Sinter automatically parallelizes using multiple workers.}, label={lst:sinter_snippet}]{S8_SNIPPET_SINTER}{../src/chapter_5/s8_beyond_stim.py}
 
 
 \subsection{High level circuit design for quantum error correction: \texttt{cirq} and \texttt{stimcirq}}
 
-While \texttt{stim} includes built-in generators for Surface Codes, it lacks native support for procedurally generating Color Codes. Constructing a generic topological code in raw \texttt{stim} requires manually managing numerical qubit indices and their intricate spatial interactions, a process that is highly error-prone.
+While \texttt{stim} includes built-in generators for Surface Codes, it lacks native support to generate Color Codes. Constructing a generic topological code directly in \texttt{stim} requires manually managing numerical qubit indices and their intricate spatial interactions, a process that is highly error-prone.
 
 To overcome this limitation, we utilize \textbf{\texttt{cirq}}, Google's high-level framework for quantum circuits. \texttt{cirq} provides critical advantages for QEC design:
 \begin{itemize}
-    \item \textbf{Geometric layout}: Qubits can be defined using planar coordinates (e.g., \texttt{cirq.GridQubit(x, y)}). This allows us to map the hexagonal or triangular faces of a Color Code directly into the circuit's architecture.
-    \item \textbf{High-level abstractions}: Operations can be reasoned about geometrically, making syndrome extraction routines intuitive to program.
+    \item \textbf{Geometric layout}: Qubits can be defined using planar coordinates (e.g., \texttt{cirq.GridQubit(x, y)}). This will allow us to map the hexagonal or triangular faces of a Color Code directly into the circuit's architecture.
+    \item \textbf{High-level abstractions}: Because of the mentioned geometric layout, operations can be designed geometrically, making syndrome extraction routines more intuitive.
 \end{itemize}
 
-However, mapping a high-level \texttt{cirq} circuit into a fault-tolerant simulation requires strict temporal alignment and metadata tracking. As shown in Listing \ref{lst:cirq_snippet}, we must use the \textbf{\texttt{stimcirq}} integration library to manually annotate the circuit. This involves defining unique string keys for every measurement, strictly ordering \texttt{cirq.Moment} boundaries to prevent compilation errors, and explicitly declaring \texttt{stimcirq.DetAnnotation} to compare parity checks across rounds.
+However, mapping a high-level \texttt{cirq} circuit into a fault-tolerant simulation requires tracking metadata across the temporal and space dimensions. As shown in Listing \ref{lst:cirq_snippet}, we must use the \textbf{\texttt{stimcirq}} integration library to manually annotate the circuit. This involves defining unique string keys for every measurement, strictly placing annotations in the right circuit tick (\texttt{cirq.Moment}), and explicitly declaring \texttt{stimcirq.DetAnnotation} to compare parity checks across rounds.
 
 Once the circuit is constructed and annotated, it compiles into an ultra-fast \texttt{stim} circuit, granting us both the expressive power of \texttt{cirq} and the raw performance of \texttt{stim}.
 
-\includesnippet[caption={Simulation 8: Using \texttt{cirq} to procedurally generate a fully functional fault-tolerant Repetition Code. The circuit is manually annotated with noise models, \texttt{stimcirq.DetAnnotation}, and \texttt{stimcirq.CumulativeObservableAnnotation} to define the spatial-temporal parity checks required by decoders, ensuring the translation to \texttt{stim} is exact.}, label={lst:cirq_snippet}]{S8_SNIPPET_CIRQ_BUILDER}{../src/chapter_5/s8_beyond_stim.py}
+\includesnippet[caption={Simulation 8: Using cirq to procedurally generate a fully functional Repetition Code. The circuit is manually annotated with noise models, stimcirq.DetAnnotation, and stimcirq.CumulativeObservableAnnotation to define the spatial-temporal parity checks required by decoders, ensuring the translation to stim is exact.}, label={lst:cirq_snippet}]{S8_SNIPPET_CIRQ_BUILDER}{../src/chapter_5/s8_beyond_stim.py}
 
