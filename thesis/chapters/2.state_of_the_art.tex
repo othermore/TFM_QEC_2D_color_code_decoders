@@ -78,7 +78,7 @@ To further optimize the mapping onto real hardware, the planar surface code is a
 \begin{figure}[hbt!]
     \centering
     % Subfigure A: Torus with observables
-    \begin{subfigure}[b]{0.38\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \includegraphics[width=1\linewidth]{figures/c2_torus_kitaev.png}
         \caption{}
@@ -88,7 +88,7 @@ To further optimize the mapping onto real hardware, the planar surface code is a
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
         
-        \begin{tikzpicture}[scale=1]
+        \begin{tikzpicture}[scale=0.9]
             % Draw the main grid lines (the lattice)
             \draw[gray!60, thick] (0,0) grid (3,3);
         
@@ -154,9 +154,9 @@ To further optimize the mapping onto real hardware, the planar surface code is a
     \end{subfigure}
     \hfill
     % Subfigure C: Rotated surface code
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.33\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.95]
+        \begin{tikzpicture}[scale=0.7]
             % Z-stabilizers (Red full faces)
             \foreach \x/\y in {0/0, 2/0, 1/1, 0/2, 2/2} {
                 \filldraw[red!20, draw=red, thick] (\x,\y) rectangle (\x+1, \y+1);
@@ -223,6 +223,485 @@ The surface code's primary advantage is its incredibly high error threshold (aro
 
 However, its main disadvantage is its terrible encoding rate. A standard planar surface code patch encodes exactly one logical qubit ($k=1$), regardless of how much we scale its distance $d$. To achieve higher distances and exponentially better protection, the physical footprint grows quadratically ($n \approx d^2$). This massive spatial overhead limits the scalability of surface codes for algorithms requiring thousands of logical qubits.
 
+\section{Color Codes}
+
+\subsection{Origins and Topologies}
+\notatfm{A trivalent lattice is a lattice in which each vertex is connected to exactly three edges. A 3-colorable lattice is one where, using only 3 colors, faces can be colored so that two adjacent faces never share the same color.}
+Introduced by Bombín and Martin-Delgado \cite{bombin_martindelgado_2006}, topological color codes represent a powerful evolution in the landscape of quantum error correction. They are defined on 2D lattices that strictly satisfy two geometric properties: they must be 3-valent and 3-colorable (typically utilizing red, green, and blue).
+
+Unlike the surface code, which physically separates $X$-checks and $Z$-checks by placing them on vertices and faces respectively, color codes place both $X$ and $Z$ checks on the same faces of the lattice, while data qubits reside exclusively on the vertices. 
+
+This overlapping check structure is mathematically robust due to the inherent geometry of these lattices. In any 3-valent, 3-colorable lattice, every face is guaranteed to have an even number of vertices. Consequently, an $X$-check and a $Z$-check defined on the exact same face will overlap on an even number of data qubits, guaranteeing that they commute. Furthermore, any two adjacent faces will always share exactly one edge (which contains exactly two vertices). Thus, an $X$-check on one face will always share two data qubits with a $Z$-check on an adjacent face, ensuring global commutativity across the entire code block, as required by the Stabilizer Formalism presented in Section \ref{sec:stabilizer_formalism}.
+
+\subsection{2D Color Code Configurations}
+\notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations:
+
+\begin{itemize}
+    \item \textbf{6.6.6 Lattice (Hexagonal):} A regular lattice composed entirely of hexagons.
+    \item \textbf{4.8.8 Lattice (Square-Octagonal):} A semi-regular lattice where each vertex connects a square and two octagons.
+    \item \textbf{4.6.12 Lattice (Truncated Hexagonal):} A more complex semi-regular lattice composed of squares, hexagons, and dodecagons. While theoretically interesting, its extremely high-weight stabilizers (weight-12) make it practically nonviable for current hardware.
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    % Placeholders for the 3 lattices. You can generate these later with TikZ or python!
+
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.55]
+            \def\R{1.2}
+            \def\dX{2.07846} 
+            
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            \newcommand{\hex}[1]{
+                \filldraw[fill=#1, draw=black, thick] 
+                    (30:\R) -- (90:\R) -- (150:\R) -- 
+                    (210:\R) -- (270:\R) -- (330:\R) -- cycle;
+            }
+        
+            % Central hexagon
+            \begin{scope}
+                \hex{colR}
+                \foreach \a in {30, 90, 150, 210, 270, 330} {
+                    \filldraw[black, fill=white, thick] (\a:\R) circle (2.5pt);
+                }
+            \end{scope}
+        
+            % Surrounding hexagons
+            \foreach \cAngle/\col in {0/colG, 60/colB, 120/colG, 180/colB, 240/colG, 300/colB} {
+                \begin{scope}[shift={(\cAngle:\dX)}]
+                    \hex{\col}
+                    \foreach \a in {30, 90, 150, 210, 270, 330} {
+                        \filldraw[black, fill=white, thick] (\a:\R) circle (2.5pt);
+                    }
+                \end{scope}
+            }
+        \end{tikzpicture}
+        \caption{}
+        \label{fig:lattice_666}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            % L = distance between centers of adjacent squares/octagons
+            \def\L{1.3657} 
+            
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            % Macro for drawing a Square and its 4 data qubits
+            \newcommand{\sq}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1 - 0.4}, {#2 - 0.4}) --
+                    ({#1 + 0.4}, {#2 - 0.4}) --
+                    ({#1 + 0.4}, {#2 + 0.4}) --
+                    ({#1 - 0.4}, {#2 + 0.4}) -- cycle;
+                
+                \foreach \vx/\vy in {-0.4/-0.4, 0.4/-0.4, 0.4/0.4, -0.4/0.4} {
+                    \filldraw[black, fill=white, thick] ({#1 + \vx}, {#2 + \vy}) circle (2.5pt);
+                }
+            }
+        
+            % Macro for drawing an Octagon and its 8 data qubits
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1 - 0.4}, {#2 - 0.9657}) --
+                    ({#1 + 0.4}, {#2 - 0.9657}) --
+                    ({#1 + 0.9657}, {#2 - 0.4}) --
+                    ({#1 + 0.9657}, {#2 + 0.4}) --
+                    ({#1 + 0.4}, {#2 + 0.9657}) --
+                    ({#1 - 0.4}, {#2 + 0.9657}) --
+                    ({#1 - 0.9657}, {#2 + 0.4}) --
+                    ({#1 - 0.9657}, {#2 - 0.4}) -- cycle;
+                    
+                \foreach \vx/\vy in {
+                    -0.4/-0.9657, 0.4/-0.9657, 0.9657/-0.4, 0.9657/0.4,
+                    0.4/0.9657, -0.4/0.9657, -0.9657/0.4, -0.9657/-0.4
+                } {
+                    \filldraw[black, fill=white, thick] ({#1 + \vx}, {#2 + \vy}) circle (2.5pt);
+                }
+            }
+        
+            % Octagons (Green vertical, Blue horizontal)
+            \oct{0}{\L}{colG}
+            \oct{0}{-\L}{colG}
+            \oct{\L}{0}{colB}
+            \oct{-\L}{0}{colB}
+            
+            % Squares (Red)
+            \sq{0}{0}{colR}
+            \sq{\L}{\L}{colR}
+            \sq{-\L}{\L}{colR}
+            \sq{\L}{-\L}{colR}
+            \sq{-\L}{-\L}{colR}
+        \end{tikzpicture}
+        \caption{}
+        \label{fig:lattice_488}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.60]
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            % Central dodecagon
+            \filldraw[fill=colR, draw=black, thick] 
+                (15:1.5455) \foreach \a in {45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345} { -- (\a:1.5455) } -- cycle;
+            
+            % Surrounding squares
+            \foreach \angle in {0, 60, 120, 180, 240, 300} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[fill=colB, draw=black, thick]
+                        (1.4928, -0.4) -- (1.4928, 0.4) -- (2.2928, 0.4) -- (2.2928, -0.4) -- cycle;
+                \end{scope}
+            }
+            
+            % Surrounding hexagons
+            \foreach \angle in {30, 90, 150, 210, 270, 330} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[fill=colG, draw=black, thick]
+                        (1.4928, -0.4) -- (1.4928, 0.4) -- (2.1856, 0.8) --
+                        (2.8784, 0.4) -- (2.8784, -0.4) -- (2.1856, -0.8) -- cycle;
+                \end{scope}
+            }
+            
+            % Data qubits
+            \foreach \a in {15, 45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345} {
+                \filldraw[black, fill=white, thick] (\a:1.5455) circle (3pt);
+            }
+            
+            \foreach \angle in {0, 60, 120, 180, 240, 300} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[black, fill=white, thick] (2.2928, 0.4) circle (3pt);
+                    \filldraw[black, fill=white, thick] (2.2928, -0.4) circle (3pt);
+                \end{scope}
+            }
+            
+            \foreach \angle in {30, 90, 150, 210, 270, 330} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[black, fill=white, thick] (2.8784, 0.4) circle (3pt);
+                    \filldraw[black, fill=white, thick] (2.8784, -0.4) circle (3pt);
+                \end{scope}
+            }
+        \end{tikzpicture}
+        \caption{}
+        \label{fig:lattice_4612}
+    \end{subfigure}
+
+    \caption{The three valid 2D configurations for topological color codes: the 6.6.6 hexagonal lattice, the 4.8.8 square-octagonal lattice, and the 4.6.12 lattice. The faces are 3-colored (e.g., red, green, blue) such that no two adjacent faces share the same color. Data qubits are represented with white circles. There are two ancilla qubits in each colored face, which are not represented in the image.}
+    \label{fig:color_code_lattices}
+\end{figure}
+
+\subsection{Topological Observables: Colored Strings and Nets}
+Just as in the surface code, logical observables in color codes are formed by continuous paths of Pauli operators acting on the data qubits. However, the 3-colorability of the lattice introduces a difference, as two qubits of the string can be connected through and edge or through a face.
+
+In a color code, strings are \textit{colored}. A string can only be a border between faces of the other two colors, but it can go through faces of its color. For example, a "red" string of Pauli operators will strictly run along edges that separate green and blue faces, and will cross red faces. 
+
+This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
+
+These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits. For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes.
+-- VOY POR AQUI --
+
+
+\begin{figure}[htbp]
+    \centering
+    
+    % Subfigure 1: Torus
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.55]
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4, -4) rectangle (4, 4);
+                
+                % Lattice
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String (Horizontal) - Jumps to the center of Blue octagons
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String (Vertical) - Jumps to the center of Green octagons
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+
+                % Red String 1 (Diagonal Up-Right) - Centers of Red Squares
+                \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
+                    \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
+                    \draw[red, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                }
+
+                % Red String 2 (Diagonal Down-Right) - Centers of Red Squares
+                \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
+                    \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
+                    \draw[red!60!black, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+
+           
+        \end{tikzpicture}
+        \caption{Periodic boundaries (Torus) encoding $k=4$.}
+    \end{subfigure}
+    \hfill
+    % Subfigure 2: Triangular Patch
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.25]
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4.5, -3) -- (4.5, -3) -- (0, 4.5) -- cycle;
+                
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String (Horizontal, X_L)
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String (Vertical, Z_L)
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+
+            \draw[red, ultra thick] (-4.5, -3) -- (4.5, -3);
+            \draw[green, ultra thick] (-4.5, -3) -- (0, 4.5);
+            \draw[blue, ultra thick] (4.5, -3) -- (0, 4.5);
+
+            \node[below, red, font=\small] at (0, -3.1) {Red Boundary};
+            \node[left, green, font=\small] at (-2.4, 0.8) {Green Boundary};
+            \node[right, blue, font=\small] at (2.4, 0.8) {Blue Boundary};
+
+
+
+        \end{tikzpicture}
+        \caption{Triangular planar patch encoding $k=1$.}
+    \end{subfigure}
+
+
+\begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.6]
+        \def\L{1.3657} 
+        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+        
+        \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+        \newcommand{\oct}[3]{
+            \filldraw[fill=#3, draw=black, thick]
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+        }
+
+        \begin{scope}
+            \clip (-4, -4) rectangle (4, 4);
+            
+            % Baldosado
+            \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+            \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+            \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+            \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+            % Line 1: Azul Horizontal (y = 0.4)
+            \foreach \k in {-4, -2, 0, 2, 4} {
+                \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+            }
+
+            % Line 2: Roja Horizontal (y = L + 0.4)
+            \foreach \k in {-5, -3, -1, 1, 3} {
+                \draw[red, line width=1.5pt] ({\k*\L - 0.4}, {\L + 0.4}) -- ({\k*\L + 0.4}, {\L + 0.4});
+                \draw[red, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {\L + 0.4}) -- ({(\k+1)*\L}, \L) -- ({(\k+2)*\L - 0.4}, {\L + 0.4});
+                \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, {\L + 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\L + 0.4}) circle (2.5pt);
+            }
+
+            % Line 3: Roja Vertical (x = 0.4)
+            \foreach \k in {-4, -2, 0, 2, 4} {
+                \draw[red, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                \draw[red, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+            }
+
+            % Line 4: Azul Vertical (x = -L + 0.4)
+            \foreach \k in {-5, -3, -1, 1, 3} {
+                \draw[blue, line width=1.5pt] ({-\L + 0.4}, {\k*\L - 0.4}) -- ({-\L + 0.4}, {\k*\L + 0.4});
+                \draw[blue, densely dotted, line width=1.5pt] ({-\L + 0.4}, {\k*\L + 0.4}) -- (-\L, {(\k+1)*\L}) -- ({-\L + 0.4}, {(\k+2)*\L - 0.4});
+                \filldraw[black, fill=white, thick] ({-\L + 0.4}, {\k*\L - 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({-\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+            }
+        \end{scope}
+
+
+    \end{tikzpicture}
+    \caption{Topological schematic of logical operators on a Torus ($k=4$). This visual representation matches the abstraction from original literature, deploying two orthogonal axes for each independent string color.}
+\end{subfigure}
+
+
+
+
+
+\begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.6]
+        \def\L{1.3657} 
+        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+        
+        \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+        \newcommand{\oct}[3]{
+            \filldraw[fill=#3, draw=black, thick]
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+        }
+
+        \begin{scope}
+            \clip (-4, -4) rectangle (4, 4);
+            
+            % Rotamos todo el contenido geométrico 45 grados
+            \begin{scope}[rotate=45]
+                % Ampliamos los límites de generación para que cubran las esquinas al rotar
+                \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String (Antes Horizontal -> Ahora Diagonal)
+                \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String (Antes Vertical -> Ahora Diagonal Inversa)
+                \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+
+                % Red String 1 (Antes Diagonal -> ¡Ahora perfectamente Vertical!)
+                \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
+                    \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
+                    \draw[red, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                }
+
+                % Red String 2 (Antes Diagonal Inversa -> ¡Ahora perfectamente Horizontal!)
+                \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
+                    \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
+                    \draw[red!60!black, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+        \end{scope}
+
+
+    \end{tikzpicture}
+    \caption{Torus configuration rotated by $45^\circ$. Notice how the two Red strings now form a perfect horizontal and vertical cross, mapping intuitively to the abstract $x$ and $y$ cycles, while the Blue and Green strings traverse diagonally.}
+\end{subfigure}
+
+
+
+
+
+    
+    \caption{Topological configurations of the 4.8.8 color code. \textbf{(a)} Without boundaries (a torus), the topology allows four independent non-contractible loops, encoding $k=4$ qubits. Notice how topological strings visually "dive" into the center of identically colored faces to jump to the next valid edge. \textbf{(b)} By introducing physical boundaries, the capacity collapses to $k=1$. The straight lines represent the minimum-weight topological strings connecting opposite boundaries.}
+    \label{fig:color_code_boundaries}
+\end{figure}
+
+
+
+
+\subsection{Advantages: Transversality and 3D Topologies}
+Color codes offer massive theoretical advantages over surface codes, primarily regarding logical gate execution. As discussed earlier in this chapter, finding transversal gates is highly desirable to prevent catastrophic error propagation within a logical block. 
+
+Color codes natively possess a fully transversal Clifford gate set, meaning that critical operations like the Phase gate ($S$), Hadamard ($H$), and CNOT can be applied strictly pairwise, without the need for complex and noisy lattice surgery. 
+
+Furthermore, the color code topology can be generalized into three dimensions (3D). In 3D configurations, certain color codes allow the transversal execution of non-Clifford gates, such as the $T$-gate. This is a monumental advantage, as it theoretically bypasses the need for the incredibly expensive Magic State Distillation factories required by the surface code, completely altering the architectural scaling limits of a quantum processor.
+
+\subsection{Disadvantages and Processor Mapping}
+Despite their theoretical superiority, 2D color codes face immense physical implementation hurdles. Their circuit-level threshold is generally lower than that of the surface code \cite{landahl2011fault}, meaning they require underlying hardware with significantly lower baseline noise to begin correcting errors effectively.
+
+Moreover, because data qubits are strictly on the vertices, the stabilizers acting on the faces involve a high number of qubits. For instance, in the 4.8.8 lattice, the octagonal faces represent weight-8 parity checks. Measuring a weight-8 stabilizer dynamically without exposing the data to correlated errors is a monumental mapping challenge on modern hardware, which typically features restricted 2D grid connectivity.
+
+Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this complex topology onto a standard 2D square architecture. However, the syndrome extraction requires intricate, elongated CNOT routing to ensure that the weight-8 checks are measured safely.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/488_mapping.png}
+    \vspace{3cm} 
+    \caption{Mapping of the 4.8.8 color code onto a standard square grid processor. The measurement of the weight-8 octagonal faces requires extended CNOT sequences. (Adapted from Fowler \cite{Fowler_2011}).}
+    \label{fig:488_mapping}
+\end{figure}
+
+Similarly, the \textbf{6.6.6 hexagonal lattice} maps naturally to certain architectures (such as heavy-hexagon chips) but still requires careful compilation. Recent breakthroughs by Lacroix et al. \cite{Lacroix_2025} outline an optimized mapping for the 6.6.6 code that minimizes SWAP gate overhead and limits the duration of the syndrome extraction cycle.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{figures/666_mapping.png}
+    \vspace{3cm} 
+    \caption{Implementation mapping of the 6.6.6 hexagonal color code on a planar processor array. (Adapted from Lacroix et al. \cite{Lacroix_2025}).}
+    \label{fig:666_mapping}
+\end{figure}
 
 
 
