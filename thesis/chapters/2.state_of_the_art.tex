@@ -1,7 +1,333 @@
 \chapter{State of the art of QEC codes: Surface codes, color codes and QLDPC codes}
 \label{chap:state_of_the_art}
 
-Nothing yet
+\section{Introduction}
+In Chapter 1, we established the fundamental principles of quantum error correction (QEC), learning how we can encode logical information into multiple physical qubits to protect it from noise. However, finding the right code for a real-world quantum computer is a delicate balancing act. A good QEC code must offer high fault-tolerance thresholds, require hardware connectivity that is actually physically possible to build, and maintain a reasonable encoding rate so that we do not need a very large number of physical qubits for each logical one we encode. 
+
+This chapter explores the evolution of these codes, focusing on three major families: Surface codes, Color codes, and Quantum Low-Density Parity-Check (QLDPC) codes.
+
+\subsection{About terminology: Topological vs. LDPC Codes}
+\notatfm{In modern literature, when researchers say "QLDPC codes", they are often referring colloquially to \textit{non-topological} QLDPC codes.} Before analyzing specific codes, we must clarify the terminology we use to classify them:
+\begin{itemize}
+    \item \textbf{Topological Codes:} In a topological code, qubits are arranged on a physical lattice (usually in 2D or 3D). Crucially, the stabilizer checks only interact with strictly local, geometrically adjacent qubits. Surface codes and 2D color codes are the quintessential examples of topological codes.
+    \item \textbf{Quantum Low-Density Parity-Check (QLDPC) Codes:} A code is considered LDPC if the number of qubits involved in any single parity check (its weight), and the number of checks acting on any single physical qubit, are both strictly bounded by a constant, regardless of the size of the code. Mathematically, surface codes and color codes perfectly fit this definition.
+    \item \textbf{\textit{Non-topological} QLDPC Codes:} These codes sacrifice the strict 2D geometric locality in favor of long-range connections. Doing so allows them to break theoretical limits and achieve asymptotically "good" encoding rates (where the number of logical qubits scales linearly with the physical ones).
+\end{itemize}
+
+\section{Transversality and the Eastin-Knill Theorem}
+
+A central goal in Quantum Error Correction (QEC) is executing logical gates fault-tolerantly. A gate is called \textit{transversal} if applying the physical gate independently to each physical qubit results in the logical version of that gate being applied to the encoded state. Transversal gates are the holy grail of fault-tolerance because they never propagate errors between qubits within the same code block. Because the operations are performed strictly on isolated pairs of physical qubits (qubit-by-qubit), an error cannot spread to other physical qubits within the same logical block. Thus, a single physical error remains a single physical error, which the error-correcting code can safely detect and fix.
+
+However, the \textbf{Eastin-Knill Theorem} \cite{eastin2009restrictions} states a severe theoretical limitation: \textit{No quantum error-correcting code can have a universal set of transversal logical gates}. This means we cannot build a universal quantum computer relying solely on these simple, inherently safe transversal operations. 
+
+When a required logical gate is non-transversal, we cannot simply interact the physical qubits of one logical block with another pairwise. Instead, we must rely on complex fault-tolerant protocols that interact deeply with the internal structure and boundaries of the logical qubits. These protocols are challenging to implement and are prone to causing error propagation. Depending on the nature of the target operation, two main techniques are employed:
+
+\subsection*{Multi-Qubit Gates: Lattice Surgery}
+\notatfm{In Lattice Surgery, merging two logical qubits means activating ancillas between the borders of the two logical qubits and creating two qubit gates between these ancillas and data qubits of the two adjacent logical qubits, effectively creating a chain of stabilizers through the boundary of both qubits. The subsequent measurement of these stabilizer chain is equivalent to measuriring the joint logical operator for both qubits. The act of measuring it is what causes the projection that leaves both logical qubits in an entangled state.} To perform non-transversal operations between two distinct logical qubits (for example, a logical CNOT in codes that do not support it transversally), the standard approach is \textbf{Lattice Surgery}. Rather than applying physical gates between individual pairs of qubits across the blocks, lattice surgery temporarily "merges" two distinct logical qubits into one larger logical block by measuring multi-qubit parity checks along the spatial boundary separating them. 
+
+After the logical operation is completed, the blocks are "split" again. While this protocol is fault-tolerant in theory, it is practically demanding. It requires executing delicate measurement cycles along the boundaries of the code patches, demanding extra routing and exposing the logical qubits to complex error propagation dynamics during the merging and splitting phases.
+
+\subsection*{Single-Qubit Gates: Magic State Injection and Distillation}
+To implement non-transversal single-qubit gates---most notably the non-Clifford $T$-gate, which is essential for universal quantum computation---we use \textbf{Magic State Injection} \cite{bravyi2005universal}. Instead of applying the gate directly to our data qubit, we prepare an auxiliary logical qubit in a special state called a "magic state". We then entangle our data qubit with this magic state (often using lattice surgery) and measure the auxiliary block, effectively teleporting the non-Clifford operation onto our data.
+
+The critical issue is that preparing a magic state fault-tolerantly directly from physical qubits initially yields a "noisy" state. If we inject a noisy state into our computation, the logical algorithm will fail. Therefore, before injection, these states must be purified using a process called \textbf{Magic State Distillation}. 
+
+Distillation is a highly iterative and wasteful protocol that consumes several noisy magic states to produce a single, higher-fidelity state. For instance, a standard distillation protocol might consume 15 noisy states to yield just 1 usable state. Because useful quantum algorithms require large numbers of $T$-gates, a fault-tolerant quantum computer must continuously manufacture these states in real-time. 
+
+\notatfm{An example of the distillation overhead is visible in the 2021 article by Gidney \& Ekera\cite{Gidney_2021}. In this paper, they propose the factorization of a 2048 bit RSA interger using a quantum processor with 20 million qubits. The article estimates that 25\% of these qubtis should be dedicated to Magic State distilation.} To achieve this, quantum processors must dedicate enormous, specialized regions---often referred to as \textit{Magic State Factories}---exclusively to this task. This immense spatial and temporal overhead is precisely what motivates the search for alternative QEC families. For instance, some configurations of color codes \cite{bombin_martindelgado_2006} inherently support a much richer set of transversal gates, significantly reducing or entirely bypassing the need for extensive magic state distillation.
+
+
+
+
+
+
+
+
+
+\section{Surface Codes}
+
+\subsection{From 1D Repetition to 2D Topologies}
+In Chapter 1, we learned that a 1D linear repetition code can only protect against one specific type of error (either bit-flips or phase-flips). Historically, protecting against both required complex concatenation schemes, like Shor's 9-qubit code. The surface code solves this elegantly by expanding into a second spatial dimension. By distributing qubits across a 2D grid, the code can interleave two different types of parity checks simultaneously, monitoring both $X$ and $Z$ errors without the recursive and inefficient overhead of concatenation.
+
+\subsection{Origins: The Toric Code}
+\notatfm{As formulated by Bombín \& Martín-Delgado \cite{bombin_martindelgado_2007}, surface codes can also be represented as a lattice with colored faces. In this configuration, data qubits reside on the vertices and stabilizers are defined on the faces, with the color of each face indicating the type of stabilizer. This is known as the rotated surface code representation and is now widely adopted in the literature.}
+This 2D topological approach was famously introduced by Alexei Kitaev in 1997 via the \textbf{Toric Code} \cite{kitaev2003fault}. It is typically defined on a 2D square lattice where the data qubits reside on the edges. The parity checks (stabilizers) are defined on the vertices ($X$-checks) and the faces or plaquettes ($Z$-checks). In this geometric arrangement, every data qubit is continuously monitored by four ancilla qubits: two responsible for $X$-checks and two for $Z$-checks. Conversely, every ancilla qubit monitors exactly four adjacent data qubits.
+
+This specific topology is not arbitrary; it is meticulously designed to satisfy the fundamental requirement of stabilizer quantum codes: all parity checks must commute. Because $X$ and $Z$ Pauli operators anticommute on a single qubit, an $X$-check and a $Z$-check will only commute if they overlap on an \textit{even} number of shared data qubits. In this lattice geometry, any vertex ($X$-check) and any adjacent face ($Z$-check) will always share exactly two data qubits, ensuring that all operators commute globally and the checks can be measured simultaneously without collapsing the logical state.
+
+To avoid the mathematical complexity of handling open boundaries at the edges of the grid, Kitaev imagined a lattice with periodic boundary conditions. In this model, the top edge of the lattice connects to the bottom edge, and the left edge connects to the right edge. Topologically, joining these opposing edges forms a continuous closed surface in the shape of a torus. 
+
+\subsection{Observables, Capacity, and Code Distance}
+In topological codes, logical operations (logical gates and measurements of the qubit) are not applied to single physical qubits. Instead, logical observables are defined as continuous chains or \textit{strings} of Pauli operators applied sequentially along a path of adjacent data qubits. 
+
+A closed string of operations that forms a small, trivial loop on the surface is simply a combination of stabilizers and has no effect on the encoded logical state. However, a string that wraps entirely around the torus---a \textit{non-contractible loop}---fundamentally changes the logical state. These global, non-contractible strings represent our logical operators ($X_L$ and $Z_L$). 
+
+When visualizing this topology on a 2D grid, these two distinct non-contractible loops correspond to the orthogonal directions of the lattice (East-West and North-South). On a torus, for each of these two directions, two operators, $X_L$ and $Z_L$, can be applied, effectively codifying 2 qubits (each with 2 operators).
+
+The number of logical qubits $k$ a code can store depends strictly on the topology (the genus) of the surface. A torus has exactly two independent paths to wrap a string (one around the central hole, and one through the tube), meaning the toric code natively encodes exactly $k=2$ logical qubits, regardless of its physical size.
+
+To increase the protection of the code, we simply increase the density of the grid. By adding more physical qubits, the topological shape (the torus) remains identical, but the length of the shortest non-contractible string grows. This minimum string length is exactly the \textbf{code distance} ($d$). As the grid grows, it takes a longer chain of consecutive physical errors to accidentally form a logical operator, thereby increasing the fault-tolerance while preserving the underlying topological properties.
+
+\subsection{Planar Implementation and Rotated Surface Codes}
+While the toric code is mathematically beautiful, manufacturing a quantum processor shaped like a 3D torus is physically impractical, particularly for 2D planar architectures like superconducting circuits. 
+
+To implement this on a real chip, we must "cut" the torus and lay it flat. This physical cut transforms the Toric Code into the planar \textbf{Surface Code}. However, cutting the torus exposes physical borders. To preserve the ability to correct both $X$ and $Z$ errors, the planar patch must have two types of alternating boundaries: "rough" boundaries (where $Z$-strings terminate) and "smooth" boundaries (where $X$-strings terminate). Because the closed loops of the torus are now severed into linear strings that span from one boundary to the opposite, the storage capacity drops: a standard planar patch encodes only $k=1$ logical qubit.
+
+To further optimize the mapping onto real hardware, the planar surface code is almost universally implemented in its \textbf{rotated} version. While this rotated representation perfectly preserves the underlying topological properties, it drastically improves spatial efficiency. Because the code distance $d$ is defined purely by the minimum length of the string connecting opposite boundaries, rotating the orientation of these boundaries by 45 degrees eliminates the wasted corner qubits present in the standard planar cut. Consequently, the rotated surface code requires roughly half the physical qubits to achieve the exact same distance $d$.
+
+\begin{figure}[htbp]
+    \centering
+    % Subfigure A: Kitaev's original formulation
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        
+        \begin{tikzpicture}[scale=1.2]
+            % Draw the main grid lines (the lattice)
+            \draw[gray!60, thick] (0,0) grid (3,3);
+        
+            % Highlight Z-stabilizer (Plaquette)
+            % Picked the bottom-left plaquette 
+            \filldraw[red!20, draw=red, ultra thick] (0,0) rectangle (1,1);
+            
+            % Highlight X-stabilizer (Vertex)
+            % Picked an internal vertex at (1,2)
+            \draw[blue, ultra thick] (0.5,2) -- (1.5,2);
+            \draw[blue, ultra thick] (1,1.5) -- (1,2.5);
+        
+            % Draw ALL Z-ancillas (Faces) as solid black dots
+            \foreach \x in {0.5, 1.5, 2.5} {
+                \foreach \y in {0.5, 1.5, 2.5} {
+                    \filldraw[black] (\x,\y) circle (2pt);
+                }
+            }
+            
+            % Draw ALL X-ancillas (Vertices) as solid black dots
+            \foreach \x in {0, 1, 2, 3} {
+                \foreach \y in {0, 1, 2, 3} {
+                    \filldraw[black] (\x,\y) circle (2pt);
+                }
+            }
+        
+            % Overwrite the active ancillas with their respective colors (no text)
+            \filldraw[blue] (1,2) circle (3pt);
+            \filldraw[red] (0.5, 0.5) circle (3pt);
+        
+            % Draw data qubits on all horizontal edges (white filled circles)
+            \foreach \x in {0.5, 1.5, 2.5} {
+                \foreach \y in {0, 1, 2, 3} {
+                    \filldraw[black, fill=white, thick] (\x,\y) circle (2.5pt);
+                }
+            }
+            % Draw data qubits on all vertical edges (white filled circles)
+            \foreach \x in {0, 1, 2, 3} {
+                \foreach \y in {0.5, 1.5, 2.5} {
+                    \filldraw[black, fill=white, thick] (\x,\y) circle (2.5pt);
+                }
+            }
+        
+            % Fill the specific data qubits involved in the highlighted X check to make them pop
+            \filldraw[blue] (0.5,2) circle (3pt);
+            \filldraw[blue] (1.5,2) circle (3pt);
+            \filldraw[blue] (1,1.5) circle (3pt);
+            \filldraw[blue] (1,2.5) circle (3pt);
+        
+            % Fill the specific data qubits involved in the highlighted Z check to make them pop
+            \filldraw[red] (0.5,0) circle (3pt);
+            \filldraw[red] (0.5,1) circle (3pt);
+            \filldraw[red] (0,0.5) circle (3pt);
+            \filldraw[red] (1,0.5) circle (3pt);
+        
+            % Draw Logical Operators (Strings) as OVERLAYS (drawn last)
+            % Z_L is a path on the primal lattice (horizontal, lowered to y=2)
+            \draw[red, line width=8pt, opacity=0.4] (0, 2) -- (3, 2) node[right, opacity=1, font=\bfseries] {$Z_L$};
+            % X_L is a path on the dual lattice (vertical)
+            \draw[blue, line width=8pt, opacity=0.4] (2.5, -0.2) -- (2.5, 3.2) node[above, opacity=1, font=\bfseries] {$X_L$};
+        \end{tikzpicture}
+        
+
+
+        \vspace{3cm} % Placeholder vertical space
+    \end{subfigure}
+    \hfill
+    % Subfigure B: Rotated surface code
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+
+\begin{tikzpicture}[scale=1.2]
+    % Z-stabilizers (Red full faces)
+    \foreach \x/\y in {0/0, 2/0, 1/1, 0/2, 2/2} {
+        \filldraw[red!20, draw=red, thick] (\x,\y) rectangle (\x+1, \y+1);
+    }
+    
+    % Z-stabilizers (Red half faces - Rough boundaries left/right)
+    \filldraw[red!20, draw=red, thick] (0,1) -- (0,2) -- (-0.5, 1.5) -- cycle; 
+    \filldraw[red!20, draw=red, thick] (3,1) -- (3,2) -- (3.5, 1.5) -- cycle; 
+
+    % X-stabilizers (Blue full faces)
+    \foreach \x/\y in {1/0, 0/1, 2/1, 1/2} {
+        \filldraw[blue!20, draw=blue, thick] (\x,\y) rectangle (\x+1, \y+1);
+    }
+    
+    % X-stabilizers (Blue half faces - Smooth boundaries top/bottom)
+    \foreach \x in {0, 2} {
+        \filldraw[blue!20, draw=blue, thick] (\x,0) -- (\x+1,0) -- (\x+0.5, -0.5) -- cycle;
+        \filldraw[blue!20, draw=blue, thick] (\x,3) -- (\x+1,3) -- (\x+0.5, 3.5) -- cycle;
+    }
+
+    % Ancilla Qubits (Solid black dots)
+    % Z full ancillas
+    \foreach \x/\y in {0.5/0.5, 2.5/0.5, 1.5/1.5, 0.5/2.5, 2.5/2.5} {
+        \filldraw[black] (\x,\y) circle (1.5pt);
+    }
+    % Z half ancillas
+    \filldraw[black] (-0.16, 1.5) circle (1.5pt);
+    \filldraw[black] (3.16, 1.5) circle (1.5pt);
+
+    % X full ancillas
+    \foreach \x/\y in {1.5/0.5, 0.5/1.5, 2.5/1.5, 1.5/2.5} {
+        \filldraw[black] (\x,\y) circle (1.5pt);
+    }
+    % X half ancillas
+    \foreach \x in {0.5, 2.5} {
+        \filldraw[black] (\x, -0.16) circle (1.5pt);
+        \filldraw[black] (\x, 3.16) circle (1.5pt);
+    }
+
+    % Data Qubits (White filled circles on vertices)
+    \foreach \x in {0, 1, 2, 3} {
+        \foreach \y in {0, 1, 2, 3} {
+            \filldraw[black, fill=white, thick] (\x,\y) circle (2.5pt);
+        }
+    }
+
+    % Logical Operators (Strings) OVERLAYS
+    % Z_L: horizontal red string connecting Left to Right through y=1
+    \draw[red, line width=8pt, opacity=0.4] (-0.3, 1) -- (3.3, 1) node[right, opacity=1, font=\bfseries] {$Z_L$};
+    
+    % X_L: vertical blue string connecting Top to Bottom through x=1
+    \draw[blue, line width=8pt, opacity=0.4] (1, -0.3) -- (1, 3.3) node[above, opacity=1, font=\bfseries] {$X_L$};
+
+\end{tikzpicture}
+
+        
+        
+        \vspace{3cm} % Placeholder vertical space
+    \end{subfigure}
+    \hfill
+    % Subfigure C: Torus with observables
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        
+        \vspace{3cm} % Placeholder vertical space
+    \end{subfigure}
+    
+    \caption{Evolution and representations of the surface code for a $d=4$ code. White circles represent data qubits and black circles represent ancilla qubits. \textbf{(a)} The original planar formulation by Kitaev, with data qubits on the edges and checks on vertices and faces. The red square represents a $Z$-stabilizer and the blue cross represents a $X$-stabilizer. The blue and red lines represent the minimum strings for the respective logical operators. A total of 49 physical qubits are needed. \textbf{(b)} The equivalent rotated surface code, placing data on vertices and alternating checks on colored faces to significantly reduce physical overhead. Red faces represent $Z$-stabilizers and blue faces represent $X$-stabilizers. The blue and red lines represent the minimum string for the respective operators. In this case, only 31 physical qubits are required. \textbf{(c)} The toric code representation, illustrating how logical observables correspond to non-contractible continuous strings wrapping around the two fundamental cycles of the torus.}
+    \label{fig:surface_code_evolution}
+\end{figure}
+
+\subsection{Advantages and Disadvantages}
+The surface code's primary advantage is its incredibly high error threshold (around $\sim 1\%$ for circuit-level noise) and its reliance on strictly nearest-neighbor 2D grid connectivity. This spatial locality is perfectly aligned with the 2D fabrication constraints of modern planar architectures, making it the industry standard baseline.
+
+However, its main disadvantage is its terrible encoding rate. A standard planar surface code patch encodes exactly one logical qubit ($k=1$), regardless of how much we scale its distance $d$. To achieve higher distances and exponentially better protection, the physical footprint grows quadratically ($n \approx d^2$). This massive spatial overhead limits the scalability of surface codes for algorithms requiring thousands of logical qubits.
+
+
+
+
+
+
+\section{Surface Codes}
+\subsection{Origins and Mechanism}
+
+Introduced by Alexei Kitaev via the Toric Code \cite{kitaev2003fault}, the surface code is the most heavily studied topological code today. It is typically defined on a 2D square lattice where the data qubits reside on the edges. The parity checks (stabilizers) are defined on the vertices ($X$-checks) and the faces or plaquettes ($Z$-checks). 
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}[scale=1.5]
+        % Nodes
+        \filldraw[black] (0,1) circle (2pt) node[above left] {Data Qubit};
+        \filldraw[black] (1,0) circle (2pt);
+        \filldraw[black] (2,1) circle (2pt);
+        \filldraw[black] (1,2) circle (2pt);
+        
+        % X-stabilizer (Vertex)
+        \draw[thick, blue] (1,1) -- (0,1);
+        \draw[thick, blue] (1,1) -- (1,0);
+        \draw[thick, blue] (1,1) -- (2,1);
+        \draw[thick, blue] (1,1) -- (1,2);
+        \filldraw[blue] (1,1) circle (3pt) node[below right, text=black] {$X$-check (Vertex)};
+        
+        % Z-stabilizer (Plaquette)
+        \filldraw[red, opacity=0.2] (2,1) -- (3,0) -- (4,1) -- (3,2) -- cycle;
+        \draw[thick, red] (2,1) -- (3,0) -- (4,1) -- (3,2) -- cycle;
+        \filldraw[red] (3,1) circle (3pt) node[below, text=black] {$Z$-check (Face)};
+        
+        % Data qubits for Z
+        \filldraw[black] (3,0) circle (2pt);
+        \filldraw[black] (4,1) circle (2pt);
+        \filldraw[black] (3,2) circle (2pt);
+    \end{tikzpicture}
+    \caption{Basic building block of the surface code, showing a vertex ($X$-type) and a plaquette ($Z$-type) stabilizer acting on four adjacent data qubits.}
+    \label{fig:surface_code_basic}
+\end{figure}
+
+\subsection{Advantages and Disadvantages}
+The surface code's primary advantage is its incredibly high error threshold (around $\sim 1\%$ for circuit-level noise) and its simple nearest-neighbor 2D grid connectivity. This makes it the leading candidate for implementation on modern superconducting processors.
+
+However, its main disadvantage is its terrible encoding rate. A standard surface code patch encodes exactly one logical qubit ($k=1$), regardless of how much we scale its distance $d$. To achieve higher distances and better protection, the physical footprint grows quadratically ($n \approx d^2$), leading to an enormous physical qubit overhead.
+
+\section{Color Codes}
+\subsection{Origins and Topologies}
+Introduced by Bombín and Martin-Delgado \cite{bombin_martindelgado_2006}, topological color codes are defined on 3-valent, 3-colorable lattices. Unlike the surface code, which separates $X$ and $Z$ checks into vertices and faces, color codes place both $X$ and $Z$ checks on the \textit{same} faces of the lattice.
+
+Color codes are usually classified by the geometric shapes of their faces. The two most prominent 2D topologies are the \textbf{6.6.6} (hexagonal) lattice and the \textbf{4.8.8} (square-octagonal) lattice.
+
+\subsection{Advantages and Disadvantages}
+Color codes offer massive theoretical advantages over surface codes. Firstly, they possess a transversal Clifford gate set, including the transversal Phase gate ($S$) and the CNOT gate. Some higher-dimensional configurations even allow transversal non-Clifford gates (like the $T$-gate), completely bypassing the need for the expensive magic state distillation. Secondly, they have a higher encoding rate, allowing us to pack more logical qubits into a smaller physical footprint.
+
+On the downside, their circuit-level threshold is generally lower than that of the surface code \cite{landahl2011fault}. Moreover, because they require measuring checks involving more qubits (like weight-6 or weight-8 faces), extracting syndromes dynamically without propagating correlated errors is an immense mapping challenge.
+
+\subsection{Processor Mapping of 4.8.8 and 6.6.6 Lattices}
+Implementing color codes on real hardware with restricted connectivity (like square grids) requires highly optimized mappings.
+
+For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this complex topology onto a standard 2D square architecture. However, the syndrome extraction requires intricate routing to ensure that the weight-8 octagonal checks can be measured safely.
+
+\begin{figure}[htbp]
+    \centering
+    % Placeholder: insert the screenshot of FIG 4 from Fowler_2011 here
+    % \includegraphics[width=0.7\textwidth]{figures/488_mapping.png}
+    \vspace{3cm} % Remove this vspace when you add the image
+    \caption{Mapping of the 4.8.8 color code onto a standard square grid processor. The measurement of the weight-8 octagonal faces requires extended CNOT sequences. (Adapted from Fowler \cite{Fowler_2011}).}
+    \label{fig:488_mapping}
+\end{figure}
+
+Similarly, the \textbf{6.6.6 hexagonal lattice} maps naturally to certain architectures but requires careful compilation. Recent breakthroughs by Lacroix et al. \cite{Lacroix_2025} outline an optimized mapping for the 6.6.6 code that minimizes SWAP gate overhead and limits the duration of the syndrome extraction cycle.
+
+\begin{figure}[htbp]
+    \centering
+    % Placeholder: insert the screenshot of FIG 1a from Lacroix_2025 here
+    % \includegraphics[width=0.7\textwidth]{figures/666_mapping.png}
+    \vspace{3cm} % Remove this vspace when you add the image
+    \caption{Implementation mapping of the 6.6.6 hexagonal color code on a planar processor array. (Adapted from Lacroix et al. \cite{Lacroix_2025}).}
+    \label{fig:666_mapping}
+\end{figure}
+
+\section{QLDPC Codes (Non-Topological)}
+\subsection{The Paradigm Shift}
+While 2D topological codes are very hardware-friendly, their reliance on local 2D planes strictly limits their scalability. To build future quantum supercomputers with millions of qubits, the overhead of surface and color codes might be too steep. This has sparked a revolution in general, non-topological QLDPC codes. By sacrificing strictly local 2D connectivity and embracing long-range physical connections, these QLDPC codes can maintain a constant encoding rate ($k/n \to c > 0$) as they scale.
+
+\subsection{Bivariate Bicycle Codes (BBC)}
+A prominent recent breakthrough in this domain is the Bivariate Bicycle Code family \cite{bravyi2024high}. Constructed using polynomials over finite fields, BBCs prove that we can encode dozens of logical qubits with distances comparable to massive surface codes, using only a fraction of the physical qubits.
+
+Their physical implementation, however, is one of the greatest engineering challenges of our time. They require sophisticated long-range couplers (like optical interconnects or neutral atoms moving in optical tweezers), positioning them as the ultimate frontier for next-generation fault-tolerant architectures.
+
+
+
+
+
+
+
+
+
 
 
 
