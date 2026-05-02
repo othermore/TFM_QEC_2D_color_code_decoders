@@ -80,6 +80,12 @@ jobs:
           commit_message: "chore: update compiled PDFs"
           file_pattern: "thesis_pdf/*.pdf"
 
+      - name: Force update latest tag
+        if: steps.check.outputs.run_build == 'true'
+        run: |
+          git tag -f latest
+          git push -f origin latest
+
       - name: Create or Update Release
         if: steps.check.outputs.run_build == 'true'
         uses: softprops/action-gh-release@v2
