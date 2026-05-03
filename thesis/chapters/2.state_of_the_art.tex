@@ -346,7 +346,7 @@ This overlapping check structure is mathematically robust due to the inherent ge
     \hfill
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.60]
+        \begin{tikzpicture}[scale=0.55]
             \colorlet{colR}{red!20}
             \colorlet{colG}{green!20}
             \colorlet{colB}{blue!20}
@@ -407,7 +407,269 @@ In a color code, strings are \textit{colored}. A string can only be a border bet
 This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
 
 These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits. For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes.
--- VOY POR AQUI --
+
+
+\begin{notebox}{Pendiente}
+Revisar estas gráficas, pensar como tienen que ser y arreglarlas
+\end{notebox}
+
+
+\begin{figure}[htbp]
+    \centering
+    
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.55]
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4, -4) rectangle (4, 4);
+                
+                % Lattice
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String (Horizontal)
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String (Vertical)
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+
+                % Red String 1 (Diagonal Up-Right)
+                \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
+                    \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
+                    \draw[red, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                }
+
+                % Red String 2 (Diagonal Down-Right)
+                \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
+                    \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
+                    \draw[red!60!black, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+
+           
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.55]
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4.5, -3) -- (4.5, -3) -- (0, 4.5) -- cycle;
+                
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String
+                \foreach \k in {-4, -2, 0, 2, 4} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+
+            \draw[red, ultra thick] (-4.5, -3) -- (4.5, -3);
+            \draw[green, ultra thick] (-4.5, -3) -- (0, 4.5);
+            \draw[blue, ultra thick] (4.5, -3) -- (0, 4.5);
+
+            \node[below, red, font=\scriptsize] at (0, -3.1) {Red Boundary};
+            \node[left, green!60!black, font=\scriptsize, align=right] at (-2.4, 0.8) {Green\\Boundary};
+            \node[right, blue, font=\scriptsize, align=left] at (2.4, 0.8) {Blue\\Boundary};
+
+
+
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+
+
+\begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.6]
+        \def\L{1.3657} 
+        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+        
+        \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+        \newcommand{\oct}[3]{
+            \filldraw[fill=#3, draw=black, thick]
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+        }
+
+        \begin{scope}
+            \clip (-4, -4) rectangle (4, 4);
+            
+            % Lattice
+            \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
+            \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
+            \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
+            \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
+
+            % Line Blue Horizontal
+            \foreach \k in {-4, -2, 0, 2, 4} {
+                \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+            }
+
+            % Line Red Horizontal
+            \foreach \k in {-5, -3, -1, 1, 3} {
+                \draw[red, line width=1.5pt] ({\k*\L - 0.4}, {\L + 0.4}) -- ({\k*\L + 0.4}, {\L + 0.4});
+                \draw[red, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {\L + 0.4}) -- ({(\k+1)*\L}, \L) -- ({(\k+2)*\L - 0.4}, {\L + 0.4});
+                \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, {\L + 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\L + 0.4}) circle (2.5pt);
+            }
+
+            % Line Red Vertical
+            \foreach \k in {-4, -2, 0, 2, 4} {
+                \draw[red, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                \draw[red, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+            }
+
+            % Line Blue Vertical
+            \foreach \k in {-5, -3, -1, 1, 3} {
+                \draw[blue, line width=1.5pt] ({-\L + 0.4}, {\k*\L - 0.4}) -- ({-\L + 0.4}, {\k*\L + 0.4});
+                \draw[blue, densely dotted, line width=1.5pt] ({-\L + 0.4}, {\k*\L + 0.4}) -- (-\L, {(\k+1)*\L}) -- ({-\L + 0.4}, {(\k+2)*\L - 0.4});
+                \filldraw[black, fill=white, thick] ({-\L + 0.4}, {\k*\L - 0.4}) circle (2.5pt);
+                \filldraw[black, fill=white, thick] ({-\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+            }
+        \end{scope}
+
+
+    \end{tikzpicture}
+    \caption{}
+\end{subfigure}
+
+
+
+
+
+\begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.6]
+        \def\L{1.3657} 
+        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+        
+        \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
+        \newcommand{\oct}[3]{
+            \filldraw[fill=#3, draw=black, thick]
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+        }
+
+        \begin{scope}
+            \clip (-4, -4) rectangle (4, 4);
+            
+            \begin{scope}[rotate=45]
+                \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \oct{\i*\L}{\j*\L}{colB};
+                \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \oct{\i*\L}{\j*\L}{colG};
+                \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \sq{\i*\L}{\j*\L}{colR};
+                \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \sq{\i*\L}{\j*\L}{colR};
+
+                % Blue String
+                \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
+                    \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
+                    \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
+                    \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                }
+
+                % Green String
+                \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
+                    \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
+                    \draw[green!60!black, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
+                }
+
+                % Red String 1
+                \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
+                    \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
+                    \draw[red, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                }
+
+                % Red String 2
+                \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
+                    \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
+                    \draw[red!60!black, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
+                    \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) circle (2.5pt);
+                }
+            \end{scope}
+        \end{scope}
+
+
+    \end{tikzpicture}
+    \caption{}
+\end{subfigure}
+
+
+
+
+
+    
+    \caption{}
+    \label{fig:color_code_boundaries}
+\end{figure}
+
+
+
 
 
 \begin{figure}[htbp]
@@ -437,7 +699,7 @@ These strings and nets define the logical operators. When two non-contractible n
                 \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
                 \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
 
-                % Blue String (Horizontal) - Jumps to the center of Blue octagons
+                % Blue String (Horizontal)
                 \foreach \k in {-4, -2, 0, 2, 4} {
                     \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
                     \draw[blue, dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
@@ -445,7 +707,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
                 }
 
-                % Green String (Vertical) - Jumps to the center of Green octagons
+                % Green String (Vertical)
                 \foreach \k in {-4, -2, 0, 2, 4} {
                     \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
                     \draw[green!60!black, dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
@@ -453,7 +715,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
                 }
 
-                % Red String 1 (Diagonal Up-Right) - Centers of Red Squares
+                % Red String 1 (Diagonal Up-Right)
                 \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
                     \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
                     \draw[red, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
@@ -461,7 +723,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
                 }
 
-                % Red String 2 (Diagonal Down-Right) - Centers of Red Squares
+                % Red String 2 (Diagonal Down-Right)
                 \foreach \k in {-4, -3, -2, -1, 0, 1, 2, 3} {
                     \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
                     \draw[red!60!black, dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
@@ -470,15 +732,17 @@ These strings and nets define the logical operators. When two non-contractible n
                 }
             \end{scope}
 
-           
+            \node[above, font=\bfseries, blue, fill=white, inner sep=1.5pt] at (2.4, 0.5) {$X_{L1}, Z_{L2}$};
+            \node[below right, font=\bfseries, green!60!black, fill=white, inner sep=1.5pt] at (0.5, 2.8) {$Z_{L1}, X_{L2}$};
+            \node[above , font=\bfseries, red, fill=white, inner sep=1.5pt] at (2.5, 2.9) {$X_{L3}, Z_{L4}$};
+            \node[below left, font=\bfseries, red!60!black, fill=white, inner sep=1.5pt] at (2.5, -2.5) {$Z_{L3}, X_{L4}$};
         \end{tikzpicture}
-        \caption{Periodic boundaries (Torus) encoding $k=4$.}
+        \caption{}
     \end{subfigure}
     \hfill
-    % Subfigure 2: Triangular Patch
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.25]
+        \begin{tikzpicture}[scale=0.55]
             \def\L{1.3657} 
             \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
             
@@ -519,18 +783,19 @@ These strings and nets define the logical operators. When two non-contractible n
             \draw[green, ultra thick] (-4.5, -3) -- (0, 4.5);
             \draw[blue, ultra thick] (4.5, -3) -- (0, 4.5);
 
-            \node[below, red, font=\small] at (0, -3.1) {Red Boundary};
-            \node[left, green, font=\small] at (-2.4, 0.8) {Green Boundary};
-            \node[right, blue, font=\small] at (2.4, 0.8) {Blue Boundary};
+            \node[below, red, font=\scriptsize] at (0, -3.1) {Red Boundary};
+            \node[left, green!60!black, font=\scriptsize, align=right] at (-2.4, 0.8) {Green\\Boundary};
+            \node[right, blue, font=\scriptsize, align=left] at (2.4, 0.8) {Blue\\Boundary};
 
-
+            \node[above, font=\bfseries, green!60!black, fill=white, inner sep=1.5pt] at (0.4, 3.8) {$Z_L$};
+            \node[above, font=\bfseries, blue, fill=white, inner sep=1.5pt] at (3.5, 0.5) {$X_L$};
 
         \end{tikzpicture}
-        \caption{Triangular planar patch encoding $k=1$.}
+        \caption{}
     \end{subfigure}
 
 
-\begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \begin{tikzpicture}[scale=0.6]
         \def\L{1.3657} 
@@ -547,13 +812,13 @@ These strings and nets define the logical operators. When two non-contractible n
         \begin{scope}
             \clip (-4, -4) rectangle (4, 4);
             
-            % Baldosado
+            % Lattice
             \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-4, -2, 0, 2, 4} \oct{\i*\L}{\j*\L}{colB};
             \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-5, -3, -1, 1, 3, 5} \oct{\i*\L}{\j*\L}{colG};
             \foreach \i in {-4, -2, 0, 2, 4} \foreach \j in {-4, -2, 0, 2, 4} \sq{\i*\L}{\j*\L}{colR};
             \foreach \i in {-5, -3, -1, 1, 3, 5} \foreach \j in {-5, -3, -1, 1, 3, 5} \sq{\i*\L}{\j*\L}{colR};
 
-            % Line 1: Azul Horizontal (y = 0.4)
+            % Line Blue Horizontal
             \foreach \k in {-4, -2, 0, 2, 4} {
                 \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
                 \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
@@ -561,7 +826,7 @@ These strings and nets define the logical operators. When two non-contractible n
                 \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
             }
 
-            % Line 2: Roja Horizontal (y = L + 0.4)
+            % Line Red Horizontal
             \foreach \k in {-5, -3, -1, 1, 3} {
                 \draw[red, line width=1.5pt] ({\k*\L - 0.4}, {\L + 0.4}) -- ({\k*\L + 0.4}, {\L + 0.4});
                 \draw[red, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {\L + 0.4}) -- ({(\k+1)*\L}, \L) -- ({(\k+2)*\L - 0.4}, {\L + 0.4});
@@ -569,7 +834,7 @@ These strings and nets define the logical operators. When two non-contractible n
                 \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\L + 0.4}) circle (2.5pt);
             }
 
-            % Line 3: Roja Vertical (x = 0.4)
+            % Line Red Vertical
             \foreach \k in {-4, -2, 0, 2, 4} {
                 \draw[red, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
                 \draw[red, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
@@ -577,7 +842,7 @@ These strings and nets define the logical operators. When two non-contractible n
                 \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
             }
 
-            % Line 4: Azul Vertical (x = -L + 0.4)
+            % Line Azul Vertical 
             \foreach \k in {-5, -3, -1, 1, 3} {
                 \draw[blue, line width=1.5pt] ({-\L + 0.4}, {\k*\L - 0.4}) -- ({-\L + 0.4}, {\k*\L + 0.4});
                 \draw[blue, densely dotted, line width=1.5pt] ({-\L + 0.4}, {\k*\L + 0.4}) -- (-\L, {(\k+1)*\L}) -- ({-\L + 0.4}, {(\k+2)*\L - 0.4});
@@ -586,9 +851,12 @@ These strings and nets define the logical operators. When two non-contractible n
             }
         \end{scope}
 
-
+        \node[above, blue, fill=white, inner sep=1pt, rounded corners=2pt] at (2.4, 0.5) {$\mathbf{X_{L1}, Z_{L2}}$};
+        \node[above, red, fill=white, inner sep=1pt, rounded corners=2pt] at (2.4, 1.86) {$\mathbf{X_{L3}, Z_{L4}}$};
+        \node[right, red, fill=white, inner sep=1pt, rounded corners=2pt] at (0.5, 2.8) {$\mathbf{Z_{L3}, X_{L4}}$};
+        \node[left, blue, fill=white, inner sep=1pt, rounded corners=2pt] at (-1.1, 2.8) {$\mathbf{Z_{L1}, X_{L2}}$};
     \end{tikzpicture}
-    \caption{Topological schematic of logical operators on a Torus ($k=4$). This visual representation matches the abstraction from original literature, deploying two orthogonal axes for each independent string color.}
+    \caption{}
 \end{subfigure}
 
 
@@ -612,15 +880,13 @@ These strings and nets define the logical operators. When two non-contractible n
         \begin{scope}
             \clip (-4, -4) rectangle (4, 4);
             
-            % Rotamos todo el contenido geométrico 45 grados
             \begin{scope}[rotate=45]
-                % Ampliamos los límites de generación para que cubran las esquinas al rotar
                 \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \oct{\i*\L}{\j*\L}{colB};
                 \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \oct{\i*\L}{\j*\L}{colG};
                 \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \sq{\i*\L}{\j*\L}{colR};
                 \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \sq{\i*\L}{\j*\L}{colR};
 
-                % Blue String (Antes Horizontal -> Ahora Diagonal)
+                % Blue String
                 \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
                     \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
                     \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
@@ -628,7 +894,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
                 }
 
-                % Green String (Antes Vertical -> Ahora Diagonal Inversa)
+                % Green String
                 \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
                     \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
                     \draw[green!60!black, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
@@ -636,7 +902,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
                 }
 
-                % Red String 1 (Antes Diagonal -> ¡Ahora perfectamente Vertical!)
+                % Red String 1
                 \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
                     \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
                     \draw[red, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
@@ -644,7 +910,7 @@ These strings and nets define the logical operators. When two non-contractible n
                     \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
                 }
 
-                % Red String 2 (Antes Diagonal Inversa -> ¡Ahora perfectamente Horizontal!)
+                % Red String 2
                 \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
                     \draw[red!60!black, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
                     \draw[red!60!black, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
@@ -654,71 +920,264 @@ These strings and nets define the logical operators. When two non-contractible n
             \end{scope}
         \end{scope}
 
-
+        \node[right, red, fill=white, inner sep=1pt, rounded corners=2pt] at (0.5, 3.5) {$\mathbf{X_{L3}, Z_{L4}}$};
+        \node[above, red!60!black, fill=white, inner sep=1pt, rounded corners=2pt] at (2.8, -0.4) {$\mathbf{Z_{L3}, X_{L4}}$};
+        \node[right, blue, fill=white, inner sep=1pt, rounded corners=2pt] at (2.5, 2.5) {$\mathbf{X_{L1}, Z_{L2}}$};
+        \node[left, green!60!black, fill=white, inner sep=1pt, rounded corners=2pt] at (-2.5, 2.5) {$\mathbf{Z_{L1}, X_{L2}}$};
     \end{tikzpicture}
-    \caption{Torus configuration rotated by $45^\circ$. Notice how the two Red strings now form a perfect horizontal and vertical cross, mapping intuitively to the abstract $x$ and $y$ cycles, while the Blue and Green strings traverse diagonally.}
+    \caption{}
 \end{subfigure}
-
-
-
-
-
-    
-    \caption{Topological configurations of the 4.8.8 color code. \textbf{(a)} Without boundaries (a torus), the topology allows four independent non-contractible loops, encoding $k=4$ qubits. Notice how topological strings visually "dive" into the center of identically colored faces to jump to the next valid edge. \textbf{(b)} By introducing physical boundaries, the capacity collapses to $k=1$. The straight lines represent the minimum-weight topological strings connecting opposite boundaries.}
-    \label{fig:color_code_boundaries}
 \end{figure}
-
-
 
 
 \subsection{Advantages: Transversality and 3D Topologies}
-Color codes offer massive theoretical advantages over surface codes, primarily regarding logical gate execution. As discussed earlier in this chapter, finding transversal gates is highly desirable to prevent catastrophic error propagation within a logical block. 
+Color codes offer massive theoretical advantages over surface codes, primarily regarding logical gate execution. As discussed earlier in this chapter, finding transversal gates is highly desirable to prevent error propagation. 
 
 Color codes natively possess a fully transversal Clifford gate set, meaning that critical operations like the Phase gate ($S$), Hadamard ($H$), and CNOT can be applied strictly pairwise, without the need for complex and noisy lattice surgery. 
 
-Furthermore, the color code topology can be generalized into three dimensions (3D). In 3D configurations, certain color codes allow the transversal execution of non-Clifford gates, such as the $T$-gate. This is a monumental advantage, as it theoretically bypasses the need for the incredibly expensive Magic State Distillation factories required by the surface code, completely altering the architectural scaling limits of a quantum processor.
+\notatfm{Because of the Eastin-Knill Theorem, no QEC code can provide a universal set of transversal gates. Consequently, 3D color codes must sacrifice the transversal $H$ gate (which are easier to distill) in order to support a transversal $T$ gate. To circumvent this and achieve full universality without distillation, techniques like \textit{dimensional jumping} are employed. This allows the code to transition between 2D and 3D topologies, applying transversal $H$ gates while in the 2D configuration.} Furthermore, the color code topology can be generalized into three dimensions (3D). In 3D configurations, certain color codes allow the transversal execution of non-Clifford gates, such as the $T$-gate. This is a very significant advantage, as it bypasses the need for Magic State Distillation factories required by the surface code.
 
 \subsection{Disadvantages and Processor Mapping}
-Despite their theoretical superiority, 2D color codes face immense physical implementation hurdles. Their circuit-level threshold is generally lower than that of the surface code \cite{landahl2011fault}, meaning they require underlying hardware with significantly lower baseline noise to begin correcting errors effectively.
+Despite their theoretical superiority, 2D color codes face significant physical implementation hurdles. Their circuit-level threshold is generally lower than that of the surface code \cite{landahl2011fault}, meaning they require underlying hardware with significantly lower baseline noise to begin correcting errors effectively.
 
-Moreover, because data qubits are strictly on the vertices, the stabilizers acting on the faces involve a high number of qubits. For instance, in the 4.8.8 lattice, the octagonal faces represent weight-8 parity checks. Measuring a weight-8 stabilizer dynamically without exposing the data to correlated errors is a monumental mapping challenge on modern hardware, which typically features restricted 2D grid connectivity.
+Moreover, the stabilizers acting on the faces involve a high number of qubits. For instance, in the 4.8.8 lattice, the octagonal faces represent weight-8 parity checks. Measuring a weight-8 stabilizer dynamically without exposing the data to correlated errors is a mapping challenge on modern hardware, which typically features restricted 2D grid connectivity.
 
-Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this complex topology onto a standard 2D square architecture. However, the syndrome extraction requires intricate, elongated CNOT routing to ensure that the weight-8 checks are measured safely.
+Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this topology onto a standard 2D square architecture, although it requires replacing the ancilla qubit in octogonal faces with 5 ancilla qubits, 4 of them connected to two data qubits each, and the fifth one connected to the 4 ancilla qubits.
 
-\begin{figure}[htbp]
-    \centering
-    % \includegraphics[width=0.7\textwidth]{figures/488_mapping.png}
-    \vspace{3cm} 
-    \caption{Mapping of the 4.8.8 color code onto a standard square grid processor. The measurement of the weight-8 octagonal faces requires extended CNOT sequences. (Adapted from Fowler \cite{Fowler_2011}).}
-    \label{fig:488_mapping}
-\end{figure}
-
-Similarly, the \textbf{6.6.6 hexagonal lattice} maps naturally to certain architectures (such as heavy-hexagon chips) but still requires careful compilation. Recent breakthroughs by Lacroix et al. \cite{Lacroix_2025} outline an optimized mapping for the 6.6.6 code that minimizes SWAP gate overhead and limits the duration of the syndrome extraction cycle.
+\begin{notebox}{Pendiente}
+Añadir captions a la imagen del mapeo
+\end{notebox}
 
 \begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.7\textwidth]{figures/666_mapping.png}
-    \vspace{3cm} 
-    \caption{Implementation mapping of the 6.6.6 hexagonal color code on a planar processor array. (Adapted from Lacroix et al. \cite{Lacroix_2025}).}
-    \label{fig:666_mapping}
+    \begin{tikzpicture}[scale=0.55]
+        \pgfdeclarelayer{background}
+        \pgfsetlayers{background,main}
+        \def\L{1.3657} 
+        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+        
+        % ---------------------------------------------------------
+        % FACE AND ANCILLA MACROS
+        % ---------------------------------------------------------
+        
+        \newcommand{\fullsq}[2]{
+            \filldraw[fill=colR, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2-0.4});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2-0.4});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2+0.4});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2+0.4});
+            \filldraw[black] ({#1},{#2}) circle (1.5pt);
+        }
+        
+        \newcommand{\fulloct}[3]{
+            \filldraw[fill=#3, draw=black, thick]
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            \def\off{0.4}
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2+\off});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2-\off});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2-\off});
+            \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2+\off});
+            \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.4},{#2+0.9657});
+            \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.9657},{#2+0.4});
+            \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.9657},{#2-0.4});
+            \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.4},{#2-0.9657});
+            \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.4},{#2-0.9657});
+            \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.9657},{#2-0.4});
+            \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.9657},{#2+0.4});
+            \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.4},{#2+0.9657});
+            \filldraw[black] ({#1+\off},{#2+\off}) circle (1.5pt);
+            \filldraw[black] ({#1+\off},{#2-\off}) circle (1.5pt);
+            \filldraw[black] ({#1-\off},{#2-\off}) circle (1.5pt);
+            \filldraw[black] ({#1-\off},{#2+\off}) circle (1.5pt);
+            \filldraw[black] ({#1},{#2}) circle (1.5pt);
+        }
+
+        \newcommand{\trapBtop}[2]{
+            \filldraw[fill=colB, draw=black, thick]
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
+                ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
+            \def\ancY{#2+0.68}
+            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.4},{#2+0.9657});
+            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.4},{#2+0.9657});
+            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+            \filldraw[black] ({#1},{\ancY}) circle (1.5pt);
+        }
+
+        \newcommand{\trapBright}[2]{
+            \filldraw[fill=colB, draw=black, thick]
+                ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
+                ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
+            \def\ancX{#1+0.48}
+            \def\ancY{#2-0.48}
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2-0.4});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+            \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+        }
+        
+        \newcommand{\trapGleft}[2]{
+            \filldraw[fill=colG, draw=black, thick]
+                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
+                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
+            \def\ancX{#1-0.48}
+            \def\ancY{#2-0.48}
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2-0.4});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+            \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+        }
+
+        % DATA QUBITS MACROS
+
+        \newcommand{\fullsqqubits}[2]{
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
+        }
+        
+        \newcommand{\fulloctqubits}[2]{
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+        }
+        
+        \newcommand{\trapBtopqubits}[2]{
+            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+        }
+        
+        \newcommand{\trapBrightqubits}[2]{
+            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+        }
+        
+        \newcommand{\trapGleftqubits}[2]{
+            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+        }
+
+        % DRAWING THE PATCH FACES
+        
+        \trapBtop{-3*\L}{0}
+        \trapBtop{-\L}{0}
+        \trapBtop{\L}{0}
+        \trapBtop{3*\L}{0}
+
+        \fullsq{-3*\L}{\L}
+        \fulloct{-2*\L}{\L}{colG}
+        \fullsq{-\L}{\L}
+        \fulloct{0}{\L}{colG}
+        \fullsq{\L}{\L}
+        \fulloct{2*\L}{\L}{colG}
+        \fullsq{3*\L}{\L}
+        \trapGleft{4*\L}{\L}
+
+        \trapBright{-3*\L}{2*\L}
+        \fullsq{-2*\L}{2*\L}
+        \fulloct{-\L}{2*\L}{colB}
+        \fullsq{0}{2*\L}
+        \fulloct{\L}{2*\L}{colB}
+        \fullsq{2*\L}{2*\L}
+
+        \fullsq{-\L}{3*\L}
+        \fulloct{0}{3*\L}{colG}
+        \fullsq{\L}{3*\L}
+        \trapGleft{2*\L}{3*\L}
+
+        \trapBright{-\L}{4*\L}
+        \fullsq{0}{4*\L}
+
+        % DRAWING THE DATA QUBITS ON TOP
+        
+        \trapBtopqubits{-3*\L}{0}
+        \trapBtopqubits{-\L}{0}
+        \trapBtopqubits{\L}{0}
+        \trapBtopqubits{3*\L}{0}
+
+        \fullsqqubits{-3*\L}{\L}
+        \fulloctqubits{-2*\L}{\L}
+        \fullsqqubits{-\L}{\L}
+        \fulloctqubits{0}{\L}
+        \fullsqqubits{\L}{\L}
+        \fulloctqubits{2*\L}{\L}
+        \fullsqqubits{3*\L}{\L}
+        \trapGleftqubits{4*\L}{\L}
+
+        \trapBrightqubits{-3*\L}{2*\L}
+        \fullsqqubits{-2*\L}{2*\L}
+        \fulloctqubits{-\L}{2*\L}
+        \fullsqqubits{0}{2*\L}
+        \fulloctqubits{\L}{2*\L}
+        \fullsqqubits{2*\L}{2*\L}
+
+        \fullsqqubits{-\L}{3*\L}
+        \fulloctqubits{0}{3*\L}
+        \fullsqqubits{\L}{3*\L}
+        \trapGleftqubits{2*\L}{3*\L}
+
+        \trapBrightqubits{-\L}{4*\L}
+        \fullsqqubits{0}{4*\L}
+
+        % BOUNDARY OUTLINES 
+        \begin{pgfonlayer}{background}
+            \draw[red, line width=4pt, line cap=round] 
+                ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+
+            \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                ({-3*\L-0.9657}, 0.4) 
+                -- ({-3*\L-0.4}, 0.9657)
+                -- ({-3*\L-0.4}, {\L+0.4})
+                -- ({-2*\L-0.4}, {2*\L+0.4})
+                -- ({-2*\L+0.4}, {2*\L+0.4})
+                -- ({-\L-0.4}, {3*\L-0.4})
+                -- ({-\L-0.4}, {3*\L+0.4})
+                -- ({-0.4}, {4*\L+0.4})
+                -- ({0.4}, {4*\L+0.4});
+
+            \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                ({4*\L+0.4}, 0.4)
+                -- ({3*\L+0.4}, {\L+0.4})
+                -- ({3*\L-0.4}, {\L+0.4})
+                -- ({2*\L+0.4}, {2*\L-0.4})
+                -- ({2*\L+0.4}, {2*\L+0.4})
+                -- ({\L+0.4}, {3*\L+0.4})
+                -- ({\L-0.4}, {3*\L+0.4})
+                -- ({0.4}, {4*\L-0.4})
+                -- ({0.4}, {4*\L+0.4});
+        \end{pgfonlayer}
+
+    \end{tikzpicture}
+    \caption{}
 \end{figure}
 
+Similarly, the \textbf{6.6.6 hexagonal lattice} maps naturally to certain architectures, but it is still a non-trivial problem. Recent publications by Lacroix et al. \cite{Lacroix_2025} outline an optimized mapping for the 6.6.6 code.
 
 
+\section{QLDPC Codes (Non-Topological)}
+\begin{notebox}{Pendiente}
+Revisar esta sección, ampliarla un poco y explicar algo más. Entender bien como se construyencon los BBC con los polinomios
+\end{notebox}
+While 2D topological codes are very hardware-friendly, their reliance on local 2D planes strictly limits their scalability. To build future quantum supercomputers with millions of qubits, the overhead of surface and color codes might be too steep. This fact has drawn attention to non-topological QLDPC codes. By sacrificing strictly local 2D connectivity and embracing long-range physical connections, these QLDPC codes can maintain a constant encoding rate as they scale, that is, the ratio between logical qubits and physical qubits tends to a constant value.
 
+\subsection{Bivariate Bicycle Codes (BBC)}
+A prominent recent breakthrough in this domain is the Bivariate Bicycle Code family \cite{bravyi2024high}. Constructed using polynomials over finite fields, BBCs prove that we can encode dozens of logical qubits with distances comparable to massive surface codes, using only a fraction of the physical qubits.
 
+Their physical implementation, however, is still an open engineering challenge. These codes require long-range couplers that are very difficult to realize (some proposals include optical interconnects or neutral atoms moving in optical tweezers). Therefore, the non topological QLDCP codes represent the ultimate frontier for next-generation fault-tolerant architectures.
 
-
-
-
-Papers en donde se ve como mapean los códigos 6.6.6 y 4.8.8 a un procesador (un grid cuadrado)
-
-4.8.8: (see FIG 4)
-https://arxiv.org/pdf/0806.4827 \cite{Fowler_2011}
-
-6.6.6: (see FIG 1a)
-https://arxiv.org/html/2412.14256v1 \cite{Lacroix_2025}
-
-
-Paper que estudia justo códigos de color y sus umbrales:
-https://arxiv.org/pdf/1108.5738 \cite{landahl2011fault}
