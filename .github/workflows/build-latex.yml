@@ -73,6 +73,13 @@ jobs:
           mkdir -p thesis_pdf
           mv thesis/*.pdf thesis_pdf/ 2>/dev/null || true
 
+      - name: Delete old release
+        if: steps.check.outputs.run_build == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --cleanup-tag -y || true
+          
       - name: Commit PDF files
         if: steps.check.outputs.run_build == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
