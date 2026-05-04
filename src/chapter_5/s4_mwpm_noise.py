@@ -11,7 +11,7 @@ def sample_repetition_code_mwpm(distance: int = 3, shots: int = 10000, p_rates: 
         p_rates = np.linspace(0.01, 0.15, 10)
     logical_error_rates = []
 
-    data_r, clifford_r, meas_r = noise_model
+    data_r, meas_r, clifford_r = noise_model
 
     for p in p_rates:
         # Define the circuit

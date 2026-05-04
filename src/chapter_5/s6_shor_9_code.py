@@ -121,7 +121,7 @@ def sample_shor_code_mwpm(shots=10000, rounds=1, states=["0"], p_rates=None, noi
     """General purpose sampling for Shor code MWPM decoding."""
     if p_rates is None: p_rates = np.linspace(0.01, 0.12, 8)
     l_rates = []
-    r_data, r_gate, r_measure = noise_ratios
+    r_data, r_measure, r_gate = noise_ratios
     
     for p in p_rates:
         errors = 0
@@ -150,7 +150,7 @@ def run_shor_simulations(shots: int = 2000):
     print("\n--- Simulation: Noise Models (1 Round, State |0>) ---")
     models = {
         "L1: $E_{data}$": (1, 0, 0),
-        "L2: $E_{data} + E_{meas}$": (1, 0, 1),
+        "L2: $E_{data} + E_{meas}$": (1, 1, 0),
         "L3: $E_{data} + E_{meas} + E_{gates}$": (1, 1, 1)
     }
     for label, ratios in models.items():
