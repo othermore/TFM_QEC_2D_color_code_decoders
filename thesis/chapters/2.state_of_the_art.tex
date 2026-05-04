@@ -234,7 +234,7 @@ Unlike the surface code, which physically separates $X$-checks and $Z$-checks by
 This overlapping check structure is mathematically robust due to the inherent geometry of these lattices. In any 3-valent, 3-colorable lattice, every face is guaranteed to have an even number of vertices. Consequently, an $X$-check and a $Z$-check defined on the exact same face will overlap on an even number of data qubits, guaranteeing that they commute. Furthermore, any two adjacent faces will always share exactly one edge (which contains exactly two vertices). Thus, an $X$-check on one face will always share two data qubits with a $Z$-check on an adjacent face, ensuring global commutativity across the entire code block, as required by the Stabilizer Formalism presented in Section \ref{sec:stabilizer_formalism}.
 
 \subsection{2D Color Code Configurations}
-\notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations:
+\notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations, shown in Figure \ref{fig:color_code_lattices}:
 
 \begin{itemize}
     \item \textbf{6.6.6 Lattice (Hexagonal):} A regular lattice composed entirely of hexagons.
@@ -399,30 +399,27 @@ This overlapping check structure is mathematically robust due to the inherent ge
 \end{figure}
 
 \subsection{Topological Observables: Colored Strings and Nets}
-Just as in the surface code, logical observables in color codes are formed by continuous paths of Pauli operators acting on the data qubits. However, the 3-colorability of the lattice introduces a difference, as two qubits of the string can be connected through and edge or through a face.
+Just as in the surface code, logical observables in color codes are formed by continuous paths of Pauli operators acting on the data qubits. However, the 3-colorability of the lattice introduces a difference, as two qubits of the string can be connected through an edge or through a face.
 
-In a color code, strings are \textit{colored}. A string can only be a border between faces of the other two colors, but it can go through faces of its color. For example, a "red" string of Pauli operators will strictly run along edges that separate green and blue faces, and will cross red faces. 
-
-This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
-
-These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits. For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes.
 
 \begin{figure}[htbp]
     \centering
-
-
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.3\textwidth}
         \centering
-        \includegraphics[width=1\linewidth]{figures/c2_torus_kitaev.png}
+        \includegraphics[width=0.85\linewidth]{figures/c2_torus_colorcode.png}
         \caption{}
     \end{subfigure}
     \hfill
-
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.345\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.6]
+        \begin{tikzpicture}[scale=0.31]
             \def\L{1.3657} 
             \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \colorlet{darkR}{red!75!black}
+            \colorlet{lightR}{red}
+            \colorlet{darkB}{blue!75!black}
+            \colorlet{lightB}{cyan!80!blue}
             
             \newcommand{\sq}[3]{ \filldraw[fill=#3, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4}); }
             \newcommand{\oct}[3]{
@@ -433,7 +430,7 @@ These strings and nets define the logical operators. When two non-contractible n
             }
     
             \begin{scope}
-                \clip (-4, -4) rectangle (4, 4);
+                \clip (-4.5, -4.5) rectangle (4.5, 4.5);
                 
                 \begin{scope}[rotate=45]
                     \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \oct{\i*\L}{\j*\L}{colB};
@@ -441,51 +438,197 @@ These strings and nets define the logical operators. When two non-contractible n
                     \foreach \i in {-6, -4, -2, 0, 2, 4, 6} \foreach \j in {-6, -4, -2, 0, 2, 4, 6} \sq{\i*\L}{\j*\L}{colR};
                     \foreach \i in {-7, -5, -3, -1, 1, 3, 5, 7} \foreach \j in {-7, -5, -3, -1, 1, 3, 5, 7} \sq{\i*\L}{\j*\L}{colR};
     
-                    % Blue String
-                    \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
-                        \draw[blue, line width=1.5pt] ({\k*\L - 0.4}, 0.4) -- ({\k*\L + 0.4}, 0.4);
-                        \draw[blue, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, 0.4) -- ({(\k+1)*\L}, 0) -- ({(\k+2)*\L - 0.4}, 0.4);
-                        \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, 0.4) circle (2.5pt);
-                        \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, 0.4) circle (2.5pt);
+                    \foreach \k in {-3, -2, -1, 0, 1, 2, 3} {
+                        \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                        \ifnum\pgfmathresult=1
+                            \draw[darkB, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L + 0.4}) -- ({\k*\L + 0.4}, {-\k*\L - 0.4});
+                            \ifnum\k<3 \draw[darkB, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L - 0.4}); \fi
+                        \else
+                            \draw[darkB, line width=1.5pt] ({\k*\L - 0.4}, {-\k*\L - 0.4}) -- ({\k*\L + 0.4}, {-\k*\L - 0.4});
+                            \ifnum\k<3 \draw[darkB, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L + 0.4}); \fi
+                        \fi
+                    }
+        
+                    \foreach \k in {-3, -2, -1, 0, 1, 2, 3} {
+                        \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                        \ifnum\pgfmathresult=1
+                            \draw[lightB, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L - 0.4}) -- ({\k*\L + 0.4}, {\k*\L + 0.4});
+                            \ifnum\k<3 \draw[lightB, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L + 0.4}); \fi
+                        \else
+                            \draw[lightB, line width=1.5pt] ({\k*\L - 0.4}, {\k*\L + 0.4}) -- ({\k*\L + 0.4}, {\k*\L + 0.4});
+                            \ifnum\k<3 \draw[lightB, densely dotted, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L - 0.4}); \fi
+                        \fi
                     }
     
-                    % Green String
-                    \foreach \k in {-6, -4, -2, 0, 2, 4, 6} {
-                        \draw[green!60!black, line width=1.5pt] (0.4, {\k*\L - 0.4}) -- (0.4, {\k*\L + 0.4});
-                        \draw[green!60!black, densely dotted, line width=1.5pt] (0.4, {\k*\L + 0.4}) -- (0, {(\k+1)*\L}) -- (0.4, {(\k+2)*\L - 0.4});
-                        \filldraw[black, fill=white, thick] (0.4, {\k*\L - 0.4}) circle (2.5pt);
-                        \filldraw[black, fill=white, thick] (0.4, {\k*\L + 0.4}) circle (2.5pt);
-                    }
-    
-                    % Red String 1
+                    % Red Vertical (Desplazada hacia la izquierda)
                     \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
-                        \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4});
-                        \draw[red, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k+1)*\L}, {(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {(\k+1)*\L + 0.4});
-                        \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
-                        \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                        \draw[darkR, line width=1.5pt] ({(\k-2)*\L + 0.4}, {\k*\L + 0.4}) -- ({(\k-1)*\L - 0.4}, {(\k+1)*\L - 0.4});
+                        \draw[darkR, densely dotted, line width=1.5pt] ({(\k-1)*\L - 0.4}, {(\k+1)*\L - 0.4}) -- ({(\k-1)*\L}, {(\k+1)*\L}) -- ({(\k-1)*\L + 0.4}, {(\k+1)*\L + 0.4});
                     }
-    
-                    % Red String 2
+
+                    % Red Horizontal (Desplazada hacia abajo)
                     \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
-                        \draw[red, line width=1.5pt] ({\k*\L + 0.4}, {-\k*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4});
-                        \draw[red, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) -- ({(\k+1)*\L}, {-(\k+1)*\L}) -- ({(\k+1)*\L + 0.4}, {-(\k+1)*\L - 0.4});
-                        \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
-                        \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {-(\k+1)*\L + 0.4}) circle (2.5pt);
+                        \draw[lightR, line width=1.5pt] ({\k*\L + 0.4}, {(-\k-2)*\L - 0.4}) -- ({(\k+1)*\L - 0.4}, {(-\k-3)*\L + 0.4});
+                        \draw[lightR, densely dotted, line width=1.5pt] ({(\k+1)*\L - 0.4}, {(-\k-3)*\L + 0.4}) -- ({(\k+1)*\L}, {(-\k-3)*\L}) -- ({(\k+1)*\L + 0.4}, {(-\k-3)*\L - 0.4});
+                    }
+
+                    \foreach \k in {-3, -2, -1, 0, 1, 2, 3} {
+                        \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                        \ifnum\pgfmathresult=1
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L + 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L - 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                        \else
+                            \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {-\k*\L - 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L - 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                            \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                        \fi
+                    }
+                    
+                    % Qubits de las cuerdas rojas también desplazados
+                    \foreach \k in {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5} {
+                        \filldraw[black, fill=white, thick] ({(\k-2)*\L + 0.4}, {\k*\L + 0.4}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] ({(\k-1)*\L - 0.4}, {(\k+1)*\L - 0.4}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] ({\k*\L + 0.4}, {(-\k-2)*\L - 0.4}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] ({(\k+1)*\L - 0.4}, {(-\k-3)*\L + 0.4}) circle (2.5pt);
                     }
                 \end{scope}
             \end{scope}
     
-            \node[right, red, fill=white, fill opacity=0.5,text opacity=1, inner sep=1pt, rounded corners=2pt] at (0.5, 3.5) {$\mathbf{X_{L3}, Z_{L4}}$};
-            \node[below, red, fill=white, fill opacity=0.5,text opacity=1, inner sep=1pt, rounded corners=2pt] at (2.8, 0) {$\mathbf{Z_{L3}, X_{L4}}$};
-            \node[right, blue, fill=white, fill opacity=0.5,text opacity=1, inner sep=1pt, rounded corners=2pt] at (2.5, 2.5) {$\mathbf{X_{L1}, Z_{L2}}$};
-            \node[left, green!60!black, fill=white, fill opacity=0.5,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-2.5, 2.5) {$\mathbf{Z_{L1}, X_{L2}}$};
+            % Etiquetas de las líneas
+            % Horizontal Blue (Azul oscura): Arriba, en el lado izquierdo
+            \node[above, darkB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (3.0, 0.5) {$\mathbf{X_{L1}, Z_{L2}}$};
+            
+            % Horizontal Red (Roja clara): Debajo de su línea, en el lado izquierdo
+            \node[below, lightR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (3.0, -1.93) {$\mathbf{Z_{L3}, X_{L4}}$};
+            
+            % Vertical Red (Roja oscura): A la derecha de su línea, en la parte de abajo
+            \node[right, darkR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-1.93, -4.0) {$\mathbf{X_{L3}, Z_{L4}}$};
+            
+            % Vertical Blue (Azul clara): Queda en el lado superior derecho como antes
+            \node[right, lightB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (0, 3.5) {$\mathbf{Z_{L1}, X_{L2}}$};
+            
         \end{tikzpicture}
         \caption{}
     \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.335\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.295]
+            \def\L{1.732}
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \colorlet{darkR}{red!75!black}
+            \colorlet{lightR}{red}
+            \colorlet{darkB}{blue!75!black}
+            \colorlet{lightB}{cyan!80!blue}
+            
+            \newcommand{\hex}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-1},{#2}) -- ({#1-0.5},{#2+0.866}) -- ({#1+0.5},{#2+0.866}) --
+                    ({#1+1},{#2}) -- ({#1+0.5},{#2-0.866}) -- ({#1-0.5},{#2-0.866}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4.5, -4.5) rectangle (4.5, 4.5);
+                
+                \foreach \u in {-4,...,4} {
+                    \foreach \v in {-4,...,4} {
+                        \pgfmathparse{int(mod(\u-\v+30, 3))}
+                        \ifnum\pgfmathresult=0 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colR} \fi
+                        \ifnum\pgfmathresult=1 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colG} \fi
+                        \ifnum\pgfmathresult=2 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colB} \fi
+                    }
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \draw[darkB, densely dotted, line width=1.5pt] ({3*\k - 1}, 1.732) -- ({3*\k + 1}, 1.732);
+                    \draw[darkB, line width=1.5pt] ({3*\k + 1}, 1.732) -- ({3*\k + 2}, 1.732);
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \draw[lightR, densely dotted, line width=1.5pt] ({3*\k - 1}, 0) -- ({3*\k + 1}, 0);
+                    \draw[lightR, line width=1.5pt] ({3*\k + 1}, 0) -- ({3*\k + 2}, 0);
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \draw[lightB, densely dotted, line width=1.5pt] (-0.5, {-1.732 + 2.598*\k}) -- (-0.5, {0 + 2.598*\k});
+                        \draw[lightB, line width=1.5pt] (-0.5, {0 + 2.598*\k}) -- (-1.0, {0.866 + 2.598*\k});
+                    \else
+                        \draw[lightB, densely dotted, line width=1.5pt] (-1.0, {-1.732 + 2.598*\k}) -- (-1.0, {0 + 2.598*\k});
+                        \draw[lightB, line width=1.5pt] (-1.0, {0 + 2.598*\k}) -- (-0.5, {0.866 + 2.598*\k});
+                    \fi
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \draw[darkR, densely dotted, line width=1.5pt] (1.0, {-0.866 + 2.598*\k}) -- (1.0, {0.866 + 2.598*\k});
+                        \draw[darkR, line width=1.5pt] (1.0, {0.866 + 2.598*\k}) -- (0.5, {1.732 + 2.598*\k});
+                    \else
+                        \draw[darkR, densely dotted, line width=1.5pt] (0.5, {-0.866 + 2.598*\k}) -- (0.5, {0.866 + 2.598*\k});
+                        \draw[darkR, line width=1.5pt] (0.5, {0.866 + 2.598*\k}) -- (1.0, {1.732 + 2.598*\k});
+                    \fi
+                }
+                
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \filldraw[black, fill=white, thick] ({3*\k - 1}, 1.732) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 1}, 1.732) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 2}, 1.732) circle (2.5pt);
+                    
+                    \filldraw[black, fill=white, thick] ({3*\k - 1}, 0) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 1}, 0) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 2}, 0) circle (2.5pt);
+                    
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \filldraw[black, fill=white, thick] (-0.5, {-1.732 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-0.5, {0 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-1.0, {0.866 + 2.598*\k}) circle (2.5pt);
+                    \else
+                        \filldraw[black, fill=white, thick] (-1.0, {-1.732 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-1.0, {0 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-0.5, {0.866 + 2.598*\k}) circle (2.5pt);
+                    \fi
+                    
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \filldraw[black, fill=white, thick] (1.0, {-0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (1.0, {0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (0.5, {1.732 + 2.598*\k}) circle (2.5pt);
+                    \else
+                        \filldraw[black, fill=white, thick] (0.5, {-0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (0.5, {0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (1.0, {1.732 + 2.598*\k}) circle (2.5pt);
+                    \fi
+                }
+            \end{scope}
+
+            \node[above, darkB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-3.5, 1.732) {$\mathbf{X_{L1}, Z_{L2}}$};
+            \node[below, lightR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (3.5, 0) {$\mathbf{Z_{L3}, X_{L4}}$};
+            
+            \node[above, darkR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (2, 4.0) {$\mathbf{X_{L3}, Z_{L4}}$};
+            \node[below, lightB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-2, -4.0) {$\mathbf{Z_{L1}, X_{L2}}$};
+            
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+
+    \caption{Logical observables in a toric color code. \textbf{(a)} Logical observables correspond to color-independent non-contractible continuous strings wrapping around the two fundamental cycles of the torus. Color codes allow us to codify two logical operators in the same string, with the logical observables for each qubit being orthogonal. \textbf{(b)} The 4 independent strings in a $4.8.8$ lattice. \textbf{(c)} The 4 independent strings in a $6.6.6$ lattice.}
+    \label{fig:color_code_logical_observables}
 \end{figure}
 
 
 
+In a color code, strings are \textit{colored}. A string can only be a border between faces of the other two colors, but it can go through faces of its color. For example, a "red" string of Pauli operators will strictly run along edges that separate green and blue faces, and will cross red faces. 
+
+This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
+
+These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits (see Figure \ref{fig:color_code_logical_observables}). For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes (see Figure \ref{fig:planar_color_code}).
 
 \subsection{Advantages: Transversality and 3D Topologies}
 Color codes offer massive theoretical advantages over surface codes, primarily regarding logical gate execution. As discussed earlier in this chapter, finding transversal gates is highly desirable to prevent error propagation. 
@@ -499,242 +642,411 @@ Despite their theoretical superiority, 2D color codes face significant physical 
 
 Moreover, the stabilizers acting on the faces involve a high number of qubits. For instance, in the 4.8.8 lattice, the octagonal faces represent weight-8 parity checks. Measuring a weight-8 stabilizer dynamically without exposing the data to correlated errors is a mapping challenge on modern hardware, which typically features restricted 2D grid connectivity.
 
-Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this topology onto a standard 2D square architecture, although it requires replacing the ancilla qubit in octogonal faces with 5 ancilla qubits, 4 of them connected to two data qubits each, and the fifth one connected to the 4 ancilla qubits.
+Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this topology onto a standard 2D square architecture, although it requires replacing the ancilla qubit in octogonal faces with 5 ancilla qubits, 4 of them connected to two data qubits each, and the fifth one connected to the 4 ancilla qubits ((see Figure \ref{fig:planar_color_code})).
 
-\begin{notebox}{Pendiente}
-Añadir captions a la imagen del mapeo
-\end{notebox}
 
 \begin{figure}[htbp]
     \centering
-    \begin{tikzpicture}[scale=0.55]
-        \pgfdeclarelayer{background}
-        \pgfsetlayers{background,main}
-        \def\L{1.3657} 
-        \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
-        
-        % ---------------------------------------------------------
-        % FACE AND ANCILLA MACROS
-        % ---------------------------------------------------------
-        
-        \newcommand{\fullsq}[2]{
-            \filldraw[fill=colR, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2-0.4});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2-0.4});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2+0.4});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2+0.4});
-            \filldraw[black] ({#1},{#2}) circle (1.5pt);
-        }
-        
-        \newcommand{\fulloct}[3]{
-            \filldraw[fill=#3, draw=black, thick]
-                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
-                ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
-                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
-            \def\off{0.4}
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2+\off});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2-\off});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2-\off});
-            \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2+\off});
-            \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.4},{#2+0.9657});
-            \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.9657},{#2+0.4});
-            \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.9657},{#2-0.4});
-            \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.4},{#2-0.9657});
-            \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.4},{#2-0.9657});
-            \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.9657},{#2-0.4});
-            \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.9657},{#2+0.4});
-            \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.4},{#2+0.9657});
-            \filldraw[black] ({#1+\off},{#2+\off}) circle (1.5pt);
-            \filldraw[black] ({#1+\off},{#2-\off}) circle (1.5pt);
-            \filldraw[black] ({#1-\off},{#2-\off}) circle (1.5pt);
-            \filldraw[black] ({#1-\off},{#2+\off}) circle (1.5pt);
-            \filldraw[black] ({#1},{#2}) circle (1.5pt);
-        }
+    \begin{subfigure}[b]{0.47\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.45]
+            \pgfdeclarelayer{background}
+            \pgfsetlayers{background,main}
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\simplsq}[2]{
+                \filldraw[fill=colR, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
+            }
+            \newcommand{\simploct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+            \newcommand{\simpltrapBtop}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
+                    ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
+            }
+            \newcommand{\simpltrapBright}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
+                    ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
+            }
+            \newcommand{\simpltrapGleft}[2]{
+                \filldraw[fill=colG, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
+            }
+            
+            \newcommand{\fullsqqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
+            }
+            \newcommand{\fulloctqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+            }
+            \newcommand{\trapBtopqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            }
+            \newcommand{\trapBrightqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            }
+            \newcommand{\trapGleftqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            }
 
-        \newcommand{\trapBtop}[2]{
-            \filldraw[fill=colB, draw=black, thick]
-                ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
-                ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
-            \def\ancY{#2+0.68}
-            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.9657},{#2+0.4});
-            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.4},{#2+0.9657});
-            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.4},{#2+0.9657});
-            \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.9657},{#2+0.4});
-            \filldraw[black] ({#1},{\ancY}) circle (1.5pt);
-        }
+            \simpltrapBtop{-3*\L}{0}
+            \simpltrapBtop{-\L}{0}
+            \simpltrapBtop{\L}{0}
+            \simpltrapBtop{3*\L}{0}
 
-        \newcommand{\trapBright}[2]{
-            \filldraw[fill=colB, draw=black, thick]
-                ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
-                ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
-            \def\ancX{#1+0.48}
-            \def\ancY{#2-0.48}
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2+0.4});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2-0.4});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
-            \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
-        }
-        
-        \newcommand{\trapGleft}[2]{
-            \filldraw[fill=colG, draw=black, thick]
-                ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
-                ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
-            \def\ancX{#1-0.48}
-            \def\ancY{#2-0.48}
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2+0.4});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2-0.4});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
-            \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
-            \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
-        }
+            \simplsq{-3*\L}{\L}
+            \simploct{-2*\L}{\L}{colG}
+            \simplsq{-\L}{\L}
+            \simploct{0}{\L}{colG}
+            \simplsq{\L}{\L}
+            \simploct{2*\L}{\L}{colG}
+            \simplsq{3*\L}{\L}
+            \simpltrapGleft{4*\L}{\L}
 
-        % DATA QUBITS MACROS
+            \simpltrapBright{-3*\L}{2*\L}
+            \simplsq{-2*\L}{2*\L}
+            \simploct{-\L}{2*\L}{colB}
+            \simplsq{0}{2*\L}
+            \simploct{\L}{2*\L}{colB}
+            \simplsq{2*\L}{2*\L}
 
-        \newcommand{\fullsqqubits}[2]{
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
-        }
-        
-        \newcommand{\fulloctqubits}[2]{
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
-        }
-        
-        \newcommand{\trapBtopqubits}[2]{
-            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
-        }
-        
-        \newcommand{\trapBrightqubits}[2]{
-            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
-        }
-        
-        \newcommand{\trapGleftqubits}[2]{
-            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
-            \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
-        }
+            \simplsq{-\L}{3*\L}
+            \simploct{0}{3*\L}{colG}
+            \simplsq{\L}{3*\L}
+            \simpltrapGleft{2*\L}{3*\L}
 
-        % DRAWING THE PATCH FACES
-        
-        \trapBtop{-3*\L}{0}
-        \trapBtop{-\L}{0}
-        \trapBtop{\L}{0}
-        \trapBtop{3*\L}{0}
+            \simpltrapBright{-\L}{4*\L}
+            \simplsq{0}{4*\L}
 
-        \fullsq{-3*\L}{\L}
-        \fulloct{-2*\L}{\L}{colG}
-        \fullsq{-\L}{\L}
-        \fulloct{0}{\L}{colG}
-        \fullsq{\L}{\L}
-        \fulloct{2*\L}{\L}{colG}
-        \fullsq{3*\L}{\L}
-        \trapGleft{4*\L}{\L}
+            \draw[blue, line width=1.5pt] (-0.4, {2*\L-0.4}) -- (0.4, {2*\L-0.4});
+            \draw[blue, densely dotted, line width=1.5pt] (0.4, {2*\L-0.4}) -- ({2*\L-0.4}, {2*\L-0.4});
+            \draw[blue, line width=1.5pt] ({2*\L-0.4}, {2*\L-0.4}) -- ({2*\L+0.4}, {2*\L-0.4});
 
-        \trapBright{-3*\L}{2*\L}
-        \fullsq{-2*\L}{2*\L}
-        \fulloct{-\L}{2*\L}{colB}
-        \fullsq{0}{2*\L}
-        \fulloct{\L}{2*\L}{colB}
-        \fullsq{2*\L}{2*\L}
+            \draw[red, line width=1.5pt] (-0.4, {2*\L-0.4}) -- (-0.9657, {\L+0.4});
+            \draw[red, densely dotted, line width=1.5pt] (-0.9657, {\L+0.4}) -- ({-\L-0.4}, {\L-0.4});
+            \draw[red, line width=1.5pt] ({-\L-0.4}, {\L-0.4}) -- ({-\L-0.9657}, 0.4);
 
-        \fullsq{-\L}{3*\L}
-        \fulloct{0}{3*\L}{colG}
-        \fullsq{\L}{3*\L}
-        \trapGleft{2*\L}{3*\L}
+            \draw[green!60!black, line width=1.5pt] (-0.4, {2*\L-0.4}) -- (-0.4, {2*\L+0.4});
+            \draw[green!60!black, densely dotted, line width=1.5pt] (-0.4, {2*\L+0.4}) -- (-0.9657, {3*\L+0.4});
+            \draw[green!60!black, line width=1.5pt] (-0.9657, {3*\L+0.4}) -- ({-\L-0.4}, {3*\L+0.4});
 
-        \trapBright{-\L}{4*\L}
-        \fullsq{0}{4*\L}
 
-        % DRAWING THE DATA QUBITS ON TOP
-        
-        \trapBtopqubits{-3*\L}{0}
-        \trapBtopqubits{-\L}{0}
-        \trapBtopqubits{\L}{0}
-        \trapBtopqubits{3*\L}{0}
 
-        \fullsqqubits{-3*\L}{\L}
-        \fulloctqubits{-2*\L}{\L}
-        \fullsqqubits{-\L}{\L}
-        \fulloctqubits{0}{\L}
-        \fullsqqubits{\L}{\L}
-        \fulloctqubits{2*\L}{\L}
-        \fullsqqubits{3*\L}{\L}
-        \trapGleftqubits{4*\L}{\L}
+            \trapBtopqubits{-3*\L}{0}
+            \trapBtopqubits{-\L}{0}
+            \trapBtopqubits{\L}{0}
+            \trapBtopqubits{3*\L}{0}
 
-        \trapBrightqubits{-3*\L}{2*\L}
-        \fullsqqubits{-2*\L}{2*\L}
-        \fulloctqubits{-\L}{2*\L}
-        \fullsqqubits{0}{2*\L}
-        \fulloctqubits{\L}{2*\L}
-        \fullsqqubits{2*\L}{2*\L}
+            \fullsqqubits{-3*\L}{\L}
+            \fulloctqubits{-2*\L}{\L}
+            \fullsqqubits{-\L}{\L}
+            \fulloctqubits{0}{\L}
+            \fullsqqubits{\L}{\L}
+            \fulloctqubits{2*\L}{\L}
+            \fullsqqubits{3*\L}{\L}
+            \trapGleftqubits{4*\L}{\L}
 
-        \fullsqqubits{-\L}{3*\L}
-        \fulloctqubits{0}{3*\L}
-        \fullsqqubits{\L}{3*\L}
-        \trapGleftqubits{2*\L}{3*\L}
+            \trapBrightqubits{-3*\L}{2*\L}
+            \fullsqqubits{-2*\L}{2*\L}
+            \fulloctqubits{-\L}{2*\L}
+            \fullsqqubits{0}{2*\L}
+            \fulloctqubits{\L}{2*\L}
+            \fullsqqubits{2*\L}{2*\L}
 
-        \trapBrightqubits{-\L}{4*\L}
-        \fullsqqubits{0}{4*\L}
+            \fullsqqubits{-\L}{3*\L}
+            \fulloctqubits{0}{3*\L}
+            \fullsqqubits{\L}{3*\L}
+            \trapGleftqubits{2*\L}{3*\L}
 
-        % BOUNDARY OUTLINES 
-        \begin{pgfonlayer}{background}
-            \draw[red, line width=4pt, line cap=round] 
-                ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+            \trapBrightqubits{-\L}{4*\L}
+            \fullsqqubits{0}{4*\L}
 
-            \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
-                ({-3*\L-0.9657}, 0.4) 
-                -- ({-3*\L-0.4}, 0.9657)
-                -- ({-3*\L-0.4}, {\L+0.4})
-                -- ({-2*\L-0.4}, {2*\L+0.4})
-                -- ({-2*\L+0.4}, {2*\L+0.4})
-                -- ({-\L-0.4}, {3*\L-0.4})
-                -- ({-\L-0.4}, {3*\L+0.4})
-                -- ({-0.4}, {4*\L+0.4})
-                -- ({0.4}, {4*\L+0.4});
+            \begin{pgfonlayer}{background}
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
 
-            \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
-                ({4*\L+0.4}, 0.4)
-                -- ({3*\L+0.4}, {\L+0.4})
-                -- ({3*\L-0.4}, {\L+0.4})
-                -- ({2*\L+0.4}, {2*\L-0.4})
-                -- ({2*\L+0.4}, {2*\L+0.4})
-                -- ({\L+0.4}, {3*\L+0.4})
-                -- ({\L-0.4}, {3*\L+0.4})
-                -- ({0.4}, {4*\L-0.4})
-                -- ({0.4}, {4*\L+0.4});
-        \end{pgfonlayer}
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
 
-    \end{tikzpicture}
-    \caption{}
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            \end{pgfonlayer}
+
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.47\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.45]
+            \pgfdeclarelayer{background}
+            \pgfsetlayers{background,main}
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\fullsq}[2]{
+                \filldraw[fill=colR, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2-0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2-0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2+0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2+0.4});
+                \filldraw[black] ({#1},{#2}) circle (1.5pt);
+            }
+            
+            \newcommand{\fulloct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+                \def\off{0.4}
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2+\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2-\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2-\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2+\off});
+                \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.9657},{#2-0.4});
+                \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.4},{#2-0.9657});
+                \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.4},{#2-0.9657});
+                \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.9657},{#2-0.4});
+                \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.4},{#2+0.9657});
+                \filldraw[black] ({#1+\off},{#2+\off}) circle (1.5pt);
+                \filldraw[black] ({#1+\off},{#2-\off}) circle (1.5pt);
+                \filldraw[black] ({#1-\off},{#2-\off}) circle (1.5pt);
+                \filldraw[black] ({#1-\off},{#2+\off}) circle (1.5pt);
+                \filldraw[black] ({#1},{#2}) circle (1.5pt);
+            }
+    
+            \newcommand{\trapBtop}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
+                    ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
+                \def\ancY{#2+0.68}
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+                \filldraw[black] ({#1},{\ancY}) circle (1.5pt);
+            }
+    
+            \newcommand{\trapBright}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
+                    ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
+                \def\ancX{#1+0.48}
+                \def\ancY{#2-0.48}
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2-0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+                \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+            }
+            
+            \newcommand{\trapGleft}[2]{
+                \filldraw[fill=colG, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
+                \def\ancX{#1-0.48}
+                \def\ancY{#2-0.48}
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2-0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+                \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+            }
+    
+            \newcommand{\fullsqqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\fulloctqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapBtopqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapBrightqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapGleftqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            }
+    
+            \trapBtop{-3*\L}{0}
+            \trapBtop{-\L}{0}
+            \trapBtop{\L}{0}
+            \trapBtop{3*\L}{0}
+    
+            \fullsq{-3*\L}{\L}
+            \fulloct{-2*\L}{\L}{colG}
+            \fullsq{-\L}{\L}
+            \fulloct{0}{\L}{colG}
+            \fullsq{\L}{\L}
+            \fulloct{2*\L}{\L}{colG}
+            \fullsq{3*\L}{\L}
+            \trapGleft{4*\L}{\L}
+    
+            \trapBright{-3*\L}{2*\L}
+            \fullsq{-2*\L}{2*\L}
+            \fulloct{-\L}{2*\L}{colB}
+            \fullsq{0}{2*\L}
+            \fulloct{\L}{2*\L}{colB}
+            \fullsq{2*\L}{2*\L}
+    
+            \fullsq{-\L}{3*\L}
+            \fulloct{0}{3*\L}{colG}
+            \fullsq{\L}{3*\L}
+            \trapGleft{2*\L}{3*\L}
+    
+            \trapBright{-\L}{4*\L}
+            \fullsq{0}{4*\L}
+    
+            \trapBtopqubits{-3*\L}{0}
+            \trapBtopqubits{-\L}{0}
+            \trapBtopqubits{\L}{0}
+            \trapBtopqubits{3*\L}{0}
+    
+            \fullsqqubits{-3*\L}{\L}
+            \fulloctqubits{-2*\L}{\L}
+            \fullsqqubits{-\L}{\L}
+            \fulloctqubits{0}{\L}
+            \fullsqqubits{\L}{\L}
+            \fulloctqubits{2*\L}{\L}
+            \fullsqqubits{3*\L}{\L}
+            \trapGleftqubits{4*\L}{\L}
+    
+            \trapBrightqubits{-3*\L}{2*\L}
+            \fullsqqubits{-2*\L}{2*\L}
+            \fulloctqubits{-\L}{2*\L}
+            \fullsqqubits{0}{2*\L}
+            \fulloctqubits{\L}{2*\L}
+            \fullsqqubits{2*\L}{2*\L}
+    
+            \fullsqqubits{-\L}{3*\L}
+            \fulloctqubits{0}{3*\L}
+            \fullsqqubits{\L}{3*\L}
+            \trapGleftqubits{2*\L}{3*\L}
+    
+            \trapBrightqubits{-\L}{4*\L}
+            \fullsqqubits{0}{4*\L}
+    
+            \begin{pgfonlayer}{background}
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+    
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
+    
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            \end{pgfonlayer}
+        \end{tikzpicture}
+        \caption{}
+    \end{subfigure}
+    \caption{Planar topology of a 4.8.8 lattice color code. \textbf{(a)} Definition of the triangular patch for a planar topology, in which we must use string-nets to define the logical observables. Each string-net can encode the logical $X$ and $Z$ operators in the color code, but the individual strings must terminate at a boundary of their own color, which inherently requires branching. \textbf{(b)} Mapping of the color code patch to a quantum processor with a square grid of qubits. For the octagonal faces, we must use 5 ancillas to perform the stabilizer measurements. Ancilla qubits in the tetrahedrons that appear in the boundaries do not map the square grid and are intentionally simplified in this diagram.}
+    \label{fig:planar_color_code}
 \end{figure}
+
 
 Similarly, the \textbf{6.6.6 hexagonal lattice} maps naturally to certain architectures, but it is still a non-trivial problem. Recent publications by Lacroix et al. \cite{Lacroix_2025} outline an optimized mapping for the 6.6.6 code.
 
+\section{Non-topological QLDPC Codes}
 
-\section{QLDPC Codes (Non-Topological)}
-\begin{notebox}{Pendiente}
-Revisar esta sección, ampliarla un poco y explicar algo más. Entender bien como se construyencon los BBC con los polinomios
-\end{notebox}
-While 2D topological codes are very hardware-friendly, their reliance on local 2D planes strictly limits their scalability. To build future quantum supercomputers with millions of qubits, the overhead of surface and color codes might be too steep. This fact has drawn attention to non-topological QLDPC codes. By sacrificing strictly local 2D connectivity and embracing long-range physical connections, these QLDPC codes can maintain a constant encoding rate as they scale, that is, the ratio between logical qubits and physical qubits tends to a constant value.
+\notatfm{The BPT bound mathematically proves that for any quantum code restricted to local interactions in 2D, the parameters must satisfy $k d^2 \leq O(n)$. This implies that the physical overhead per logical qubit ($n/k$) must grow at least as $d^2$. If higher error protection is needed (higher $d$), the physical footprint explodes quadratically.} While 2D topological codes are very hardware-friendly, their reliance on local 2D planes strictly limits their scalability. The fundamental bottleneck of local 2D codes is governed by the Bravyi-Poulin-Terhal (BPT) bound \cite{Bravyi_2010}. To build future quantum supercomputers with millions of qubits and increasing distances for longer computations, this geometric restriction imposes a prohibitive physical overhead.
+
+This fact has drawn massive attention to non-topological Quantum Low-Density Parity-Check (QLDPC) codes. By sacrificing strictly local 2D connectivity and embracing long-range physical connections, these codes break the BPT bound. In a topological code, increasing the distance requires making the 2D patch larger, which squares the number of physical qubits. QLDPC codes, instead, can maintain a constant encoding rate while the distance grows linearly with the number of physical qubits. This removes the quadratic penalty for fault tolerance.
 
 \subsection{Bivariate Bicycle Codes (BBC)}
-A prominent recent breakthrough in this domain is the Bivariate Bicycle Code family \cite{bravyi2024high}. Constructed using polynomials over finite fields, BBCs prove that we can encode dozens of logical qubits with distances comparable to massive surface codes, using only a fraction of the physical qubits.
 
-Their physical implementation, however, is still an open engineering challenge. These codes require long-range couplers that are very difficult to realize (some proposals include optical interconnects or neutral atoms moving in optical tweezers). Therefore, the non topological QLDCP codes represent the ultimate frontier for next-generation fault-tolerant architectures.
+\notatfm{To understand the massive savings: a typical BBC can encode 12 logical qubits with a distance of $d=12$ using just 144 physical qubits in total. To achieve the same parameters ($k=12, d=12$) using standard surface codes, one would need $12 \times 12^2 = 1728$ physical qubits. This represents more than a $10\times$ reduction in hardware footprint.} A prominent recent breakthrough in the practical domain is the Bivariate Bicycle Code family \cite{bravyi2024high}. These codes prove that we can encode dozens of logical qubits with high distances using only a fraction of the physical qubits required by topological codes.
 
+The core ingenuity of BBCs lies in how they guarantee that $X$-type and $Z$-type stabilizers commute, which is the most difficult challenge when designing any quantum code. In the stabilizer formalism, an $X$-stabilizer and a $Z$-stabilizer commute if and only if they overlap on an even number of physical qubits. 
+
+Instead of trying to manually guess which qubits to connect to satisfy this rule, BBCs use a clever mathematical trick. The physical qubits are divided into two equal groups (the "bicycles"). Then, the designers use a polynomial with two variables, $x$ and $y$, to define which qubits are grouped to form a stabilizer. 
+
+Physically, the variables $x$ and $y$ simply represent geometric shifts: $x$ acts as an instruction to "shift one position to the right" and $y$ means "shift one position down" on a virtual grid. A polynomial like $1 + x + y^2$ acts as a wiring instruction that tells the hardware: "to build this stabilizer, apply the operator to a given qubit ($1$), the qubit to its right ($x$), and the qubit two steps down ($y^2$)". 
+
+Because polynomials naturally commute in mathematics (multiplying $P_1 \times P_2$ is identical to $P_2 \times P_1$), generating the stabilizer overlapping rules from them automatically guarantees that any $X$-stabilizer and $Z$-stabilizer will always intersect on an even number of qubits. Furthermore, by keeping these "wiring instructions" very short (low degree polynomials), the number of physical qubits involved in each stabilizer remains very low (Low-Density), which is essential to prevent error propagation during syndrome measurements.
+
+Their physical implementation, however, is still an open engineering challenge. Because the shifts dictated by the polynomials can connect qubits that are far apart on the grid, these codes require high-fidelity, long-range couplers. Current promising proposals to realize this non-local connectivity include dynamic optical interconnects or neutral atoms that are physicaly moved with optical tweezers. Therefore, non-topological QLDPC codes represent the ultimate frontier for next-generation fault-tolerant architectures.
