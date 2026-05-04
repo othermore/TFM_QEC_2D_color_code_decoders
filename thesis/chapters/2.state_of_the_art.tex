@@ -16,7 +16,7 @@ This chapter explores the evolution of these codes, focusing on three major fami
 
 \section{Transversality and the Eastin-Knill Theorem}
 
-A central goal in Quantum Error Correction (QEC) is executing logical gates fault-tolerantly. A gate is called \textit{transversal} if applying the physical gate independently to each physical qubit results in the logical version of that gate being applied to the encoded state. Transversal gates are the holy grail of fault-tolerance because they never propagate errors between qubits within the same code block. Because the operations are performed strictly on isolated pairs of physical qubits (qubit-by-qubit), an error cannot spread to other physical qubits within the same logical block. Thus, a single physical error remains a single physical error, which the error-correcting code can safely detect and fix.
+A central goal in Quantum Error Correction (QEC) is executing logical gates fault-tolerantly. A gate is called \textit{transversal} if applying the physical gate independently to each physical data qubit results in the logical version of that gate being applied to the encoded state. Transversal gates are the holy grail of fault-tolerance because they never propagate errors between qubits within the same code block. Because the operations are performed strictly on isolated pairs of physical qubits (qubit-by-qubit), an error cannot spread to other physical qubits within the same logical block. Thus, a single physical error remains a single physical error, which the error-correcting code can safely detect and fix.
 
 However, the \textbf{Eastin-Knill Theorem} \cite{eastin2009restrictions} states a severe theoretical limitation: \textit{No quantum error-correcting code can have a universal set of transversal logical gates}. This means we cannot build a universal quantum computer relying solely on these simple, inherently safe transversal operations. 
 
@@ -237,9 +237,9 @@ This overlapping check structure is mathematically robust due to the inherent ge
 \notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations, shown in Figure \ref{fig:color_code_lattices}:
 
 \begin{itemize}
-    \item \textbf{6.6.6 Lattice (Hexagonal):} A regular lattice composed entirely of hexagons.
-    \item \textbf{4.8.8 Lattice (Square-Octagonal):} A semi-regular lattice where each vertex connects a square and two octagons.
-    \item \textbf{4.6.12 Lattice (Truncated Hexagonal):} A more complex semi-regular lattice composed of squares, hexagons, and dodecagons. While theoretically interesting, its extremely high-weight stabilizers (weight-12) make it practically nonviable for current hardware.
+    \item \textbf{6.6.6 Lattice:} A regular lattice composed entirely of hexagons.
+    \item \textbf{4.8.8 Lattice:} A semi-regular lattice where each vertex connects a square and two octagons.
+    \item \textbf{4.6.12 Lattice:} A more complex semi-regular lattice composed of squares, hexagons, and dodecagons. While theoretically interesting, its extremely high-weight stabilizers (weight-12) make it practically nonviable for current hardware.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -629,6 +629,8 @@ In a color code, strings are \textit{colored}. A string can only be a border bet
 This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
 
 These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits (see Figure \ref{fig:color_code_logical_observables}). For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes (see Figure \ref{fig:planar_color_code}).
+
+Despite the lattice being three-colorable and supporting strings of three distinct colors, only two of these colors are strictly independent from an error-correction perspective. In a 2D color code, every data qubit is located at a vertex shared by exactly three faces---one red, one green, and one blue. Consequently, any single error will always trigger a defect in exactly one face of each color. Because these syndrome defects are inherently created in triplets, the parity information gathered from any two colors fully determines the state of the third.
 
 \subsection{Advantages: Transversality and 3D Topologies}
 Color codes offer massive theoretical advantages over surface codes, primarily regarding logical gate execution. As discussed earlier in this chapter, finding transversal gates is highly desirable to prevent error propagation. 

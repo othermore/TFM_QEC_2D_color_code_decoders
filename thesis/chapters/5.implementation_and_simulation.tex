@@ -18,7 +18,7 @@ Stim is a QEC specialized simulator. The primary advantage of \texttt{stim} is i
 
 To introduce the simulation pipeline, we begin with the simplest QEC protocol: the distance-$d$ repetition code. As discussed in Chapter \ref{chap:introduction}, this code protects against a single type of error (e.g., bit-flips) by encoding one logical qubit into $d$ physical data qubits, requiring $d-1$ additional ancilla qubits to perform parity measurements.
 
-For our baseline simulation, we use a \textbf{code-capacity noise model}. For our baseline simulation, we use a code-capacity noise model (see Chapter \ref{chap:modeling_quantum_error}) using a depolarizing channel. 
+For our baseline simulation, we use a \textbf{code-capacity noise model} (see Chapter \ref{chap:modeling_quantum_error}) using a depolarizing channel. 
 
 Stim makes it exceptionally easy to implement a basic repetition code. The building blocks of this simulation are:
 \begin{itemize}
@@ -94,10 +94,10 @@ As shown in Figure \ref{fig:stim_rep_circuit_distance_plot}, realistic noise dra
 \subsection{Implementing the 9-qubit Shor code}
 \label{subsec:shor_implementation}
 
-\notatfm{Because the final measurement of the data qubits can also be noisy, we must add one last set of detectors at the end of the circuit. These detectors, known as boundary detectors, compare the parity of the final data measurements against the last syndrome extracted via ancillas, effectively catching readout errors in the final layer.}
 In our previous simulations, we relied on \texttt{stim}'s built-in circuit generation library. To better illustrate how a quantum error correction circuit is explicitly constructed from scratch, we now implement the 9-qubit Shor code ($[[9, 1, 3]]$). Building a custom circuit in \texttt{stim} follows a strict pipeline.
 
-First, the circuit is declared and initialized, followed by the application of the necessary gates to encode the logical state and extract the stabilizer operators. A crucial step in custom \texttt{stim} circuits is explicitly tracking the outcomes: stabilizer measurements must be labeled as \texttt{DETECTOR}s (Listing \ref{lst:stim_detector}), while the final measurements of the data qubits are targeted by \texttt{OBSERVABLE\_INCLUDE} instructions to track the logical state parity (Listing \ref{lst:stim_boundary_detector_and_observable}). This strict labeling allows the simulator to decouple the syndrome extraction—which provides the inputs for the decoder—from the logical observable tracking, which is ultimately compared against the expected baseline to determine if a logical failure occurred.
+
+\notatfm{Because the final measurement of the data qubits can also be noisy, we must add one last set of detectors at the end of the circuit. These detectors, known as boundary detectors, compare the parity of the final data measurements against the last syndrome extracted via ancillas, effectively catching readout errors in the final layer.} First, the circuit is declared and initialized, followed by the application of the necessary gates to encode the logical state and extract the stabilizer operators. A crucial step in custom \texttt{stim} circuits is explicitly tracking the outcomes: stabilizer measurements must be labeled as \texttt{DETECTOR}s (Listing \ref{lst:stim_detector}), while the final measurements of the data qubits are targeted by \texttt{OBSERVABLE\_INCLUDE} instructions to track the logical state parity (Listing \ref{lst:stim_boundary_detector_and_observable}). This strict labeling allows the simulator to decouple the syndrome extraction—which provides the inputs for the decoder—from the logical observable tracking, which is ultimately compared against the expected baseline to determine if a logical failure occurred.
 
 \begin{figure}[hbt!] 
     \centering
@@ -170,11 +170,6 @@ Figure \ref{fig:threshold_theorem_plot} demonstrates this effect perfectly.
     \label{fig:threshold_theorem_plot}
 \end{figure}
 
-
-\begin{notebox}{Default noise model for this thesis}
-To maintain focus on the architectural advantages of QEC codes (and, more specifically, 2D color codes) and their fundamental decoding algorithms, the remainder of this thesis will operate primarily under the code-capacity model, unless stated otherwise.
-\end{notebox}
-
 \section{Beyond stim: Experimental setup for implementation and simulation}
 
 As demonstrated in the previous sections, \texttt{stim} is an exceptionally powerful tool for defining and sampling quantum circuits. However, when transitioning from baseline models to complex, scalable topological codes like the Surface Code or the Color Code, relying solely on \texttt{stim} becomes insufficient. 
@@ -240,6 +235,6 @@ To run our simulations, we often want to plot physical noise in the X axis. Sinc
 
 When plotting these results, we must select a single metric for the X-axis to represent the physical error rate. We use the two-qubit gate error rate ($p_{2q}$) as the reference.
 
-Listing \ref{lst:s9_with_noise} shows how we build a perfectly clean circuit, use the \texttt{with\_noise} method to automatically inject noise in the circuit based on our IBM model..
+Listing \ref{lst:s9_with_noise} shows how we build a perfectly clean circuit, use the \texttt{with\_noise} method to automatically inject noise in the circuit based on our IBM model.
 
 \includesnippet[caption={Simulation 9: Applying the noise model to a clean circuit and converting it to stim for large-scale sampling.}, label={lst:s9_with_noise}]{S9_SNIPPET_WITH_NOISE}{../src/chapter_5/s9_qiskit_noise_model.py}
