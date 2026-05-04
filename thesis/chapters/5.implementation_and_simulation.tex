@@ -213,5 +213,33 @@ Once the circuit is constructed and annotated, it compiles into an ultra-fast \t
 
 \includesnippet[caption={Simulation 8: Using cirq to procedurally generate a fully functional Repetition Code. The circuit is manually annotated with noise models, stimcirq.DetAnnotation, and stimcirq.CumulativeObservableAnnotation to define the spatial-temporal parity checks required by decoders, ensuring the translation to stim is exact.}, label={lst:cirq_snippet}]{S8_SNIPPET_CIRQ_BUILDER}{../src/chapter_5/s8_beyond_stim.py}
 
-\section{Extracting error models from Qiskit Fake Providers}
+\section{Automated noise injection: Extracting error models from Qiskit Fake Providers}
+\label{sec:qiskit_noise_model}
 
+In the preceding sections, we simulated circuit-level noise by manually injecting depolarizing channels and measurement flips at specific coordinates in the \texttt{stim} circuit. While this illustrates the mechanics of noise, it does not scale when we try to construct complex QEC codes.
+
+Fortunately, \texttt{cirq} provides a robust mechanism to automate this process: the \texttt{cirq.NoiseModel} allows us to apply a set of noise rules to every operation in a circuit. To demonstrate its power, we will extract physical error rates from a real quantum processor using IBM's Qiskit \texttt{FakeProviders}, and automatically inject them into our simulations.
+
+\subsection{Extracting physical parameters}
+
+\notatfm{In a strictly exhaustive circuit-level noise model, one should also include \textit{idle noise}. Because two-qubit gate errors ($p_{2q}$) are typically orders of magnitude higher than idle decoherence during the gate's duration, we approximate the system by only applying noise directly to active gates and measurements.} Using Qiskit's backend properties, we can extract the specific error rates of a physical chip. For our simulation, we compute the average single-qubit gate error ($p_{1q}$), two-qubit gate error ($p_{2q}$), and measurement readout error ($p_{meas}$). 
+
+Listing \ref{lst:s9_extract} demonstrates how these average parameters are programmatically extracted from a Qiskit backend.
+
+\includesnippet[caption={Simulation 9: Extracting average physical error rates from a Qiskit FakeProvider.}, label={lst:s9_extract}]{S9_SNIPPET_EXTRACT}{../src/chapter_5/s9_qiskit_noise_model.py}
+
+\subsection{Automating noise injection with \texttt{cirq.NoiseModel}}
+
+Once the physical parameters are extracted, we must map them into our \texttt{cirq} workflow. By inheriting from \texttt{cirq.NoiseModel}, we can override the \texttt{noisy\_operation} method to define specific rules for each gate type. 
+
+As shown in Listing \ref{lst:s9_model}, we apply bit-flips to measurements and depolarizing channels to gates.
+
+\includesnippet[caption={Simulation 9: Implementing a custom \texttt{cirq.NoiseModel} that applies the extracted error rates. The scale factor acts as a mathematical clamp to prevent probabilities from exceeding 1.0.}, label={lst:s9_model}]{S9_SNIPPET_MODEL}{../src/chapter_5/s9_qiskit_noise_model.py}
+
+To run our simulations, we often want to plot physical noise in the X axis. Since our extracted Qiskit noise provides a single fixed point, we introduce a \texttt{scale} factor. We multiply the base error rates by this factor to artificially worsen or improve the hardware's performance, allowing us to trace the error curve while maintaining the realistic relative ratios between single-qubit, two-qubit, and measurement errors.
+
+When plotting these results, we must select a single metric for the X-axis to represent the physical error rate. We use the two-qubit gate error rate ($p_{2q}$) as the reference.
+
+Listing \ref{lst:s9_with_noise} shows how we build a perfectly clean circuit, use the \texttt{with\_noise} method to automatically inject noise in the circuit based on our IBM model..
+
+\includesnippet[caption={Simulation 9: Applying the noise model to a clean circuit and converting it to stim for large-scale sampling.}, label={lst:s9_with_noise}]{S9_SNIPPET_WITH_NOISE}{../src/chapter_5/s9_qiskit_noise_model.py}
