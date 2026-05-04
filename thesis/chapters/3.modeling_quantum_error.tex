@@ -1,8 +1,52 @@
 \chapter{Modeling quantum error}
 \label{chap:modeling_quantum_error}
+In order to design, evaluate, and compare Quantum Error Correction (QEC) protocols, we must first establish a framework to describe how errors occur in quantum systems. A decoder cannot be effectively designed or benchmarked without a clear definition of the noise it is expected to correct. 
 
-\section{Formalizing quantum error modeling: code-capacity, phenomenological and circuit-level noise}
+Simulating continuous noise for large-scale systems is computationally intractable. Fortunately, as discussed in Section \ref{sec:classical_error}, quantum errors can be discretized into a finite set of Pauli errors ($X$, $Y$, and $Z$). Therefore, in the context of QEC simulation, we can safely model noise as discrete probabilistic Pauli insertions.
 
+\section{Types of quantum noise}
+\label{sec:types_of_noise}
+Before deciding where errors occur in a circuit, we must define the probability distribution of the errors themselves. The choice of noise type drastically affects the performance of both the QEC code and the decoder.
+\subsection{Depolarizing noise}
+\notatfm{The depolarizing channel is widely used for benchmarking decoders because it provides a "worst-case" scenario of symmetric uncertainty. If a decoder performs well under depolarizing noise, it is generally robust across different hardware platforms.} The depolarizing channel is the most standard noise model used in QEC literature due to its symmetry and mathematical simplicity. Under this model, a qubit has a probability $p$ of suffering an error, and when an error occurs, it is equally likely to be an $X$ (bit-flip), $Z$ (phase-flip), or $Y$ (both) error. Thus, each specific Pauli error occurs with probability $p/3$.
 
-\notatfm{The depolarizing channel is a standard symmetric noise model where a qubit has a probability $p$ of suffering an error, with the error being equally likely to be the Pauli $X$, $Y$, or $Z$ operator ($p/3$ each). This contrasts with asymmetric noise models, such as pure phase-damping or amplitude-damping channels.}
-NOTA QUE SACO DE OTRO CAPÍTULO PORQUE IRÁ AQUÍ CUANDO HAGA ESTE CAPÍTULO
+\subsection{Biased noise}
+Real quantum hardware rarely exhibits perfectly symmetric noise. In many physical qubit implementations, such as superconducting transmons, the quantum state is far more susceptible to losing its phase information than to losing its energy. This results in \textbf{biased noise}, where one type of error (typically $Z$ phase-flips) is significantly more probable than the others.
+
+\notatfm{The XZZX surface code has stabilizers that combine Z and X detectors and is therefore not a CSS code.} When the noise is highly biased, standard CSS codes may not be optimal. Instead, tailored codes (like the XZZX Surface Code) or tailored decoders can exploit this asymmetry by assigning lower weights to $Z$ errors, vastly improving the threshold for that specific hardware.
+
+\subsection{Correlated noise}
+Standard simulations usually assume that errors are independent and identically distributed, meaning the probability of an error on one qubit does not depend on the state of its neighbors. However, physical systems suffer from \textbf{correlated noise}, such as cosmic ray impacts or crosstalk between neighboring microwave lines, which can cause simultaneous errors on multiple adjacent qubits. While more difficult to model computationally, analyzing correlated noise is critical because multi-qubit errors can easily form logical strings that bypass the topological protection of the code.
+
+\section{Error Models}
+\label{sec:error_models}
+While the \textit{type} of noise defines the probability distribution of the Pauli operators, the \textit{error model} defines the abstraction level of the circuit where these errors are injected. We classify error models into three hierarchical categories: code-capacity, phenomenological, and circuit-level noise.
+
+\subsection{Code-capacity noise}
+\notatfm{While physically unrealistic, the code-capacity model is an essential theoretical tool. It isolates the raw error-correcting capability of the code's geometry and the base performance of the spatial decoder, without the confounding effects of faulty syndrome extraction circuits.} The \textbf{code-capacity model} is the simplest and most abstract error model. It assumes that all quantum gates, measurements, and state preparations are perfectly flawless. Errors are only injected into the data qubits while they are "idle".
+
+Under this model, the syndrome extracted by the ancilla qubits is always 100\% reliable. Because measurements never fail, the decoder only needs to solve a 2D spatial problem (matching the errors on the lattice). 
+
+\subsection{Phenomenological noise}
+In reality, the classical measurement hardware and the ancilla qubits used to extract the syndrome are also susceptible to noise. The \textbf{phenomenological noise model} builds upon the code-capacity model by adding \textbf{readout errors}. 
+
+In this model, data qubits suffer errors with probability $p$, and the classical syndrome bits obtained from the measurements are independently flipped with probability $q$ (usually $p=q$). However, the entangling gates used to compute the parity checks are still assumed to be perfect.
+
+Because the syndrome itself can now lie, the decoder can no longer trust a single measurement round. A faulty measurement could trick the decoder into applying an incorrect correction, creating a logical error. To solve this, the syndrome extraction must be repeated over time (typically $d$ rounds for a distance-$d$ code). The decoder must now resolve a 3D spatial-temporal graph, tracking how detection events appear and disappear across time steps.
+
+\subsection{Circuit-level noise}
+\notatfm{Circuit-level noise introduces a critical challenge: \textbf{error propagation}. A CNOT gate will propagate an $X$ error from its control to its target, and a $Z$ error from its target to its control. A single physical fault occurring in the middle of a syndrome extraction routine can propagate into a multi-qubit error on the data qubits (known as a "hook error").} The \textbf{circuit-level noise model} is the most realistic and demanding simulation framework. It removes all assumptions of perfection. In this model, noise is injected into every physical operation:
+\begin{itemize}
+    \item \textbf{Initialization}: Qubits may be prepared in the wrong state.
+    \item \textbf{Idle operations}: Qubits suffer decoherence while waiting for other operations to finish.
+    \item \textbf{Single-qubit gates}: A depolarizing channel is applied after every single-qubit rotation.
+    \item \textbf{Two-qubit gates}: A two-qubit depolarizing channel is applied after every entangling gate (e.g., CNOT).
+    \item \textbf{Measurements}: Measurement outcomes can be flipped, as in the phenomenological model.
+\end{itemize}
+
+Because of error propagation, circuit-level noise can generate correlated errors on the data lattice from a single independent fault. Decoders operating under circuit-level noise must be explicitly aware of the circuit scheduling (the specific order of the CNOT gates) to correctly anticipate and decode these correlated hook errors.
+
+\section{Relationship between the models}
+\notatfm{We use the $[p_{data}:p_{meas}:p_{gate}]$ notation to define the probability ratios between the three models. As an example, $[1:0.5:0]$ represents a phenomenological noise mode with data errors happening twice as much as measurement errors.} These three error models form a strict hierarchy. Circuit-level noise is the superset that encapsulates all physical reality. If we take a circuit-level simulation and artificially set the error rates of all gates and idle cycles to zero (leaving only measurement errors and a baseline data qubit error), we recover the phenomenological model. If we subsequently set the measurement error rate to zero, we are left with the code-capacity model.
+
+Throughout this thesis, we will strictly simulate non-correlated depolarizing noise. We will utilize the code-capacity model to analyze the fundamental topological properties of Color Codes, and deploy the circuit-level noise model when benchmarking their performance against realistic quantum hardware constraints. The exception will be the initial implementation in Chapter \ref{chap:implementation_and_simulation}, in which we will use different noise models to illustrate its impact and various properties of the QEC codes.
