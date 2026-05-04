@@ -234,7 +234,7 @@ Once the physical parameters are extracted, we must map them into our \texttt{ci
 
 As shown in Listing \ref{lst:s9_model}, we apply bit-flips to measurements and depolarizing channels to gates.
 
-\includesnippet[caption={Simulation 9: Implementing a custom \texttt{cirq.NoiseModel} that applies the extracted error rates. The scale factor acts as a mathematical clamp to prevent probabilities from exceeding 1.0.}, label={lst:s9_model}]{S9_SNIPPET_MODEL}{../src/chapter_5/s9_qiskit_noise_model.py}
+\includesnippet[caption={Simulation 9: Implementing a custom cirq.NoiseModel that applies the extracted error rates. The scaled error rates are bounded to avoid exceeding 1.0.}, label={lst:s9_model}]{S9_SNIPPET_MODEL}{../src/chapter_5/s9_qiskit_noise_model.py}
 
 To run our simulations, we often want to plot physical noise in the X axis. Since our extracted Qiskit noise provides a single fixed point, we introduce a \texttt{scale} factor. We multiply the base error rates by this factor to artificially worsen or improve the hardware's performance, allowing us to trace the error curve while maintaining the realistic relative ratios between single-qubit, two-qubit, and measurement errors.
 
