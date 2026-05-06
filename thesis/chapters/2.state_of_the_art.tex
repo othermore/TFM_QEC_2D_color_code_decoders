@@ -60,7 +60,7 @@ To avoid the mathematical complexity of handling open boundaries at the edges of
 \subsection{Observables, Capacity, and Code Distance}
 In topological codes, logical operations (logical gates and measurements of the qubit) are not applied to single physical qubits. Instead, logical observables are defined as continuous chains or \textit{strings} of Pauli operators applied sequentially along a path of adjacent data qubits. 
 
-A closed string of operations that forms a small, trivial loop on the surface is simply a combination of stabilizers and has no effect on the encoded logical state. However, a string that wraps entirely around the torus---a \textit{non-contractible loop}---fundamentally changes the logical state. These global, non-contractible strings represent our logical operators ($X_L$ and $Z_L$). Figure \ref{fig:surface_code_evolution} shows this.
+A closed string of operations that forms a small, trivial loop on the surface is simply a combination of stabilizers and has no effect on the encoded logical state. However, a string that wraps entirely around the torus---a \textit{non-contractible loop}---fundamentally changes the logical state. These global, non-contractible strings represent our logical operators ($X_L$ and $Z_L$). Figure \ref{fig:2:surface_code_evolution} shows this.
 
 When visualizing this topology on a 2D grid, these two distinct non-contractible loops correspond to the orthogonal directions of the lattice (East-West and North-South). On a torus, for each of these two directions, two operators, $X_L$ and $Z_L$, can be applied, effectively codifying 2 qubits (each with 2 operators).
 
@@ -73,14 +73,14 @@ While the toric code is mathematically beautiful, manufacturing a quantum proces
 
 To implement this on a real chip, we must "cut" the torus and lay it flat. This physical cut transforms the Toric Code into the planar \textbf{Surface Code}. However, cutting the torus exposes physical borders. To preserve the ability to correct both $X$ and $Z$ errors, the planar patch must have two types of alternating boundaries: "rough" boundaries (where $Z$-strings terminate) and "smooth" boundaries (where $X$-strings terminate). Because the closed loops of the torus are now severed into linear strings that span from one boundary to the opposite, the storage capacity drops: a standard planar patch encodes only $k=1$ logical qubit.
 
-To further optimize the mapping onto real hardware, the planar surface code is almost universally implemented in its \textbf{rotated} version. While this rotated representation perfectly preserves the underlying topological properties, it drastically improves spatial efficiency. Because the code distance $d$ is defined purely by the minimum length of the string connecting opposite boundaries, rotating the orientation of these boundaries by 45 degrees eliminates the wasted corner qubits present in the standard planar cut. Consequently, the rotated surface code requires significantly less physical qubits to achieve the exact same distance $d$ (see Figure \ref{fig:surface_code_evolution}).
+To further optimize the mapping onto real hardware, the planar surface code is almost universally implemented in its \textbf{rotated} version. While this rotated representation perfectly preserves the underlying topological properties, it drastically improves spatial efficiency. Because the code distance $d$ is defined purely by the minimum length of the string connecting opposite boundaries, rotating the orientation of these boundaries by 45 degrees eliminates the wasted corner qubits present in the standard planar cut. Consequently, the rotated surface code requires significantly less physical qubits to achieve the exact same distance $d$ (see Figure \ref{fig:2:surface_code_evolution}).
 
 \begin{figure}[hbt!]
     \centering
     % Subfigure A: Torus with observables
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
-        \includegraphics[width=1\linewidth]{figures/c2_torus_kitaev.png}
+        \includegraphics[width=1\linewidth]{figures/chapter_2/c2_torus_kitaev.png}
         \caption{}
     \end{subfigure}
     \hfill
@@ -215,7 +215,7 @@ To further optimize the mapping onto real hardware, the planar surface code is a
     \end{subfigure}
 
     \caption{Evolution and representations of the surface code. \textbf{(a)} The toric code representation, illustrating how logical observables correspond to non-contractible continuous strings wrapping around the two fundamental cycles of the torus. \textbf{(b)} The original planar formulation by Kitaev ($d=4$), with data qubits on the edges and checks on vertices and faces. The red square represents a $Z$-stabilizer and the blue cross represents a $X$-stabilizer. A total of 49 physical qubits are needed. \textbf{(c)} The equivalent rotated surface code, placing data on vertices and alternating checks on colored faces to significantly reduce physical overhead. Red faces represent $Z$-stabilizers and blue faces represent $X$-stabilizers. The blue and red lines represent the minimum string for the respective operators. In this case, only 31 physical qubits are required. In figures \textbf{(b)} and \textbf{(c)} for a $d=4$ code, white circles represent data qubits and black circles represent ancilla qubits.  The blue and red lines represent the minimum strings for the respective logical operators.}
-    \label{fig:surface_code_evolution}
+    \label{fig:2:surface_code_evolution}
 \end{figure}
 
 \subsection{Advantages and Disadvantages}
@@ -234,7 +234,7 @@ Unlike the surface code, which physically separates $X$-checks and $Z$-checks by
 This overlapping check structure is mathematically robust due to the inherent geometry of these lattices. In any 3-valent, 3-colorable lattice, every face is guaranteed to have an even number of vertices. Consequently, an $X$-check and a $Z$-check defined on the exact same face will overlap on an even number of data qubits, guaranteeing that they commute. Furthermore, any two adjacent faces will always share exactly one edge (which contains exactly two vertices). Thus, an $X$-check on one face will always share two data qubits with a $Z$-check on an adjacent face, ensuring global commutativity across the entire code block, as required by the Stabilizer Formalism presented in Section \ref{sec:stabilizer_formalism}.
 
 \subsection{2D Color Code Configurations}
-\notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations, shown in Figure \ref{fig:color_code_lattices}:
+\notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations, shown in Figure \ref{fig:2:color_code_lattices}:
 
 \begin{itemize}
     \item \textbf{6.6.6 Lattice:} A regular lattice composed entirely of hexagons.
@@ -280,7 +280,7 @@ This overlapping check structure is mathematically robust due to the inherent ge
             }
         \end{tikzpicture}
         \caption{}
-        \label{fig:lattice_666}
+        \label{fig:2:lattice_666}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.3\textwidth}
@@ -340,7 +340,7 @@ This overlapping check structure is mathematically robust due to the inherent ge
             \sq{-\L}{-\L}{colR}
         \end{tikzpicture}
         \caption{}
-        \label{fig:lattice_488}
+        \label{fig:2:lattice_488}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.3\textwidth}
@@ -391,11 +391,11 @@ This overlapping check structure is mathematically robust due to the inherent ge
             }
         \end{tikzpicture}
         \caption{}
-        \label{fig:lattice_4612}
+        \label{fig:2:lattice_4612}
     \end{subfigure}
 
     \caption{The three valid 2D configurations for topological color codes: the 6.6.6 hexagonal lattice, the 4.8.8 square-octagonal lattice, and the 4.6.12 lattice. The faces are 3-colored (e.g., red, green, blue) such that no two adjacent faces share the same color. Data qubits are represented with white circles. There are two ancilla qubits in each colored face, which are not represented in the image.}
-    \label{fig:color_code_lattices}
+    \label{fig:2:color_code_lattices}
 \end{figure}
 
 \subsection{Topological Observables: Colored Strings and Nets}
@@ -406,7 +406,7 @@ Just as in the surface code, logical observables in color codes are formed by co
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \centering
-        \includegraphics[width=0.85\linewidth]{figures/c2_torus_colorcode.png}
+        \includegraphics[width=0.85\linewidth]{figures/chapter_2/c2_torus_colorcode.png}
         \caption{}
     \end{subfigure}
     \hfill
@@ -619,7 +619,7 @@ Just as in the surface code, logical observables in color codes are formed by co
     \end{subfigure}
 
     \caption{Logical observables in a toric color code. \textbf{(a)} Logical observables correspond to color-independent non-contractible continuous strings wrapping around the two fundamental cycles of the torus. Color codes allow us to codify two logical operators in the same string, with the logical observables for each qubit being orthogonal. \textbf{(b)} The 4 independent strings in a $4.8.8$ lattice. \textbf{(c)} The 4 independent strings in a $6.6.6$ lattice.}
-    \label{fig:color_code_logical_observables}
+    \label{fig:2:color_code_logical_observables}
 \end{figure}
 
 
@@ -628,7 +628,7 @@ In a color code, strings are \textit{colored}. A string can only be a border bet
 
 This color property leads to a unique topological feature: \textbf{string branching}. A string of one color can "unfold" or branch into two strings of the remaining colors at any vertex. For instance, a red string can split into a green string and a blue string, forming a structure known as a \textit{net}. This topological flexibility means that logical operators do not have to be simple linear loops; they can be complex, branching networks of operators that span the lattice.
 
-These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits (see Figure \ref{fig:color_code_logical_observables}). For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes (see Figure \ref{fig:planar_color_code}).
+These strings and nets define the logical operators. When two non-contractible nets of $X$ and $Z$ operators intersect at an odd number of data qubits, they anticommute, forming a valid logical qubit. Because of this rich combinatorial structure, a color code is twice as dense as a surface code. While a surface code wrapped on a torus natively encodes $k=2$ logical qubits, a color code on the exact same toroidal surface encodes $k=4$ logical qubits (see Figure \ref{fig:2:color_code_logical_observables}). For planar implementations, triangular patches are typically used, which encode $k=1$ logical qubit but offer remarkably different boundary symmetries compared to the square patches of surface codes (see Figure \ref{fig:2:planar_color_code}).
 
 Despite the lattice being three-colorable and supporting strings of three distinct colors, only two of these colors are strictly independent from an error-correction perspective. In a 2D color code, every data qubit is located at a vertex shared by exactly three faces---one red, one green, and one blue. Consequently, any single error will always trigger a defect in exactly one face of each color. Because these syndrome defects are inherently created in triplets, the parity information gathered from any two colors fully determines the state of the third.
 
@@ -644,7 +644,7 @@ Despite their theoretical superiority, 2D color codes face significant physical 
 
 Moreover, the stabilizers acting on the faces involve a high number of qubits. For instance, in the 4.8.8 lattice, the octagonal faces represent weight-8 parity checks. Measuring a weight-8 stabilizer dynamically without exposing the data to correlated errors is a mapping challenge on modern hardware, which typically features restricted 2D grid connectivity.
 
-Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this topology onto a standard 2D square architecture, although it requires replacing the ancilla qubit in octogonal faces with 5 ancilla qubits, 4 of them connected to two data qubits each, and the fifth one connected to the 4 ancilla qubits ((see Figure \ref{fig:planar_color_code})).
+Implementing these codes on real processors requires highly optimized, specialized layouts. For the \textbf{4.8.8 lattice}, Fowler \cite{Fowler_2011} demonstrated that it is possible to map this topology onto a standard 2D square architecture, although it requires replacing the ancilla qubit in octogonal faces with 5 ancilla qubits, 4 of them connected to two data qubits each, and the fifth one connected to the 4 ancilla qubits ((see Figure \ref{fig:2:planar_color_code})).
 
 
 \begin{figure}[htbp]
@@ -1027,7 +1027,7 @@ Implementing these codes on real processors requires highly optimized, specializ
         \caption{}
     \end{subfigure}
     \caption{Planar topology of a 4.8.8 lattice color code. \textbf{(a)} Definition of the triangular patch for a planar topology, in which we must use string-nets to define the logical observables. Each string-net can encode the logical $X$ and $Z$ operators in the color code, but the individual strings must terminate at a boundary of their own color, which inherently requires branching. \textbf{(b)} Mapping of the color code patch to a quantum processor with a square grid of qubits. For the octagonal faces, we must use 5 ancillas to perform the stabilizer measurements. Ancilla qubits in the tetrahedrons that appear in the boundaries do not map the square grid and are intentionally simplified in this diagram.}
-    \label{fig:planar_color_code}
+    \label{fig:2:planar_color_code}
 \end{figure}
 
 

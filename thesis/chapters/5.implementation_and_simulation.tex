@@ -37,7 +37,7 @@ The code in Listing \ref{lst:stim_rep_code} illustrates how this simulation can 
 \notatfm{The preparation of the initial state of a circuit is not generally required. However, noise models can be asymmetric (e.g. a qubit may be more likely to flip from $\ket{1}$ to $\ket{0}$ than from $\ket{0}$ to $\ket{1}$) and so can be QEC codes (the 9-qubit Shor code has better protection against bit-flip errors than against phase-flip errors). In these cases, preparing the initial state may be required.}
 During the simulation, errors can occur with a certain probability $p$. When they happen, they are tracked and cascade down to the detectors and observables, allowing \texttt{stim} to determine both if a detector is triggered and if an observable flips. If the code and the decoding succeed, both should match. Because flips, rather than states, are tracked, the circuit does not have to be prepared on a certain state, we only evaluate its capacity to preserve its state.
 
-Figure \ref{fig:stim_rep_compare_plot} shows the logical error rate as a function of the physical error rate for this code with two different decoders. Note that, as a basic repetition code, this code only corrects for bit-flip errors.
+Figure \ref{fig:5:stim_rep_compare_plot} shows the logical error rate as a function of the physical error rate for this code with two different decoders. Note that, as a basic repetition code, this code only corrects for bit-flip errors.
 
 
 \includesnippet[caption={Simulation 1: Basic repetition code simulation}, label={lst:stim_rep_code}]{S1_SNIPPET}{../src/chapter_5/s1_stim_rep_code.py}
@@ -57,13 +57,13 @@ The code Listing \ref{lst:majority_vote_decoder} shows a very simple implementat
 
 \includesnippet[caption={Simulation 2: Implementation of a simple Majority Vote decoder for a repetition code}, label={lst:majority_vote_decoder}]{S2_SNIPPET}{../src/chapter_5/s2_majority_vote_decoder.py}
 
-As seen in Figure \ref{fig:stim_rep_compare_plot}, for simple repetition codes under basic noise models, both decoders perform similarly, effectively reducing physical errors. In the following section we will stress-test our decoders to see how their efficiency decays with different noise models.
+As seen in Figure \ref{fig:5:stim_rep_compare_plot}, for simple repetition codes under basic noise models, both decoders perform similarly, effectively reducing physical errors. In the following section we will stress-test our decoders to see how their efficiency decays with different noise models.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.6\linewidth]{figures/stim_rep_comparison_plot.png}
+    \includegraphics[width=0.6\linewidth]{figures/chapter_5/stim_rep_comparison_plot.png}
     \caption{Simulation 3: Comparison of the results of simulations 1 and 2. Displays the logical error for a basic repetition code using Majority Vote and MWPM decoders. The x=y dotted line helps comparing the QEC protocol to not implementing any QEC. If the logical error rate is above the physical error rate, the QEC protocol is adding errors}
-    \label{fig:stim_rep_compare_plot}
+    \label{fig:5:stim_rep_compare_plot}
 \end{figure}
 
 \subsection{Introducing circuit-level noise}
@@ -75,20 +75,20 @@ To illustrate this, we expand our simulation to include \textbf{circuit-level no
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_noise_plot.png}
+    \includegraphics[width=0.8\textwidth]{figures/chapter_5/stim_rep_circuit_noise_plot.png}
     \caption{Simulation 4: Impact of circuit-level and phenomenological noise on the repetition code performance. Introducing more complex noise significantly degrades the logical error suppression compared to the idealized code-capacity baseline. With this additional noise, MWPM shows its advantage over the Majority Vote because of its capacity to consider the probabilities of each error to select the most probable set of errors that could have caused the observed syndrome.}
-    \label{fig:stim_rep_circuit_noise_plot}
+    \label{fig:5:stim_rep_circuit_noise_plot}
 \end{figure}
 
 \includesnippet[caption={Simulation 4: Adding circuit-level noise.}, label={lst:stim_rep_code_noise}]{S4_SAMPLE}{../src/chapter_5/s4_majority_vote_noise.py}
 
-As shown in Figure \ref{fig:stim_rep_circuit_distance_plot}, realistic noise drastically reduces the effectiveness of the code, but it also shows the importance of the decoder. Handling circuit-level noise requires complex spatial-temporal decoding graphs, which makes MWPM a better solution than a basic Majority Vote decoder. The figure also shows how increasing the distance improves the results of the MWPM decoder, but it degrades the result of the Majority Vote decoder. This means that, for this specific noise model and the MWPM decoder, the system is operating under the threshold, so the error correcting capacity of the protocol can be increased by increasing the distance. However, with our Majority Vote decoder, the system operates above the threshold.
+As shown in Figure \ref{fig:5:stim_rep_circuit_distance_plot}, realistic noise drastically reduces the effectiveness of the code, but it also shows the importance of the decoder. Handling circuit-level noise requires complex spatial-temporal decoding graphs, which makes MWPM a better solution than a basic Majority Vote decoder. The figure also shows how increasing the distance improves the results of the MWPM decoder, but it degrades the result of the Majority Vote decoder. This means that, for this specific noise model and the MWPM decoder, the system is operating under the threshold, so the error correcting capacity of the protocol can be increased by increasing the distance. However, with our Majority Vote decoder, the system operates above the threshold.
 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/stim_rep_circuit_distance_plot.png}
+    \includegraphics[width=0.8\textwidth]{figures/chapter_5/stim_rep_circuit_distance_plot.png}
     \caption{Simulation 5: Under a complex noise model (code-capacity, circuit-level and phenomenological) increasing the distance of the code has the opposite effect for each of the decoders.}
-    \label{fig:stim_rep_circuit_distance_plot}
+    \label{fig:5:stim_rep_circuit_distance_plot}
 \end{figure}
 
 \subsection{Implementing the 9-qubit Shor code}
@@ -104,32 +104,32 @@ In our previous simulations, we relied on \texttt{stim}'s built-in circuit gener
     \captionsetup[subfigure]{font=footnotesize}
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/shor_9_noise_models.png}
+        \includegraphics[width=\textwidth]{figures/chapter_5/shor_9_noise_models.png}
         \caption{Noise Models}
-        \label{fig:shor_9_noise_models}
+        \label{fig:5:shor_9_noise_models}
     \end{subfigure}% 
     \hfill
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/shor_9_rounds.png}
+        \includegraphics[width=\textwidth]{figures/chapter_5/shor_9_rounds.png}
         \caption{Rounds}
-        \label{fig:shor_9_rounds}
+        \label{fig:5:shor_9_rounds}
     \end{subfigure}
 
     \vspace{1ex} 
 
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/shor_9_states.png}
+        \includegraphics[width=\textwidth]{figures/chapter_5/shor_9_states.png}
         \caption{State Dependency}
-        \label{fig:shor_9_states}
+        \label{fig:5:shor_9_states}
     \end{subfigure}
 
     \caption{\textbf{Simulation 6}: Performance analysis of the Shor 9-qubit code using the MWPM decoder. 
     \textbf{(a) Noise models}: Comparison between Code-capacity, Phenomenological, and Circuit-level noise. 
     \textbf{(b) Rounds}: Accumulation of errors over syndrome measurement rounds. 
     \textbf{(c) State Dependency}: Performance for different initial states. When measuring in the $Z$-basis ($\ket{0}$ or $\ket{1}$), the logical outcome is insensitive to logical phase-flips (physical $X$ errors) but vulnerable to logical bit-flips (physical $Z$ errors). Conversely, measurements in the $X$-basis ($\ket{+}$ or $\ket{-}$) are vulnerable to logical phase-flips but insensitive to logical bit-flips. Due to the code's concatenated structure, there are fewer fatal combinations for physical $X$ errors than for physical $Z$ errors, resulting in higher logical protection for the $\ket{\pm}$ states. Finally, measurements in the $Y$-basis ($\ket{\pm i}$) are vulnerable to fatal combinations of both physical $X$ and physical $Z$ errors, effectively accumulating the vulnerabilities of both previous cases and resulting in the highest logical failure rate.}
-    \label{fig:simulation_6_shor}
+    \label{fig:5:simulation_6_shor}
 \end{figure}
 
 Finally, to evaluate the code under realistic conditions, noise must be integrated into the circuit. Unlike the automated generator, building a circuit from scratch requires manually injecting specific noise channels-such as gate depolarization, measurement flips, or idle decoherence-at the exact coordinates where they occur (Listings \ref{lst:stim_noisy_gate}, \ref{lst:stim_noisy_measurement}, and \ref{lst:stim_noisy_round}).
@@ -162,12 +162,12 @@ To conclude our exploration of baseline models, we return to the repetition code
 To observe this transition clearly in a simulation, two critical adjustments are required. First, we must adopt an appropriate noise model. Under pure code-capacity noise, the 1D repetition code lacks a standard visible threshold because the decoder can adapt to extreme error rates with perfect syndromes. We opt for a noise model that is fundamentally code-capacity, but we inject small rates of circuit-level noise (specifically, small probabilities of measurement and gate errors, at a 1:0.05:0.05 ratio). This forces the decoder to handle imperfect syndromes, allowing us to see exactly how the code behaves when its limits are tested. 
 
 Second, we must ensure that the number of syndrome extraction rounds grows proportionally with the code distance (setting \texttt{rounds = d}). Fault tolerance must be achieved in both space (number of qubits) and time (measurement rounds). If we were to increase the number of qubits but only measure the syndrome once, the code would be heavily protected spatially but extremely fragile temporally. By increasing the rounds along with the distance, we force the larger codes to survive the noise for a longer period. While this might intuitively seem unfair—giving larger codes more opportunities to fail—the power of the Threshold Theorem is that, below the threshold, the error suppression is so strong that the larger code still achieves a lower total error rate despite enduring more rounds of noise.
-Figure \ref{fig:threshold_theorem_plot} demonstrates this effect perfectly. 
+Figure \ref{fig:5:threshold_theorem_plot} demonstrates this effect perfectly. 
 \begin{figure}[hbt!]
     \centering
-    \includegraphics[width=0.8\linewidth]{figures/s7_threshold_theorem.png}
+    \includegraphics[width=0.8\linewidth]{figures/chapter_5/s7_threshold_theorem.png}
     \caption{Simulation 7: Visualizing the Threshold Theorem using a repetition code under a predominantly code-capacity noise model with small rates of circuit-level noise (ratio 1:0.05:0.05). For physical error rates below the threshold (the point where the curves intersect), increasing the distance of the code strictly improves its performance, driving the logical error rate down. Conversely, for physical error rates above the threshold, the noise overwhelms the system, and adding more qubits only introduces more errors, degrading the overall performance.}
-    \label{fig:threshold_theorem_plot}
+    \label{fig:5:threshold_theorem_plot}
 \end{figure}
 
 \section{Beyond stim: Experimental setup for implementation and simulation}

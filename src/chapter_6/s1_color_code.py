@@ -156,11 +156,15 @@ class Lattice488(Lattice):
     """
     def build(self):
         """
-        Builds the 4.8.8 lattice using a procedural level-based topological construction.
-        The lattice is built by first placing the core squares in a pyramid structure.
+        Builds the 4.8.8 lattice using a procedural level-based construction.
+        The lattice is built by first placing the squares in a pyramid structure.
         Then, the gaps between these squares are filled with octagons.
         Finally, the left, right, and bottom boundaries are capped with trapezoids
         to ensure all boundary data qubits are protected by appropriate stabilizers.
+        Depending on the distance, octogons and trapezoids have different colors,
+        which alternates between distances (e.g. at d=3 the octogons in the first level 
+        are green, but at d=5 octogons in the first level are blue and they are 
+        green in the second level)
         All rules scale automatically for any valid distance.
         """
         N = (self.distance - 1) // 2

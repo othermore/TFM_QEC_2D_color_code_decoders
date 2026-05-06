@@ -72,7 +72,7 @@ If a noise event flips one of the physical bits (e.g., the state becomes $010$),
     \end{tikzpicture}   
 }
 \caption{Mechanism of a classical 3-bit repetition code correcting a single bit-flip error.}
-\label{fig:classical_repetition}
+\label{fig:1:classical_repetition}
 \end{figure}
 
 \notatfm{This overlapping block parity concept is the foundation of classical Hamming codes, which can mathematically pinpoint exactly which bit flipped without needing massive repetition.}
@@ -110,7 +110,7 @@ A more efficient method is the use of \textbf{parity checks}. Instead of copying
         \node[below=0.7cm of p, font=\scriptsize\color{gray}] {Data block};
     \end{tikzpicture}
 \caption{A parity check bit appended to a 3-bit message. The parity bit (0) is calculated to ensure that the total number of '1's in the data block is even.}
-\label{fig:parity_check}
+\label{fig:1:parity_check}
 \end{figure}
 
 \subsubsection*{The Three Major Challenges of Quantum Error Correction}
@@ -166,7 +166,7 @@ It is natural to assume we could simply apply these classical techniques to quan
     };
 \end{tikzpicture}
 \caption{Geometric representation of a qubit on the Bloch sphere. The parameters $\theta$ and $\phi$ define the continuous orientation of the state vector $|\psi\rangle$ relative to the computational basis states $|0\rangle$ and $|1\rangle$.}
-\label{fig:bloch_sphere}
+\label{fig:1:bloch_sphere}
 \end{figure}
 \end{enumerate}
 
@@ -192,7 +192,7 @@ $$|0\rangle_L = |000\rangle, \quad |1\rangle_L = |111\rangle$$
     \lstick{$|0\rangle$} & \qw & \targ{} & \qw & 
 \end{quantikz}
 \caption{Encoding circuit for the bit-flip code. Entanglement distributes the logical information without violating the no-cloning theorem.}
-\label{fig:bit_flip_encoding}
+\label{fig:1:bit_flip_encoding}
 \end{figure}
 
 To solve the measurement problem, Shor introduced the concept of \textbf{syndrome extraction}. Instead of measuring each qubit (which would destroy the superposition $\alpha|000\rangle + \beta|111\rangle$), we compare pairs of these qubits to determine whether they are equal or different without gaining any information about their actual state.
@@ -207,10 +207,10 @@ To solve the measurement problem, Shor introduced the concept of \textbf{syndrom
         \lstick{Ancilla $s_B$} & \qw      & \targ{}  & \meter{} & \qw \rstick{bit $b$}
     \end{quantikz}
     \caption{Syndrome measurement: The ancilla qubits are activated when the two qubits that they monitor are different. Depending on which of the two ancilla qubits are activated, we can determine which of the qubits has flipped. This is known as a Z-type detector}
-    \label{fig:3-qubit-syndrome}
+    \label{fig:1:3-qubit-syndrome}
 \end{figure}
 
-As shown in Figure \ref{fig:3-qubit-syndrome}, measuring the ancilla qubits does not provide information about the state of each individual qubit, but it provides information about two qubits being different. The following table shows how the measuring of these ancilla qubits maps to specific identified errors.
+As shown in Figure \ref{fig:1:3-qubit-syndrome}, measuring the ancilla qubits does not provide information about the state of each individual qubit, but it provides information about two qubits being different. The following table shows how the measuring of these ancilla qubits maps to specific identified errors.
 
 \begin{table}[H]
     \centering
@@ -247,13 +247,13 @@ The encoding circuit entangles the qubits using the CNOT structure of the bit-fl
     \lstick{$|0\rangle$} & \qw & \targ{} & \gate{H} & \qw &
 \end{quantikz}
 \caption{Encoding circuit for the 3-qubit phase-flip code. The information is first distributed via entanglement, and then Hadamard gates transform the final state into the $\{|+\rangle, |-\rangle\}$ basis.}
-\label{fig:phase_flip_encoding}
+\label{fig:1:phase_flip_encoding}
 \end{figure}
 
 \notatfm{To measure the relative phases of the data qubits (implementing a X-type detector), the phase-kickback technique is used: the ancilla is put on a $|+\rangle$ state and CNOT gates are run with the ancilla as control qubit.}
 Applying the same measuring technique to these three qubits in pairs, allows determining the syndrome, which in this case will point to a $Z$ error. 
 
-% Figure \ref{fig:3-qubit-phase-syndrome} shows the corresponding circuit.
+% Figure \ref{fig:1:3-qubit-phase-syndrome} shows the corresponding circuit.
 
 % \begin{figure}[H]
 %     \centering
@@ -265,7 +265,7 @@ Applying the same measuring technique to these three qubits in pairs, allows det
 %         \lstick{Ancilla $s_B$ $\ket{0}$} & \gate{H} & \qw & \qw & \ctrl{-3} & \ctrl{-2} & \gate{H} & \meter{} \rstick{bit $b$}
 %     \end{quantikz}
 %     \caption{Phase-flip syndrome measurement: The ancilla qubits are initialized in the $\ket{+}$ state using Hadamard gates. To perform the measurement in the $X$ basis, CNOT gates are applied in reverse (ancilla as control, data as target) to exploit phase kickback. A final Hadamard gate returns the ancillas to the computational basis before measurement.}
-%     \label{fig:3-qubit-phase-syndrome}
+%     \label{fig:1:3-qubit-phase-syndrome}
 % \end{figure}
 
 % The following table shows how each of the possible syndromes points to one specific error correction: 
@@ -308,7 +308,7 @@ $$|1\rangle_L = \frac{(|000\rangle - |111\rangle)(|000\rangle - |111\rangle)(|00
         \lstick{$|0\rangle$} & \qw & \qw & \qw & \qw & \targ{} & \qw & 
     \end{quantikz}
     \caption{Full encoding circuit for the 9-qubit Shor code. The initial CNOT and Hadamard gates encode the logical state into a 3-qubit phase-flip code. Subsequently, each of these three qubits is encoded into a 3-qubit bit-flip code, resulting in the final 9-qubit state.}
-    \label{fig:shor_9qubit_circuit}
+    \label{fig:1:shor_9qubit_circuit}
 \end{figure}
 
 To extract the syndrome of the 9-qubit Shor code, a total of 8 ancilla qubits are needed, 6 of them monitoring pairs of qubits to detect bit flips inside the clusters (Z-type detectors), and 2 of them monitoring full clusters to detect phase flips between two clusters (X-type detectors). The Table \ref{tab:9-shor-ancilla} shows the ancilla qubits and the data qubits they monitor.
