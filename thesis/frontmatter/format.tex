@@ -280,16 +280,13 @@
 }
 
 \usepackage{tabularx}
+\usepackage{adjustbox}
 
 
-
-
-% 1. BibLaTeX setup
+% BibLaTeX setup
 \usepackage[style=numeric, sorting=none]{biblatex}
 \addbibresource{references.bib}
 
-% --- INTERCEPTOR DE TEXTO PLANO ---
-% Copia el autor o editor tal cual está escrito en el .bib a la variable "usera"
 \DeclareSourcemap{
   \maps[datatype=bibtex]{
     \map[overwrite=false]{
@@ -303,7 +300,7 @@
   }
 }
 
-% 2. Hyperref setup
+% Hyperref setup
 \usepackage{hyperref}
 \hypersetup{
     unicode=true,
@@ -314,10 +311,9 @@
     citecolor=nebrijared 
 }
 
-% 3. PDF annotations
+% PDF annotations
 \usepackage{pdfcomment}
 
-% 4. Redefinición avanzada usando la variable de texto plano (usera)
 \DeclareCiteCommand{\cite}[\mkbibbrackets]
   {\usebibmacro{prenote}}
   {%

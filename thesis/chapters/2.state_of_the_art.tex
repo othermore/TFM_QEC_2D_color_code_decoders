@@ -398,6 +398,12 @@ This overlapping check structure is mathematically robust due to the inherent ge
     \label{fig:2:color_code_lattices}
 \end{figure}
 
+The $4.8.8$ lattice presents unique properties that make it particularly interesting, which motivates our decision of performing our simulations with this lattice:
+\begin{itemize}
+    \item Lower qubit requirements: For the 4.8.8, 6.6.6, and 4.6.12 color code geometries, the number of data qubits $n$ as a function of the distance $d$ is given by $n_{4.8.8} = \frac{d^2 + 2d - 1}{2}$, $n_{6.6.6} = \frac{3d^2 + 1}{4}$, and $n_{4.6.12} = \frac{3d^2 - 6d + 5}{2}$, respectively, with the 4.8.8 lattice being the one with best asymptotical ratio. 
+    \item As a doubly-even code, the 4.8.8 lattice enables a transversal implementation of the full Clifford group, including $H$, $S^\dagger$ and $\text{CNOT}$. While all 2D color code lattices allow for transversal Clifford group gates, only the 4.8.8 geometry allows the $S$ gate to be implemented not only transversally, but uniformly across all physical qubits. Lattices containing faces whose number of sides is not a multiple of four (such as the hexagons in the 6.6.6 and 4.6.12 codes) require the transversal operation to alternate between $S$ and $S^\dagger$ gates.
+\end{itemize}
+
 \subsection{Topological Observables: Colored Strings and Nets}
 Just as in the surface code, logical observables in color codes are formed by continuous paths of Pauli operators acting on the data qubits. However, the 3-colorability of the lattice introduces a difference, as two qubits of the string can be connected through an edge or through a face.
 
