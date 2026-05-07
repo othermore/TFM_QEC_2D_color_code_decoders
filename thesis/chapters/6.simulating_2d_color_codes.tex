@@ -85,29 +85,24 @@ With the geometry resolved, the \texttt{ColorCode} class takes over to construct
 \notatfm{Unlike a manual layout, this class dynamically maps the geometric shapes to stabilizer measurement routines. For each syndrome extraction round, it prepares the ancillas, applies Hadamard gates where necessary, and executes CNOT gates between each ancilla and its surrounding data qubits.}
 The circuit generation is highly structured: it first initializes the qubits, then iterates over the requested number of measurement rounds, and finally performs a transversal data measurement to extract the logical observable.
 
-Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a distance 3 code with a single measurement round. Due to its significant width, the image has been dynamically split into two halves for readability.
+Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a distance 3 code with a single measurement round. 
 \begin{figure}[htbp]
     \centering
-    % Primera mitad (izquierda)
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \begin{adjustbox}{trim=0 0 {0.5\width} 0, clip, max width=\textwidth}
+        \begin{adjustbox}{trim=0 0 {0.51\width} 0, clip, max width=\textwidth}
             \includegraphics{figures/chapter_6/circuit_d3.pdf}
         \end{adjustbox}
-        \caption{First half: Initialization and early stabilizer interactions.}
     \end{subfigure}
 
-    \vspace{3ex}
-    
-    % Segunda mitad (derecha)
+    \vspace{1ex}
     \begin{subfigure}[b]{\textwidth}
         \centering
-        \begin{adjustbox}{trim={0.5\width} 0 0 0, clip, max width=\textwidth}
+        \begin{adjustbox}{trim={0.49\width} 0 0 0, clip, max width=\textwidth}
             \includegraphics{figures/chapter_6/circuit_d3.pdf}
         \end{adjustbox}
-        \caption{Second half: Final stabilizer interactions and data measurement.}
     \end{subfigure}
-    \caption{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The circuit is generated automatically by mapping the abstract geometric lattice faces into synchronized parity checks.}
+    \caption{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been dynamically split into two halves for readability. }
     \label{fig:6:circuit_d3}
 \end{figure}
 
