@@ -271,14 +271,14 @@ class ColorCode:
         coord_map = {}
         
         for i, (cx, cy) in enumerate(sorted_coords):
-            new_q = cirq.GridQubit(i // 10, i % 10)
+            new_q = cirq.GridQubit(int(cy), int(cx))
             coord_map[(cx, cy)] = new_q
             self.data_qubits.append(new_q)
             self.plot_coords[new_q] = (cx, cy)
 
         for i, face in enumerate(self.lattice.faces_data):
             cx, cy = face['anc_coord']
-            new_a = cirq.GridQubit(100 + (i // 10), i % 10)
+            new_a = cirq.GridQubit(int(cy), int(cx))
             self.ancilla_qubits.append(new_a)
             self.plot_coords[new_a] = (cx, cy)
             
