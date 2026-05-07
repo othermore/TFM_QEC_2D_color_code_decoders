@@ -80,10 +80,13 @@ To facilitate converting the lattice in a circuit, and inspired by the mapping o
 \end{figure}
 
 \subsection{Circuit Generation}
-With the geometry resolved, the \texttt{ColorCode} class takes over to construct the quantum circuit. It receives an instantiated \texttt{Lattice} object and extracts all unique coordinates, translating them into \texttt{cirq.GridQubit} objects. 
+With the geometry resolved, the \texttt{ColorCode} class constructs the quantum circuit. It receives a \texttt{Lattice} object and extracts all unique coordinates, translating them into \texttt{cirq.GridQubit} objects. 
 
-\notatfm{Unlike a manual layout, this class dynamically maps the geometric shapes to stabilizer measurement routines. For each syndrome extraction round, it prepares the ancillas, applies Hadamard gates where necessary, and executes CNOT gates between each ancilla and its surrounding data qubits.}
-The circuit generation is highly structured: it first initializes the qubits, then iterates over the requested number of measurement rounds, and finally performs a transversal data measurement to extract the logical observable.
+\notatfm{Under a code-capacity error model, the order in which CNOT gates are performed is not relevant. However, under more realistic error models, physical errors can occur during syndrome extraction and propagate through subsequent CNOT gates, causing correlated multi-qubit failures known as \textit{hook errors}. This phenomenon requires a carefully planned CNOT schedule.} Unlike a manual layout, this class dynamically maps the geometric shapes to stabilizer measurement routines. For each syndrome extraction round, it prepares the ancillas, applies Hadamard gates where necessary, and executes CNOT gates between each ancilla and its surrounding data qubits. Finally, it performs a measurement of the data qubits to extract the logical observable.
+
+Detectors are defined after each syndrome extraction. To reduce the number of qubits, ancilla qubits are reused for the $X$ and $Z$ stabilizer measurement, which are sequential. It's worth noting that in the first round $X$ detectors are not added. This is because, with the initial state of the qubits set as $\ket{0}$, measurements in the $X$ axis are not deterministic, so the meassured syndrome would be random. After the first round of syndrome measurements, qubit state collapses to a defined value, which can then be used in subsequent rounds to detect phase-flip errors.
+
+Similarly, the observable is defined at the end of the circuit. While in the 2D color codes observables are generally defined as a string-nets connecting the boundaries of the lattice (and with minimal weight), an observable defined by all the data qubits is topologically equivalent. This allows us to implement a very simple definition of the observable. 
 
 Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a distance 3 code with a single measurement round. 
 \begin{figure}[htbp]
