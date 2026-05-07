@@ -1,10 +1,116 @@
 \chapter{Simulating 2D triangular color codes with a 4.8.8 lattice geometry and a code-capacity noise model}
 \label{chap:simulating_2d_color_codes}
 
+\section{Syndrome Graph Construction and Decoding}
+\label{sec:stim_pymatching_architecture}
 
-\section{Advantages of the 4.8.8 lattice geometry}
+\subsection{The Detector Error Model (DEM)}
+As seen in Chapter \ref{chap:qec_decoders}, many modern decoders rely on mapping the decoding problem to a classical graph-theory problem. A key element of this framework is the \textbf{Detector Error Model}, which represents the error vulnerabilities with a specific quantum circuit. The DEM is constructed by \texttt{stim} before the simulation begins and passed to the decoder. It is constructed as an hypergraph:
+
+\notatfm{Unlike standard graphs, in an hypergraph a hyper-edge can connect any number of nodes. That allows the edges in the DEM to connect one single physical errors to any number of detectors (e.g., 1, 2, or 3).} \begin{itemize}
+    \item \textbf{Nodes (Detectors):} Each node represents a deterministic parity check (a \textit{detector}), which evaluates to zero under noiseless conditions (e.g., the comparison of a stabilizer measurement between cycle $t$ and $t-1$).
+    \item \textbf{Hyperedges (Errors):} A hyperedge connects the specific set of detectors flipped by a single, independent physical error. 
+    \item \textbf{Weights:} Each hyperedge is assigned a weight calculated as $w = \ln((1-p)/p)$, where $p$ is the physical probability of that specific fault occurring.
+    \item \textbf{Observable Payload:} Each hyperedge carries a boolean payload indicating whether the physical error causes a flip in the logical state (which means this specific physical error operation anti-commutes with the logical observable).
+\end{itemize}
+
+\texttt{stim} automates the generation of the DEM through fast symbolic simulation:
+\begin{enumerate}
+    \item \textbf{Independent physical errors (nodes)}: \texttt{stim} identifies every possible error in the circuit, which is defined by the error channels that have been injected in the circuit definition. This includes code-capacity, gate and measurement errors.
+    \item \textbf{Error simulation:} For each independent error identified, \texttt{stim} evaluates all the detectors and logical observables in the circuit. Instead of running a computationally expensive full simulation of the circuit, \texttt{stim} mathematically propagates each error forward through the circuit. Because code-correction circuits contain exclusively Clifford gates, determining how the error propagates is efficient.
+    \item \textbf{Logical error characterization (hyperedges):} \texttt{stim} observes exactly which detectors and logical observables are inverted by the propagated error. It then adds a hyperedge to the DEM connecting all the flipped detectors, alongside its probability and observable payload.
+\end{enumerate}
+
+
+\subsection{Decoding the DEM}
+In the simulation process, for each experiment shot, \textbf{stim} generates errors with the probability established by the error model and produces the syndrome (the list of detectors that have been activated) and the observable that is measured at the end of the execution.
+
+The DEM serves as the static blueprint for the decoder. Given a certain syndrome, the decoder must determine the physical error (or combination of multiple physical errors, which we call the error chain) that caused such syndrome. Because different error chains can cause a given syndrome, the problem consist on determining the one that has the highest probability of occurring. 
+
+Once the most probable error chain is identified, the decoder computes the collective parity of their observable payloads (i.e. which of the physical errors in the chain cause a flip in the observable). If the final parity is $1$, it predicts a logical flip. This prediction is compared against the actual logical observable measured by Stim to determine the success or failure of the decoding cycle.
+
 
 \section{Implementing a 2D color code}
+\label{sec:implementation_color_code}
+
+To systematically implement the 2D Color Code and allow for future scalability, we have adopted a modular software architecture. The problem has been divided into two strictly independent layers: the topological construction of the grid (\textit{Lattice Construction}) and the quantum logic representation (\textit{Circuit Generation}). This separation of concerns ensures that the circuit generator is completely agnostic to the underlying geometry; it simply receives a set of abstract shapes and coordinates, meaning new lattices (such as the 6.6.6 hexagonal grid) can be added in the future without altering the core quantum logic.
+
+Furthermore, this approach simplifies visualizing the lattice geometry and confirming correctness before having to dive into the circuit implementation.
+
+\subsection{Lattice Construction}
+\notatfm{The abstract class \texttt{Lattice} serves as the foundation. It defines the generic behavior of a 2D topological grid, treating it simply as a collection of geometric shapes. Each shape inherits from a base \texttt{Shape} class and defines its own data qubits, its ancilla (detector) qubit, and its color.}
+The specific implementation for this work is the \texttt{Lattice488} class, which procedurally generates the 4.8.8 semi-regular lattice (consisting of squares and octagons). The algorithm builds the lattice level by level:
+\begin{enumerate}
+    \item It first places the \texttt{SquareShape} instances in a pyramid-like structure.
+    \item It then fills the gaps between these squares with \texttt{OctogonShape} instances.
+    \item Finally, to ensure all boundary data qubits are protected by valid stabilizers, it caps the left, right, and bottom boundaries with \texttt{TrapezoidShape} instances.
+\end{enumerate}
+
+By dynamically calculating coordinates and alternating colors based on the distance $d$, the lattice scales automatically to any arbitrary size. Figure \ref{fig:6:lattice_evolution} shows the automated geometric evolution of the 4.8.8 lattice for distances 3, 5, 7 and 9.
+
+To facilitate converting the lattice in a circuit, and inspired by the mapping of a 4.8.8. geometry to a square grid proposed by Fowler \cite{Fowler_2011} and discussed in Chapter \ref{chap:state_of_the_art}, we assign grid coordinates to each data and ancilla qubit in the grid. The geometry and the specific grid mapping results in the detectors having odd $x$ and $y$ coordinates, and data qubits having even $x$ and $y$ coordinates.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/lattice_d3.pdf}
+        \caption{$d=3$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/lattice_d5.pdf}
+        \caption{$d=5$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/lattice_d7.pdf}
+        \caption{$d=7$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/lattice_d9.pdf}
+        \caption{$d=7$}
+    \end{subfigure}
+    \caption{Evolution of the 4.8.8 Color Code lattice for distances 3, 5, 7 and 9. The solid squares represent the ancilla qubits (syndrome detectors) positioned at the center of each face. The white circles with black outlines represent the physical data qubits. The labels indicate their specific $(x, y)$ coordinates in the simulated grid.}
+    \label{fig:6:lattice_evolution}
+\end{figure}
+
+\subsection{Circuit Generation}
+With the geometry resolved, the \texttt{ColorCode} class takes over to construct the quantum circuit. It receives an instantiated \texttt{Lattice} object and extracts all unique coordinates, translating them into \texttt{cirq.GridQubit} objects. 
+
+\notatfm{Unlike a manual layout, this class dynamically maps the geometric shapes to stabilizer measurement routines. For each syndrome extraction round, it prepares the ancillas, applies Hadamard gates where necessary, and executes CNOT gates between each ancilla and its surrounding data qubits.}
+The circuit generation is highly structured: it first initializes the qubits, then iterates over the requested number of measurement rounds, and finally performs a transversal data measurement to extract the logical observable.
+
+Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a distance 3 code with a single measurement round. Due to its significant width, the image has been dynamically split into two halves for readability.
+\begin{figure}[htbp]
+    \centering
+    % Primera mitad (izquierda)
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \begin{adjustbox}{trim=0 0 {0.5\width} 0, clip, max width=\textwidth}
+            \includegraphics{figures/chapter_6/circuit_d3.pdf}
+        \end{adjustbox}
+        \caption{First half: Initialization and early stabilizer interactions.}
+    \end{subfigure}
+
+    \vspace{3ex}
+    
+    % Segunda mitad (derecha)
+    \begin{subfigure}[b]{\textwidth}
+        \centering
+        \begin{adjustbox}{trim={0.5\width} 0 0 0, clip, max width=\textwidth}
+            \includegraphics{figures/chapter_6/circuit_d3.pdf}
+        \end{adjustbox}
+        \caption{Second half: Final stabilizer interactions and data measurement.}
+    \end{subfigure}
+    \caption{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The circuit is generated automatically by mapping the abstract geometric lattice faces into synchronized parity checks.}
+    \label{fig:6:circuit_d3}
+\end{figure}
+
 
 \section{Implementing a projection decoder}
 
