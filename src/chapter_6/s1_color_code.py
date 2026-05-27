@@ -310,11 +310,17 @@ class ColorCode:
         
         Finally, the logical observable Z_L is declared using stimcirq.CumulativeObservableAnnotation.
         It is defined transversally as the product of all data qubit measurements at the end.
+        
+        To prevent Z errors in the first noisy round from being hidden due to the randomness
+        of |0> initialization, the circuit actually executes `rounds + 1` cycles.
+        Cycle r=0 is a noiseless preparation round to establish the X syndrome baseline.
+        Noise is injected from r=1 to r=rounds.
         """
         circuit = cirq.Circuit()
         
-        for r in range(rounds):
-            circuit.append([cirq.I(q) for q in self.data_qubits], strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
+        for r in range(rounds + 1):
+            if r > 0:
+                circuit.append([cirq.I(q) for q in self.data_qubits], strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
             
             for face in self.faces:
                 a = face['ancilla']
@@ -365,17 +371,16 @@ class ColorCode:
         meas_d = [cirq.measure(q, key=f'd_{q.row}_{q.col}') for q in self.data_qubits]
         circuit.append(cirq.Moment(meas_d))
         
-        if rounds > 0:
-            final_dets = []
-            for face in self.faces:
-                ax, ay = self.plot_coords[face['ancilla']]
-                keys = [f"mZ_{rounds-1}_{face['ancilla'].col}"]
-                keys.extend([f'd_{dq.row}_{dq.col}' for dq in face['data']])
-                final_dets.append(stimcirq.DetAnnotation(
-                    parity_keys=keys,
-                    coordinate_metadata=(ax, ay, rounds)
-                ))
-            circuit.append(cirq.Moment(final_dets))
+        final_dets = []
+        for face in self.faces:
+            ax, ay = self.plot_coords[face['ancilla']]
+            keys = [f"mZ_{rounds}_{face['ancilla'].col}"]
+            keys.extend([f'd_{dq.row}_{dq.col}' for dq in face['data']])
+            final_dets.append(stimcirq.DetAnnotation(
+                parity_keys=keys,
+                coordinate_metadata=(ax, ay, rounds + 1)
+            ))
+        circuit.append(cirq.Moment(final_dets))
                 
         obs_keys = [f'd_{q.row}_{q.col}' for q in self.data_qubits]
         circuit.append(cirq.Moment([stimcirq.CumulativeObservableAnnotation(
