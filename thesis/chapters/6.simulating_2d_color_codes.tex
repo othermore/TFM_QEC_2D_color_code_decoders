@@ -138,6 +138,103 @@ With this systematic architecture in place, we are now ready to implement and si
 
 
 \section{BP+OSD}
+\label{sec:6:bposd}
+
+As discussed in Chapter \ref{chap:qec_decoders}, the Belief Propagation with Ordered Statistics Decoding (BP+OSD) algorithm provides a method to decode 2D Color Codes without projections or other adaptations. However, this flexibility comes at the cost of higher complexity. The BP+OSD algorithm allows several parameters to fine-tune its performance and complexity. 
+
+In this section, we first perform a systematic optimization of these parameters to identify the optimal configuration for our specific 4.8.8 lattice geometry. Subsequently, we use the optimized decoder to execute a full threshold evaluation.
+
+\subsection{Parameter Optimization}
+\label{subsec:6:bposd_optimization}
+
+To isolate the effect of the different BP+OSD parameters, we fixed the lattice distance to $d=7$ and evaluated the decoder's performance across a range of physical depolarizing error rates. Our optimization focuses on three key components: the BP update rule, the OSD method, and the OSD search order.
+
+\subsubsection{BP Update Rule Comparison}
+The standard Belief Propagation algorithm utilizes the Product-Sum (PS) update rule, which computes exact probabilities. A widely used alternative is the Min-Sum (MS) approximation, which simplifies the check-node updates. This minimizes computational overhead and can mitigate the effect of the short cycles present in the color code Tanner graph.
+
+Figure \ref{fig:6:bposd_bp_methods} compares both approaches. The empirical results show that the Min-Sum and Product-Sum rules yield virtually identical logical error rates. However, the Min-Sum approximation consistently reduces the average execution time. Based on these results, we select the Min-Sum (MS) update rule to accelerate all subsequent simulations.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_bp_methods_error.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_bp_methods_time.png}
+    \end{subfigure}
+    \caption{Performance comparison of the Min-Sum and Product-Sum BP update rules for $d=7$. The logical error rate (left) remains largely unaffected, but the Min-Sum approximation provides a clear advantage in execution time (right).}
+    \label{fig:6:bposd_bp_methods}
+\end{figure}
+
+\subsubsection{OSD Method Comparison}
+When BP fails to converge, the OSD post-processing phase forces a valid solution based on the soft probabilities. We evaluated three OSD strategies, maintaining a constant search order of $k=5$ when applicable:
+\begin{itemize}
+    \item \textbf{Order-0 (\texttt{osd\_0}):} Directly applies Gaussian elimination without further search.
+    \item \textbf{Exhaustive (\texttt{osd\_e}):} Performs an exhaustive search over the $k$ least reliable qubits.
+    \item \textbf{Combination Sweep (\texttt{osd\_cs}):} Explores a wider non exhaustive search over the least reliable qubits, with $k$ controlling the search depth.
+\end{itemize}
+
+\notatfm{While \texttt{osd\_e} is an exhaustive search, it is limited to the $k$ lowest-confidence qubits, which prevents it from evaluating highly probable error combinations that include other qubits. \texttt{osd\_cs} overcomes this by sampling combinations across a wider subset of uncertain qubits.} As depicted in Figure \ref{fig:6:bposd_osd_methods}, \texttt{osd\_0} underperforms significantly because it entirely trusts the unconverged BP probabilities. The Exhaustive method (\texttt{osd\_e}) improves the threshold, but the Combination Sweep method (\texttt{osd\_cs}) heavily outperforms both by efficiently exploring combinations of likely error vectors. Consequently, \texttt{osd\_cs} is selected as our baseline OSD method.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_methods_error.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_methods_time.png}
+    \end{subfigure}
+    \caption{Comparison of different OSD post-processing strategies (\texttt{osd\_0}, \texttt{osd\_e}, \texttt{osd\_cs}) at a fixed search order $k=5$. The Combination Sweep method yields the lowest logical error rates.}
+    \label{fig:6:bposd_osd_methods}
+\end{figure}
+
+\subsubsection{OSD Search Order Analysis}
+Having selected \texttt{osd\_cs}, we must define its search order $k$. A higher order allows the decoder to explore more alternative hypotheses, improving accuracy but heavily penalizing execution time due to the combinatorial explosion.
+
+Figure \ref{fig:6:bposd_osd_orders} illustrates this trade-off. Increasing $k$ from 5 to 10 yields a notable improvement in the logical error rate. However, pushing $k$ to 20 provides highly diminishing returns while severely impacting the execution speed. To maintain computational feasibility without significantly sacrificing the decoding threshold, we fix the OSD order at $k=10$.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_orders_error.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_orders_time.png}
+    \end{subfigure}
+    \caption{Effect of the OSD search order ($k \in \{5, 10, 20\}$) on the logical error rate and execution time. An order of $k=10$ provides an optimal balance between accuracy and computational cost.}
+    \label{fig:6:bposd_osd_orders}
+\end{figure}
+
+\subsection{Threshold Evaluation}
+\label{subsec:6:bposd_threshold}
+
+With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=3$ up to $d=11$. To guarantee robust statistics specially at low physical error rates, the simulation executed up to $20 \times 10^6$ shots per configuration, but stopping when $300$ logical errors have ocurred.
+
+\notatfm{The threshold is calculated by interpolating the logical error curves for different distances and finding their crossing point, in a logarithmic representation.} The results of this simulation are presented in Figure \ref{fig:6:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 14.32\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_threshold.png}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_time.png}
+    \end{subfigure}
+    \caption{Simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
+    \label{fig:6:bposd_threshold}
+\end{figure}
 
 
 
