@@ -84,7 +84,7 @@ With the geometry resolved, the \texttt{ColorCode} class constructs the quantum 
 
 \notatfm{Under a code-capacity error model, the order in which CNOT gates are performed is not relevant. However, under more realistic error models, physical errors can occur during syndrome extraction and propagate through subsequent CNOT gates, causing correlated multi-qubit failures known as \textit{hook errors}. This phenomenon requires a carefully planned CNOT schedule.} Unlike a manual layout, this class dynamically maps the geometric shapes to stabilizer measurement routines. For each syndrome extraction round, it prepares the ancillas, applies Hadamard gates where necessary, and executes CNOT gates between each ancilla and its surrounding data qubits. Finally, it performs a measurement of the data qubits to extract the logical observable.
 
-Detectors are defined after each syndrome extraction. To reduce the number of qubits, ancilla qubits are reused for the $X$ and $Z$ stabilizer measurement, which are sequential. It's worth noting that in the first round $X$ detectors are not added. This is because, with the initial state of the qubits set as $\ket{0}$, measurements in the $X$ axis are not deterministic, so the measured syndrome would be random. After the first round of syndrome measurements, qubit state collapses to a defined value, which can then be used in subsequent rounds to detect phase-flip errors.
+Detectors are defined after each syndrome extraction. To reduce the number of qubits, ancilla qubits are reused for the $X$ and $Z$ stabilizer measurement, which are sequential. It's worth noting that in the first round $X$ detectors are not added. This is because, with the initial state of the qubits set as $\ket{0}$, measurements in the $X$ axis are not deterministic, so the measured syndrome would be random. After the first round of syndrome measurements, qubit state collapses to a defined value, which can then be used in subsequent rounds to detect phase-flip errors. To allow $Z$ errors to be corrected, we add one initial noiseless round that forces the syndrome to collapse so it can be used later to correct errors.
 
 Similarly, the observable is defined at the end of the circuit. While in the 2D color codes observables are generally defined as a string-nets connecting the boundaries of the lattice (and with minimal weight), an observable defined by all the data qubits is topologically equivalent. This allows us to implement a very simple definition of the observable. 
 
@@ -108,6 +108,33 @@ Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a di
     \caption{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been dynamically split into two halves for readability. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
     \label{fig:6:circuit_d3}
 \end{figure}
+
+\section{Simulation Architecture and Evaluation Metrics}
+\label{sec:simulation_architecture}
+
+To systematically evaluate and compare the performance of different decoders on the 2D Color Code, it is essential to establish a robust, automated, and scalable simulation pipeline. Rather than writing isolated scripts for each decoding algorithm, we have designed a unified modular architecture that leverages the \texttt{sinter} library described in Chapter \ref{chap:implementation_and_simulation}.
+
+The architecture is composed of three main intercommunicating modules:
+
+\begin{enumerate}
+    \item \textbf{The simulation manager (\texttt{simulator.py}):} This is the main entry point for a given simulation. It receives a configuration matrix detailing the code distances ($d$) and the physical error rates ($p$) to simulate. For each configuration, it invokes the \texttt{ColorCode} generator (discussed in Section~\ref{sec:implementation_color_code}) to dynamically create the Stim circuits and the corresponding Detector Error Models (DEM). Because generating these symbolic models can be computationally expensive, the simulator implements a caching system. It saves the \texttt{.stim} and \texttt{.dem} files to disk, automatically detecting when parameters change to invalidate and clean the cache, speeding up subsequent runs.
+    
+    \item \textbf{The decoder interface (\texttt{decoder\_interfaces.py}):} To ensure the simulation pipeline works similarly with any decoding algorithm being tested, all decoders are wrapped into \texttt{sinter.Decoder}, which is an adapter class. This module acts as a plug-and-play interface that standardizes the input (syndrome data) and the output (logical predictions), allowing us to swap the decoder with a single parameter change.
+    
+    \item \textbf{Data storage and visualization (\texttt{plotter.py}):} As \texttt{sinter} processes the shots, the raw statistical results (total shots, logical errors observed, and execution time) are systematically appended to a CSV file, so the data can be used and compared later, which will be critical in Chapter \ref{chap:comparative_analysis}. Once the simulation concludes, the CSV data is plotted and stored.
+\end{enumerate}
+
+\notatfm{Tracking the execution time is crucial to later evaluate the empirical computational complexity of each algorithm, which dictates whether a decoder can keep up with the physical quantum hardware clock speeds.} By structuring the project this way, we can guarantee that all algorithms are subjected to the exact same conditions. The captured data allows meassuring the four key metrics that will drive the comparative analysis:
+
+\begin{itemize}
+    \item \textbf{Determination of error thresholds ($p_{th}$):} Identifying the crossing point in the logical error curves where increasing the code distance begins to suppress errors rather than amplifying them.
+    \item \textbf{Logical failure rate ($p_L$) scaling as a function of physical error rate ($p$) and code distance ($d$):} Analyzing the curves to evaluate the decoder's raw accuracy.
+    \item \textbf{Sub-threshold scaling analysis and theoretical suppression limits:} Evaluating how steeply the logical error drops when operating below the threshold.
+    \item \textbf{Computational complexity and empirical decoding time (Accuracy vs. Speed trade-off):} Analyzing the empirical decoding time to determine if the decoder's complexity is practically scalable.
+\end{itemize}
+
+With this systematic architecture in place, we are now ready to implement and simulate the specific decoding algorithms.
+
 
 
 \section{BP+OSD}
