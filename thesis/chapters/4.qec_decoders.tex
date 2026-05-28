@@ -490,7 +490,19 @@ If the Tanner graph has a tree-like structure, BP is mathematically guaranteed t
 
 OSD steps in by taking these final, unconverged probabilities from BP and sorting all the data qubits from the most likely to have an error to the least likely. It then selects a subset of the most strongly suspected failing qubits. Using standard linear algebra--specifically, Gaussian elimination over the code's parity-check matrix--OSD forces a valid mathematical solution that aligns with the syndrome.
 
-By combining the probabilistic insight of Belief Propagation with the brute-force algebraic resolution of Ordered Statistic Decoding, BP+OSD bypasses the hypergraph problem of Color Codes and achieves some of the highest decoding accuracy thresholds.
+By combining the probabilistic insight of Belief Propagation with the brute-force algebraic resolution of Ordered Statistic Decoding, BP+OSD mitigates the hypergraph problem of Color Codes.
+
+
+\subsubsection*{Algorithmic Enhancements: OSD-Order and Min-Sum}
+
+While the baseline BP+OSD algorithm provides a strong foundation, decoding graphs like those of the 2D Color Codes, with cycles and where multiple physical errors can cause the same syndrome (degenerated) requires further refinements.
+
+\notatfm{By default, \textit{Order-0} OSD simply performs Gaussian elimination and accepts the single resulting mathematical solution. This is highly naive, as it entirely trusts the reliability ordering provided by BP. If BP misjudged even a single critical qubit, Order-0 will confidently output an incorrect high-weight error chain, significantly lowering the decoding threshold. The alternative higher-OSD search improves OSD at the cost of increased comlexity up to $O(N^o)$ for an order $o$.} \textbf{Higher-Order OSD Search.} As discussed, BP often fails to converge on color codes. When OSD takes over, it ranks the qubits from most to least reliable. A naive approach would simply lock the state of the reliable qubits and algebraically solve for the remaining ones. However, this assumes BP's ranking is perfect. To maximize accuracy, modern implementations introduce an \textit{OSD order} ($k$). Instead of solving the system only once, the algorithm isolates the $k$ least reliable qubits in the information set. It then systematically generates multiple alternative hypotheses by flipping the assumed states of these qubits. For each hypothesis, it performs the Gaussian elimination to find a valid solution. Finally, the decoder compares all the valid solutions generated and selects the one with the lowest weight of physical error (higher chances of being cause of the syndrome). 
+
+\textbf{The Min-Sum Approximation.} To address BP's tendency to get trapped in infinite feedback loops caused by the short cycles, there's a simplification known as the \textbf{Min-Sum Algorithm}. In the exact theoretical version of BP (the Sum-Product Algorithm), probabilities are precisely calculated using complex functions. When these exact probabilities propagate around closed loops, they amplify themselves, causing the decoder to believe in incorrect predictions. 
+
+Min-Sum simplifies this by having each check node ignore the precise probabilities of all its physical qubits except the least reliable one, which mostly defines the overall confidence of the prediction. It simply takes this minimum value and passes it along. Implicitly, this is over-estimating the confidence, as it ignores the uncertainty of all qubits except the most uncertain. Because of that, this is combined with a \textit{scaling factor} to artificially lower the certainty. 
+
 
 \section{Projection decoders (Delfosse, 2014)}
 
