@@ -121,10 +121,10 @@ The architecture is composed of three main intercommunicating modules:
     
     \item \textbf{The decoder interface (\texttt{decoder\_interfaces.py}):} To ensure the simulation pipeline works similarly with any decoding algorithm being tested, all decoders are wrapped into \texttt{sinter.Decoder}, which is an adapter class. This module acts as a plug-and-play interface that standardizes the input (syndrome data) and the output (logical predictions), allowing us to swap the decoder with a single parameter change.
     
-    \item \textbf{Data storage and visualization (\texttt{plotter.py}):} As \texttt{sinter} processes the shots, the raw statistical results (total shots, logical errors observed, and execution time) are systematically appended to a CSV file, so the data can be used and compared later, which will be critical in Chapter \ref{chap:comparative_analysis}. Once the simulation concludes, the CSV data is plotted and stored.
+    \item \textbf{Data storage and visualization (\texttt{plotter.py}):} As \texttt{sinter} processes the shots, the raw statistical results (total shots, logical errors observed, and execution time) are systematically appended to a CSV file, so the data can be used and compared later, which will be critical in Chapter \ref{chap:comparative_analysis}. Once the simulation concludes, the CSV data is plotted and stored. At this stage, we also perform an interpolation of the logical error rate curves to determine their crossing points, and average all the crossing points to estimate the threshold $p_{th}$.
 \end{enumerate}
 
-\notatfm{Tracking the execution time is crucial to later evaluate the empirical computational complexity of each algorithm, which dictates whether a decoder can keep up with the physical quantum hardware clock speeds.} By structuring the project this way, we can guarantee that all algorithms are subjected to the exact same conditions. The captured data allows meassuring the four key metrics that will drive the comparative analysis:
+\notatfm{Tracking the execution time is key to later evaluate the empirical computational complexity of each algorithm, which determines whether a decoder can keep up with the physical quantum hardware speeds.} By structuring the project this way, we can guarantee that all algorithms are subjected to the exact same conditions. The captured data allows measuring the four key metrics that will drive the comparative analysis:
 
 \begin{itemize}
     \item \textbf{Determination of error thresholds ($p_{th}$):} Identifying the crossing point in the logical error curves where increasing the code distance begins to suppress errors rather than amplifying them.
@@ -138,6 +138,8 @@ With this systematic architecture in place, we are now ready to implement and si
 
 
 \section{BP+OSD}
+
+
 
 \section{Projection decoder + MWPM/Union-find}
 
