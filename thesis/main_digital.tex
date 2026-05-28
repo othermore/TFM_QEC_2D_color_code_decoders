@@ -6,7 +6,9 @@
 \WarningFilter{hyperref}{Option `pdftex' has already been used}
 \WarningFilter{soulutf8}{This package is obsolete}
 
-\usepackage[9pt]{extsizes}
+%%%%
+\usepackage[10pt]{extsizes}
+% \usepackage[9pt]{extsizes}
 
 \input{frontmatter/format}
 
@@ -16,6 +18,7 @@
     right=5cm,   
     top=3cm,
     bottom=3cm,
+    headsep=0.4cm,
     marginparwidth=4cm, 
     marginparsep=0.5cm    
 }
@@ -34,8 +37,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 
-\fancyhead[L]{\footnotesize \textbf{ANTONIO MORALES GARCIA}}
-\fancyhead[R]{\footnotesize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
+\fancyhead[L]{\scriptsize \textbf{ANTONIO MORALES GARCIA}}
+\fancyhead[R]{\scriptsize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
 \renewcommand{\headrulewidth}{0.4pt}
 
 \fancyfoot[R]{\footnotesize \thepage}
@@ -49,14 +52,14 @@
 
 \begin{document}
 
-\pagestyle{empty}
-\begin{tikzpicture}[remember picture, overlay]
-    \node[text width=14cm, align=center] at (current page.center) {
-        \input{cover_front}
-    };
-\end{tikzpicture}
-\clearpage
 
+\frontmatter
+\pagestyle{fancy}
+\setfrontgeometry
+
+\input{frontmatter/titlepage_digital}
+\clearpage
+\thispagestyle{empty}
 \begin{tikzpicture}[remember picture, overlay]
     \node[text width=11cm, align=justify] at (current page.center) {
         \input{cover_back}
@@ -64,22 +67,22 @@
 \end{tikzpicture}
 \clearpage
 
-\frontmatter
-\pagestyle{fancy}
-\setfrontgeometry
-
-\input{frontmatter/titlepage}
-
-\clearpage
-
-\input{frontmatter/dedication}
-\include{chapters/acknowledgments}
-\include{chapters/structure}
+\begingroup
+  \pagestyle{plain}
+  \input{frontmatter/dedication}
+  \include{chapters/acknowledgments}
+  \include{chapters/structure}
+  \clearpage
+\endgroup
 
 \setfrontgeometry
 \phantomsection
 \label{label:short_toc}
-\shorttableofcontents{Overview}{1}
+\begingroup
+  \pagestyle{plain}
+  \shorttableofcontents{Overview}{1}
+  \clearpage
+\endgroup
 
 \mainmatter
 \setmaingeometry 

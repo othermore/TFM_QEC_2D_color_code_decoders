@@ -1,49 +1,59 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-% Nuevo Ancho total = 185mm (back) + 17mm (lomo) + 185mm (front) = 387mm
+
+% Ancho total calculado = 185mm (back) + 17mm (lomo) + 185mm (front) = 387mm
 \usepackage[paperwidth=387mm, paperheight=250mm, margin=0cm]{geometry}
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{tikz}
-\usepackage{helvet}
-\renewcommand{\familydefault}{\sfdefault}
 
-\definecolor{nebrijared}{HTML}{C2002F}
+\definecolor{nebrijared}{cmyk}{0.0000, 0.9355, 0.7473, 0.2706}
 
 \begin{document}
 \pagestyle{empty}
 
 \begin{tikzpicture}[remember picture, overlay]
-    \fill[white] (current page.north west) rectangle (current page.south east);
+    % 1. Fondo completo rojo
+    \fill[nebrijared] (current page.north west) rectangle (current page.south east);
 
-    \fill[nebrijared] ([xshift=-30mm]current page.center |- current page.north) rectangle ([xshift=30mm]current page.center |- current page.south);
-    
-    \node[rotate=-90, text=white] at (current page.center) {
-        \fontsize{14}{16}\selectfont\bfseries 
-        QEC DECODERS FOR 2D COLOR CODES \hspace{2cm} ANTONIO MORALES GARCÍA
+    % 2. Franja blanca (Inicia a -15mm del techo y baja hasta -50mm)
+    \fill[white] ([yshift=-20mm]current page.north west) rectangle ([yshift=-70mm]current page.north east);
+
+    % 3. Logo centrado exactamente en el eje Y de la franja blanca (-32.5mm)
+    \node[anchor=center] at ([xshift=101mm, yshift=-46.5mm]current page.north) {
+        \includegraphics[height=45mm]{LogoPortada}
     };
 
-    \node[text width=11cm, align=justify] at ([xshift=-110mm, yshift=0cm]current page.center) {
+    % 4. Portada Frontal (Texto bajado a -75mm para no pisar la franja)
+    \node[anchor=north, text width=14cm, align=center, text=white] at ([xshift=101mm, yshift=-85mm]current page.north) {
+        \rmfamily
+        \large
+        \textbf{Master´s Degree in Quantum Computing \\[0.5em] Higher Polytechnic School} \par \vspace{20mm}
+
+        {\linespread{1.2}\selectfont
+        \fontsize{17pt}{21pt}\selectfont
+        \textbf{Quantum Error Correction Decoders \\ for 2D Color Codes:\\ Systematic Simulation and Comparison} \par }  \vspace{25mm}
+
+        Author: \textbf{Antonio Morales García}\\[0.6cm]
+        Scientific Director: Dr. Miguel Ángel Martín-Delgado Alcántara\\
+        Tutor: Prof. Francisco Gálvez Ramírez \par \vspace{25mm}
+
+        Madrid 2026
+    };
+
+    % 5. Lomo
+    \node[rotate=-90, text=white] at (current page.center) {
+        \rmfamily\bfseries\fontsize{11pt}{13pt}\selectfont
+        \hspace{7cm} QEC DECODERS FOR 2D COLOR CODES \hspace{1.6cm} A. MORALES GARCÍA
+    };
+
+    % 6. Contraportada (Texto bajado a -75mm)
+    \node[anchor=north, text width=13cm, align=justify, text=white] at ([xshift=-101mm, yshift=-95mm]current page.north) {
+        \rmfamily
+        \LARGE \textbf{Abstract} \\
         \input{cover_back}
     };
-
-    \node[text width=14cm, align=center] at ([xshift=110mm, yshift=0cm]current page.center) {
-        \input{cover_front}
-    };
-
-    % --- LÍNEAS DE PLEGADO ---
-    % COMENTADAS (solo para pruebas)
-    \iffalse
-    \draw [dashed, gray, line width=0.5pt] 
-        ([xshift=-8.5mm]current page.center |- current page.north) -- 
-        ([xshift=-8.5mm]current page.center |- current page.south);
-    
-    \draw [dashed, gray, line width=0.5pt] 
-        ([xshift=8.5mm]current page.center |- current page.north) -- 
-        ([xshift=8.5mm]current page.center |- current page.south);
-    % ----------------------------------------------------
-    \fi
 \end{tikzpicture}
 
 \end{document}

@@ -7,8 +7,8 @@
 \subsection{The Detector Error Model (DEM)}
 As seen in Chapter \ref{chap:qec_decoders}, many modern decoders rely on mapping the decoding problem to a classical graph-theory problem. A key element of this framework is the \textbf{Detector Error Model}, which represents the error vulnerabilities with a specific quantum circuit. The DEM is constructed by \texttt{stim} before the simulation begins and passed to the decoder. It is constructed as an hypergraph:
 
-\notatfm{Unlike standard graphs, in an hypergraph a hyper-edge can connect any number of nodes. That allows the edges in the DEM to connect one single physical errors to any number of detectors (e.g., 1, 2, or 3).} \begin{itemize}
-    \item \textbf{Nodes (Detectors):} Each node represents a deterministic parity check (a \textit{detector}), which evaluates to zero under noiseless conditions (e.g., the comparison of a stabilizer measurement between cycle $t$ and $t-1$).
+\begin{itemize}
+    \item \notatfm{Unlike standard graphs, in an hypergraph a hyper-edge can connect any number of nodes. That allows the edges in the DEM to connect one single physical errors to any number of detectors (e.g., 1, 2, or 3).} \textbf{Nodes (Detectors):} Each node represents a deterministic parity check (a \textit{detector}), which evaluates to zero under noiseless conditions (e.g., the comparison of a stabilizer measurement between cycle $t$ and $t-1$).
     \item \textbf{Hyperedges (Errors):} A hyperedge connects the specific set of detectors flipped by a single, independent physical error. 
     \item \textbf{Weights:} Each hyperedge is assigned a weight calculated as $w = \ln((1-p)/p)$, where $p$ is the physical probability of that specific fault occurring.
     \item \textbf{Observable Payload:} Each hyperedge carries a boolean payload indicating whether the physical error causes a flip in the logical state (which means this specific physical error operation anti-commutes with the logical observable).
@@ -165,7 +165,7 @@ Figure \ref{fig:6:bposd_bp_methods} compares both approaches. The empirical resu
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_bp_methods_time.png}
     \end{subfigure}
-    \caption[Performance comparison of the Min-Sum and Product-Sum BP update rules.]{Performance comparison of the Min-Sum and Product-Sum BP update rules for $d=7$. The logical error rate (left) remains largely unaffected, but the Min-Sum approximation provides a clear advantage in execution time (right).}
+    \caption[Simulation 2b: Performance comparison of the Min-Sum and Product-Sum BP update rules.]{Performance comparison of the Min-Sum and Product-Sum BP update rules for $d=7$. The logical error rate (left) remains largely unaffected, but the Min-Sum approximation provides a clear advantage in execution time (right).}
     \label{fig:6:bposd_bp_methods}
 \end{figure}
 
@@ -190,7 +190,7 @@ When BP fails to converge, the OSD post-processing phase forces a valid solution
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_methods_time.png}
     \end{subfigure}
-    \caption[Comparison of different OSD post-processing strategies.]{Comparison of different OSD post-processing strategies (\texttt{osd\_0}, \texttt{osd\_e}, \texttt{osd\_cs}) at a fixed search order $k=5$. The Combination Sweep method yields the lowest logical error rates.}
+    \caption[Simulation 2b: Comparison of different OSD post-processing strategies.]{Comparison of different OSD post-processing strategies (\texttt{osd\_0}, \texttt{osd\_e}, \texttt{osd\_cs}) at a fixed search order $k=5$. The Combination Sweep method yields the lowest logical error rates.}
     \label{fig:6:bposd_osd_methods}
 \end{figure}
 
@@ -210,7 +210,7 @@ Figure \ref{fig:6:bposd_osd_orders} illustrates this trade-off. Increasing $k$ f
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_orders_time.png}
     \end{subfigure}
-    \caption[Effect of the OSD search order.]{Effect of the OSD search order ($k \in \{5, 10, 20\}$) on the logical error rate and execution time. An order of $k=10$ provides an optimal balance between accuracy and computational cost.}
+    \caption[Simulation 2b: Effect of the OSD search order.]{Effect of the OSD search order ($k \in \{5, 10, 20\}$) on the logical error rate and execution time. An order of $k=10$ provides an optimal balance between accuracy and computational cost.}
     \label{fig:6:bposd_osd_orders}
 \end{figure}
 
@@ -232,7 +232,7 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_time.png}
     \end{subfigure}
-    \caption[Main simulation results for the optimally configured BP+OSD decoder.]{Main simulation results for the optimally configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
+    \caption[Simulation 2: BP+OSD decoder.]{Main simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
     \label{fig:6:bposd_threshold}
 \end{figure}
 

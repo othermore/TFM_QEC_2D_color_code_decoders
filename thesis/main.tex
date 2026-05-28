@@ -5,7 +5,7 @@
 \WarningFilter{extsizes}{It is better to use}
 \WarningFilter{hyperref}{Option `pdftex' has already been used}
 \WarningFilter{soulutf8}{This package is obsolete}
-\usepackage[9pt]{extsizes}
+\usepackage[11pt]{extsizes}
 
 \input{frontmatter/format}
 
@@ -16,6 +16,7 @@
     outer=4.25cm,   
     top=2.5cm,
     bottom=2.5cm,
+    headsep=0.4cm,
     marginparwidth=3.3cm, 
     marginparsep=0.4cm    
 }
@@ -34,8 +35,8 @@
 \pagestyle{fancy}
 \fancyhf{}
 
-\fancyhead[LE]{\footnotesize \textbf{ANTONIO MORALES GARCIA}}
-\fancyhead[RO]{\footnotesize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
+\fancyhead[LE]{\scriptsize \textbf{ANTONIO MORALES GARCIA}}
+\fancyhead[RO]{\scriptsize \textbf{QEC DECODERS FOR 2D COLOR CODES}}
 \renewcommand{\headrulewidth}{0.4pt}
 
 \fancyfoot[LE,RO]{\footnotesize \thepage}
@@ -56,15 +57,23 @@
 
 \cleardoublepage
 
-\input{frontmatter/dedication}
-\include{chapters/acknowledgments}
-\include{chapters/structure}
+\begingroup
+  \pagestyle{plain}
+  \input{frontmatter/dedication}
+  \include{chapters/acknowledgments}
+  \include{chapters/structure}
+  \clearpage
+\endgroup
 
 \setfrontgeometry
 
 \phantomsection
 \label{label:short_toc}
-\shorttableofcontents{Overview}{1}
+\begingroup
+  \pagestyle{plain}
+  \shorttableofcontents{Overview}{1}
+  \clearpage
+\endgroup
 
 
 \mainmatter
