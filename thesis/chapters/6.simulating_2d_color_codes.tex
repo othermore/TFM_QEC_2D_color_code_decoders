@@ -75,7 +75,7 @@ To facilitate converting the lattice in a circuit, and inspired by the mapping o
         \includegraphics[width=\textwidth]{figures/chapter_6/lattice_d9.pdf}
         \caption{$d=7$}
     \end{subfigure}
-    \caption{Evolution of the 4.8.8 Color Code lattice for distances 3, 5, 7 and 9. The solid squares represent the ancilla qubits (syndrome detectors) positioned at the center of each face. The white circles with black outlines represent the physical data qubits. The labels indicate their specific $(x, y)$ coordinates in the simulated grid. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
+    \caption[Evolution of the 4.8.8 Color Code lattice.]{Evolution of the 4.8.8 Color Code lattice for distances 3, 5, 7 and 9. The solid squares represent the ancilla qubits (syndrome detectors) positioned at the center of each face. The white circles with black outlines represent the physical data qubits. The labels indicate their specific $(x, y)$ coordinates in the simulated grid. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
     \label{fig:6:lattice_evolution}
 \end{figure}
 
@@ -105,7 +105,7 @@ Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a di
             \includegraphics{figures/chapter_6/circuit_d3.pdf}
         \end{adjustbox}
     \end{subfigure}
-    \caption{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been dynamically split into two halves for readability. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
+    \caption[Complete quantum circuit for the 4.8.8 Color Code.]{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been dynamically split into two halves for readability. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
     \label{fig:6:circuit_d3}
 \end{figure}
 
@@ -165,7 +165,7 @@ Figure \ref{fig:6:bposd_bp_methods} compares both approaches. The empirical resu
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_bp_methods_time.png}
     \end{subfigure}
-    \caption{Performance comparison of the Min-Sum and Product-Sum BP update rules for $d=7$. The logical error rate (left) remains largely unaffected, but the Min-Sum approximation provides a clear advantage in execution time (right).}
+    \caption[Performance comparison of the Min-Sum and Product-Sum BP update rules.]{Performance comparison of the Min-Sum and Product-Sum BP update rules for $d=7$. The logical error rate (left) remains largely unaffected, but the Min-Sum approximation provides a clear advantage in execution time (right).}
     \label{fig:6:bposd_bp_methods}
 \end{figure}
 
@@ -190,7 +190,7 @@ When BP fails to converge, the OSD post-processing phase forces a valid solution
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_methods_time.png}
     \end{subfigure}
-    \caption{Comparison of different OSD post-processing strategies (\texttt{osd\_0}, \texttt{osd\_e}, \texttt{osd\_cs}) at a fixed search order $k=5$. The Combination Sweep method yields the lowest logical error rates.}
+    \caption[Comparison of different OSD post-processing strategies.]{Comparison of different OSD post-processing strategies (\texttt{osd\_0}, \texttt{osd\_e}, \texttt{osd\_cs}) at a fixed search order $k=5$. The Combination Sweep method yields the lowest logical error rates.}
     \label{fig:6:bposd_osd_methods}
 \end{figure}
 
@@ -210,7 +210,7 @@ Figure \ref{fig:6:bposd_osd_orders} illustrates this trade-off. Increasing $k$ f
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2b_bposd_osd_orders_time.png}
     \end{subfigure}
-    \caption{Effect of the OSD search order ($k \in \{5, 10, 20\}$) on the logical error rate and execution time. An order of $k=10$ provides an optimal balance between accuracy and computational cost.}
+    \caption[Effect of the OSD search order.]{Effect of the OSD search order ($k \in \{5, 10, 20\}$) on the logical error rate and execution time. An order of $k=10$ provides an optimal balance between accuracy and computational cost.}
     \label{fig:6:bposd_osd_orders}
 \end{figure}
 
@@ -232,7 +232,7 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_time.png}
     \end{subfigure}
-    \caption{Simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
+    \caption[Main simulation results for the optimally configured BP+OSD decoder.]{Main simulation results for the optimally configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
     \label{fig:6:bposd_threshold}
 \end{figure}
 

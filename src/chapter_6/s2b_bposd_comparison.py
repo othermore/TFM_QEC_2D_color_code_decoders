@@ -25,7 +25,6 @@ def run_comparison(
     osd_methods = ['osd_0', 'osd_e', 'osd_cs']
     osd_orders = [5, 10, 20]
     
-    # Generate exactly 12 custom decoders
     custom_decoders: Dict[str, sinter.Decoder] = {}
     for bp in bp_methods:
         for osd in osd_methods:
@@ -66,10 +65,6 @@ def run_comparison(
         print(f"Starting Sinter collect for {len(custom_decoders)} decoders...")
         start_time = time.time()
         
-        # Windows compatibility for multiprocessing in scripts
-        from multiprocessing import freeze_support
-        freeze_support()
-        
         stats = sinter.collect(
             num_workers=os.cpu_count() or 4,
             tasks=tasks,
@@ -103,9 +98,7 @@ def plot_results(csv_path):
     df = pd.read_csv(csv_path)
     base_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(csv_path))), "figures", "chapter_6")
     os.makedirs(base_path, exist_ok=True)
-    
-    # Removed fixed dictionaries for colors, markers, and linestyles
-    
+        
     def make_plot(subset_decoders, title_suffix, filename_suffix):
         fig_err, ax_err = plt.subplots(figsize=(10, 6))
         fig_time, ax_time = plt.subplots(figsize=(10, 6))

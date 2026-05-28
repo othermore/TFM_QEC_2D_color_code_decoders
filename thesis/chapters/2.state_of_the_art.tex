@@ -214,7 +214,7 @@ To further optimize the mapping onto real hardware, the planar surface code is a
         \caption{}
     \end{subfigure}
 
-    \caption{Evolution and representations of the surface code. \textbf{(a)} The toric code representation, illustrating how logical observables correspond to non-contractible continuous strings wrapping around the two fundamental cycles of the torus. \textbf{(b)} The original planar formulation by Kitaev ($d=4$), with data qubits on the edges and checks on vertices and faces. The red square represents a $Z$-stabilizer and the blue cross represents a $X$-stabilizer. A total of 49 physical qubits are needed. \textbf{(c)} The equivalent rotated surface code, placing data on vertices and alternating checks on colored faces to significantly reduce physical overhead. Red faces represent $Z$-stabilizers and blue faces represent $X$-stabilizers. The blue and red lines represent the minimum string for the respective operators. In this case, only 31 physical qubits are required. In figures \textbf{(b)} and \textbf{(c)} for a $d=4$ code, white circles represent data qubits and black circles represent ancilla qubits.  The blue and red lines represent the minimum strings for the respective logical operators.}
+    \caption[Evolution and representations of the surface code.]{Evolution and representations of the surface code. \textbf{(a)} The toric code representation, illustrating how logical observables correspond to non-contractible continuous strings wrapping around the two fundamental cycles of the torus. \textbf{(b)} The original planar formulation by Kitaev ($d=4$), with data qubits on the edges and checks on vertices and faces. The red square represents a $Z$-stabilizer and the blue cross represents a $X$-stabilizer. A total of 49 physical qubits are needed. \textbf{(c)} The equivalent rotated surface code, placing data on vertices and alternating checks on colored faces to significantly reduce physical overhead. Red faces represent $Z$-stabilizers and blue faces represent $X$-stabilizers. The blue and red lines represent the minimum string for the respective operators. In this case, only 31 physical qubits are required. In figures \textbf{(b)} and \textbf{(c)} for a $d=4$ code, white circles represent data qubits and black circles represent ancilla qubits.  The blue and red lines represent the minimum strings for the respective logical operators.}
     \label{fig:2:surface_code_evolution}
 \end{figure}
 
@@ -394,7 +394,7 @@ This overlapping check structure is mathematically robust due to the inherent ge
         \label{fig:2:lattice_4612}
     \end{subfigure}
 
-    \caption{The three valid 2D configurations for topological color codes: the 6.6.6 hexagonal lattice, the 4.8.8 square-octagonal lattice, and the 4.6.12 lattice. The faces are 3-colored (e.g., red, green, blue) such that no two adjacent faces share the same color. Data qubits are represented with white circles. There are two ancilla qubits in each colored face, which are not represented in the image.}
+    \caption[The three valid 2D configurations for topological color codes.]{The three valid 2D configurations for topological color codes: the 6.6.6 hexagonal lattice, the 4.8.8 square-octagonal lattice, and the 4.6.12 lattice. The faces are 3-colored (e.g., red, green, blue) such that no two adjacent faces share the same color. Data qubits are represented with white circles. There are two ancilla qubits in each colored face, which are not represented in the image.}
     \label{fig:2:color_code_lattices}
 \end{figure}
 
@@ -624,7 +624,7 @@ Just as in the surface code, logical observables in color codes are formed by co
         \caption{}
     \end{subfigure}
 
-    \caption{Logical observables in a toric color code. \textbf{(a)} Logical observables correspond to color-independent non-contractible continuous strings wrapping around the two fundamental cycles of the torus. Color codes allow us to codify two logical operators in the same string, with the logical observables for each qubit being orthogonal. \textbf{(b)} The 4 independent strings in a $4.8.8$ lattice. \textbf{(c)} The 4 independent strings in a $6.6.6$ lattice.}
+    \caption[Logical observables in a toric color code.]{Logical observables in a toric color code. \textbf{(a)} Logical observables correspond to color-independent non-contractible continuous strings wrapping around the two fundamental cycles of the torus. Color codes allow us to codify two logical operators in the same string, with the logical observables for each qubit being orthogonal. \textbf{(b)} The 4 independent strings in a $4.8.8$ lattice. \textbf{(c)} The 4 independent strings in a $6.6.6$ lattice.}
     \label{fig:2:color_code_logical_observables}
 \end{figure}
 
@@ -1032,7 +1032,7 @@ Implementing these codes on real processors requires highly optimized, specializ
         \end{tikzpicture}
         \caption{}
     \end{subfigure}
-    \caption{Planar topology of a 4.8.8 lattice color code. \textbf{(a)} Definition of the triangular patch for a planar topology, in which we must use string-nets to define the logical observables. Each string-net can encode the logical $X$ and $Z$ operators in the color code, but the individual strings must terminate at a boundary of their own color, which inherently requires branching. \textbf{(b)} Mapping of the color code patch to a quantum processor with a square grid of qubits. For the octagonal faces, we must use 5 ancillas to perform the stabilizer measurements. Ancilla qubits in the tetrahedrons that appear in the boundaries do not map the square grid and are intentionally simplified in this diagram.}
+    \caption[Planar topology of a 4.8.8 lattice color code.]{Planar topology of a 4.8.8 lattice color code. \textbf{(a)} Definition of the triangular patch for a planar topology, in which we must use string-nets to define the logical observables. Each string-net can encode the logical $X$ and $Z$ operators in the color code, but the individual strings must terminate at a boundary of their own color, which inherently requires branching. \textbf{(b)} Mapping of the color code patch to a quantum processor with a square grid of qubits. For the octagonal faces, we must use 5 ancillas to perform the stabilizer measurements. Ancilla qubits in the tetrahedrons that appear in the boundaries do not map the square grid and are intentionally simplified in this diagram.}
     \label{fig:2:planar_color_code}
 \end{figure}
 
