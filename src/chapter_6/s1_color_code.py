@@ -329,7 +329,7 @@ class ColorCode:
                     circuit.append(cirq.CNOT(a, dq), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
                 circuit.append(cirq.H(a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
                 
-            meas_x = [cirq.measure(f['ancilla'], key=f"mX_{r}_{f['ancilla'].col}") for f in self.faces]
+            meas_x = [cirq.measure(f['ancilla'], key=f"mX_{r}_{f['ancilla'].row}_{f['ancilla'].col}") for f in self.faces]
             circuit.append(cirq.Moment(meas_x))
             
             # X outcomes in round 0 are random due to |0> initialization, so we only 
@@ -339,7 +339,7 @@ class ColorCode:
                 for face in self.faces:
                     ax, ay = self.plot_coords[face['ancilla']]
                     det_ops.append(stimcirq.DetAnnotation(
-                        parity_keys=[f"mX_{r}_{face['ancilla'].col}", f"mX_{r-1}_{face['ancilla'].col}"],
+                        parity_keys=[f"mX_{r}_{face['ancilla'].row}_{face['ancilla'].col}", f"mX_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}"],
                         coordinate_metadata=(ax, ay, r)
                     ))
                 circuit.append(cirq.Moment(det_ops))
@@ -351,15 +351,15 @@ class ColorCode:
                 for dq in face['data']:
                     circuit.append(cirq.CNOT(dq, a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
                     
-            meas_z = [cirq.measure(f['ancilla'], key=f"mZ_{r}_{f['ancilla'].col}") for f in self.faces]
+            meas_z = [cirq.measure(f['ancilla'], key=f"mZ_{r}_{f['ancilla'].row}_{f['ancilla'].col}") for f in self.faces]
             circuit.append(cirq.Moment(meas_z))
             
             det_ops_z = []
             for face in self.faces:
                 ax, ay = self.plot_coords[face['ancilla']]
-                keys = [f"mZ_{r}_{face['ancilla'].col}"]
+                keys = [f"mZ_{r}_{face['ancilla'].row}_{face['ancilla'].col}"]
                 if r > 0:
-                    keys.append(f"mZ_{r-1}_{face['ancilla'].col}")
+                    keys.append(f"mZ_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}")
                 det_ops_z.append(stimcirq.DetAnnotation(
                     parity_keys=keys,
                     coordinate_metadata=(ax, ay, r)
@@ -374,7 +374,7 @@ class ColorCode:
         final_dets = []
         for face in self.faces:
             ax, ay = self.plot_coords[face['ancilla']]
-            keys = [f"mZ_{rounds}_{face['ancilla'].col}"]
+            keys = [f"mZ_{rounds}_{face['ancilla'].row}_{face['ancilla'].col}"]
             keys.extend([f'd_{dq.row}_{dq.col}' for dq in face['data']])
             final_dets.append(stimcirq.DetAnnotation(
                 parity_keys=keys,
