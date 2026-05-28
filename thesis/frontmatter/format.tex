@@ -21,20 +21,23 @@
 \usepackage{helvet}
 \usepackage{booktabs}
 \usepackage[tight]{shorttoc}
+\usepackage{emptypage}
 
-
-\renewcommand{\familydefault}{\sfdefault}
+%%%%
+% \renewcommand{\familydefault}{\sfdefault}
 
 \usepackage{subcaption}
 
 \usepackage{geometry}
 
-\linespread{0.96}
+%%%%
+\linespread{1.15}
+%\linespread{0.96}
 
 \usepackage{parskip}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 
-\definecolor{nebrijared}{HTML}{C2002F}
+\definecolor{nebrijared}{cmyk}{0.0000, 0.9355, 0.7473, 0.2706}
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{backcolour}{rgb}{0.98,0.96,0.96}
@@ -50,7 +53,7 @@
     \leavevmode%
     \marginpar{%
         \RaggedRight
-        \footnotesize\itshape\color{black!80}%
+        \footnotesize\color{black!80}%
         \linespread{0.9}\selectfont%
         #1%
     }%
@@ -263,7 +266,7 @@
 \captionsetup{
     font=small,                               
     labelfont={bf, color=nebrijared},     
-    textfont={it},                        
+    textfont={normalfont},                        
     labelsep=period,                      
     justification=raggedright,            
     singlelinecheck=false                 
@@ -273,7 +276,7 @@
 \newcommand{\tablenote}[1]{%
     \marginnote{%
         \RaggedRight
-        \footnotesize\itshape\color{black!80}
+        \footnotesize\color{black!80}
         \linespread{0.9}\selectfont
         #1
     }%
