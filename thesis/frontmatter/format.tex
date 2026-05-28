@@ -286,6 +286,15 @@
 \usepackage{adjustbox}
 
 
+\usepackage{etoolbox}
+
+% Reduce font size for standard tabular environments
+\AtBeginEnvironment{tabular}{\fontsize{9.5pt}{11.5pt}\selectfont}
+
+% Reduce font size for tabularx environments
+\AtBeginEnvironment{tabularx}{\fontsize{9.5pt}{11.5pt}\selectfont}
+
+
 % BibLaTeX setup
 \usepackage[style=numeric, sorting=none]{biblatex}
 \addbibresource{references.bib}
