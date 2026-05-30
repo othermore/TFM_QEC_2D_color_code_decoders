@@ -180,7 +180,7 @@ Edmonds' algorithm succeeds where other algorithms fail because of how it handle
 
 While MWPM is exceptionally well-suited for Surface Codes, it cannot be directly applied to 2D Color Codes. The reason lies in the fundamental topology of the code.
 
-In a surface code, a physical error creates a 1-dimensional string connecting two defects. However, in a color code, a single physical Pauli error activates \textbf{three} adjacent stabilizers. Consequently, an error chain in a color code is not a simple path between two points, but a branching, 2-dimensional structure that connects multiple groups of three defects.
+In a surface code, a physical error creates a 1-dimensional string connecting two defects. However, in a color code, a single physical Pauli error activates \textbf{three} adjacent stabilizers. Consequently, an error chain in a color code is not a simple path between two points, but a branching, 2-dimensional structure that connects multiple groups of three defects. The result is an hypergraph, where an edge connects more than two nodes.
 
 In the following sections we will study different alternatives to decode color codes, some of which heavily rely on MWPM.
 
@@ -504,7 +504,1033 @@ While the baseline BP+OSD algorithm provides a strong foundation, decoding graph
 Min-Sum simplifies this by having each check node ignore the precise probabilities of all its physical qubits except the least reliable one, which mostly defines the overall confidence of the prediction. It simply takes this minimum value and passes it along. Implicitly, this is over-estimating the confidence, as it ignores the uncertainty of all qubits except the most uncertain. Because of that, this is combined with a \textit{scaling factor} to artificially lower the certainty. 
 
 
-\section{Projection decoders (Delfosse, 2014)}
+\section{Projection Decoder}
+\label{sec:4:projection_decoder}
+As detailed in previous sections, the primary obstacle in decoding topological color codes is the branching nature of their error chains (string-nets), which creates a hypergraph incompatible with standard graph algorithms like Minimum Weight Perfect Matching (MWPM) or Union-Find. The Projection decoder, introduced by Nicolas Delfosse in 2014 \cite{Delfosse_2014}, circumvents this limitation by mathematically reducing the color code into multiple independent surface codes.
+
+\notatfm{By projecting the lattice to only two colors of faces, any branch in the string-net is effectively removed. What remains is a set of 1-dimensional error strings that connect the defects on the bipartite graph, matching the structure of the surface code.} The method relies on the 3-colorability of the color code lattice. Because adjacent faces always have different colors (e.g., red, green, and blue), the removal of all faces of a single color produces a bipartite graph composed of the remaining two colors. This resulting graph is equivalent to a standard surface code: each edge connects exactly two nodes. The decoder splits the global syndrome into three separate syndromes, each corresponding to one of the possible pairs of colors (Red-Green, Green-Blue, and Blue-Red). 
+
+Once the syndrome is projected onto these three surface codes, they are decoded independently using algorithms like MWPM, that compute a correction for each of the three projections. The final step merges the three independent corrections to form a valid error recovery operation for the original color code. By mathematically combining the 1-dimensional string corrections from the three projected graphs, the algorithm reconstructs the original branching structure of the error, mapping the independent surface code paths back to the specific physical qubits of the 2D color code.
+
+This divide-and-conquer strategy provides a computationally efficient path to decode color codes. However, because the three projections are decoded independently, the algorithm loses the global correlation information of the noise, which increases the logical error rate compared to global decoders.
+
+Given that the intermediate MWPM logic has already been described in Section \ref{sec:mwpm}, we will now detail the projection and merging processes. 
+
+\subsection{The Projection Step}
+\notatfm{When dealing with realistic noise (beyond code-capacity), assigning weights (failure probabilities) to the edges of the projected surface codes becomes relevant. Under circuit-level noise, multiple distinct physical fault mechanisms (e.g., a single data-qubit error vs a failing gate propagating errors to several qubits) might produce the same projected syndrome. A simple option is to assign the weight based on the probability of the independent single-qubit error, effectively blinding the MWPM decoder to the correlated noise. A more robust approach consist in calculating the edge weight by summing the probabilities of all the possible errors that could trigger that specific projected edge.} The core mechanism of the projection decoder relies on transforming the 2D color code lattice into distinct surface code lattices. To create a projected surface code, the algorithm ignores one of the three colors. For instance, to create the Red-Green ($RG$) projection, all Blue faces are removed from the lattice. The remaining Red and Green faces result in a bipartite syndrome graph. In this mapped graph:
+\begin{itemize}
+    \item The original Red and Green faces become the vertices (the parity-checks) of the new surface code.
+    \item The physical data qubits, originally connecting three vertices, become the edges connecting a Red vertex to a Green vertex. The graph nodes can therefore be split into two separate groups (one for each color) and the edges will always connect one element of each group.
+\end{itemize}
+This transformation is applied to create three projected lattices (e.g., $RG$, $GB$, and $BR$), which is illustrated in Figure \ref{fig:projection_graphs}. When an error occurs on a physical qubit in the original color code, it typically triggers three stabilizers (one of each color). However, in the $RG$ projection, the Blue stabilizer is ignored. The error now only appears to trigger the Red and Green stabilizers, acting exactly as a standard 1-dimensional string with two endpoints. This matches the syndrome of a surface code, and therefore can be directly processed by the MWPM decoder. 
+
+Because each pair of adjacent detectors is separated by exactly two physical qubits in the original lattice, any edge in the projected bipartite graph represents two parallel qubits. Before running the MWPM decoder over this projection, these two parallel qubits are abstracted into a single logical edge. Consequently, the output of the MWPM algorithm is a set of 1-dimensional edges, leaving an inherent ambiguity regarding which specific physical qubits were originally affected.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray, thick] (-2.3314, 0.9657) -- (-2.7314, 1.3657);
+            \draw[gray, thick] (-2.3314, 0.9657) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-2.3314, 0.9657) -- (-2.7314, 0);
+            \filldraw[black] (-2.3314, 0.9657) circle (2pt);
+            \draw[gray, thick] (-3.1314, 0.9657) -- (-2.7314, 1.3657);
+            \draw[gray, thick] (-3.1314, 0.9657) -- (-4.0971, 1.3657);
+            \draw[gray, thick] (-3.1314, 0.9657) -- (-2.7314, 0);
+            \filldraw[black] (-3.1314, 0.9657) circle (2pt);
+            \draw[gray, thick] (0.4, 0.9657) -- (0, 1.3657);
+            \draw[gray, thick] (0.4, 0.9657) -- (1.3657, 1.3657);
+            \draw[gray, thick] (0.4, 0.9657) -- (0, 0);
+            \filldraw[black] (0.4, 0.9657) circle (2pt);
+            \draw[gray, thick] (-0.4, 0.9657) -- (0, 1.3657);
+            \draw[gray, thick] (-0.4, 0.9657) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-0.4, 0.9657) -- (0, 0);
+            \filldraw[black] (-0.4, 0.9657) circle (2pt);
+            \draw[gray, thick] (3.1314, 0.9657) -- (2.7314, 1.3657);
+            \draw[gray, thick] (3.1314, 0.9657) -- (4.0971, 1.3657);
+            \draw[gray, thick] (3.1314, 0.9657) -- (2.7314, 0);
+            \filldraw[black] (3.1314, 0.9657) circle (2pt);
+            \draw[gray, thick] (2.3314, 0.9657) -- (2.7314, 1.3657);
+            \draw[gray, thick] (2.3314, 0.9657) -- (1.3657, 1.3657);
+            \draw[gray, thick] (2.3314, 0.9657) -- (2.7314, 0);
+            \filldraw[black] (2.3314, 0.9657) circle (2pt);
+            \draw[gray, thick] (-3.1314, 1.7657) -- (-2.7314, 1.3657);
+            \draw[gray, thick] (-3.1314, 1.7657) -- (-4.0971, 1.3657);
+            \draw[gray, thick] (-3.1314, 1.7657) -- (-2.7314, 2.7314);
+            \filldraw[black] (-3.1314, 1.7657) circle (2pt);
+            \draw[gray, thick] (-2.3314, 1.7657) -- (-2.7314, 1.3657);
+            \draw[gray, thick] (-2.3314, 1.7657) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-2.3314, 1.7657) -- (-2.7314, 2.7314);
+            \filldraw[black] (-2.3314, 1.7657) circle (2pt);
+            \draw[gray, thick] (-0.4, 1.7657) -- (0, 1.3657);
+            \draw[gray, thick] (-0.4, 1.7657) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-0.4, 1.7657) -- (0, 2.7314);
+            \filldraw[black] (-0.4, 1.7657) circle (2pt);
+            \draw[gray, thick] (-0.9657, 2.3314) -- (-1.3657, 2.7314);
+            \draw[gray, thick] (-0.9657, 2.3314) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-0.9657, 2.3314) -- (0, 2.7314);
+            \filldraw[black] (-0.9657, 2.3314) circle (2pt);
+            \draw[gray, thick] (-1.7657, 2.3314) -- (-1.3657, 2.7314);
+            \draw[gray, thick] (-1.7657, 2.3314) -- (-1.3657, 1.3657);
+            \draw[gray, thick] (-1.7657, 2.3314) -- (-2.7314, 2.7314);
+            \filldraw[black] (-1.7657, 2.3314) circle (2pt);
+            \draw[gray, thick] (0.4, 1.7657) -- (0, 1.3657);
+            \draw[gray, thick] (0.4, 1.7657) -- (1.3657, 1.3657);
+            \draw[gray, thick] (0.4, 1.7657) -- (0, 2.7314);
+            \filldraw[black] (0.4, 1.7657) circle (2pt);
+            \draw[gray, thick] (2.3314, 1.7657) -- (2.7314, 1.3657);
+            \draw[gray, thick] (2.3314, 1.7657) -- (1.3657, 1.3657);
+            \draw[gray, thick] (2.3314, 1.7657) -- (2.7314, 2.7314);
+            \filldraw[black] (2.3314, 1.7657) circle (2pt);
+            \draw[gray, thick] (1.7657, 2.3314) -- (1.3657, 2.7314);
+            \draw[gray, thick] (1.7657, 2.3314) -- (1.3657, 1.3657);
+            \draw[gray, thick] (1.7657, 2.3314) -- (2.7314, 2.7314);
+            \filldraw[black] (1.7657, 2.3314) circle (2pt);
+            \draw[gray, thick] (0.9657, 2.3314) -- (1.3657, 2.7314);
+            \draw[gray, thick] (0.9657, 2.3314) -- (1.3657, 1.3657);
+            \draw[gray, thick] (0.9657, 2.3314) -- (0, 2.7314);
+            \filldraw[black] (0.9657, 2.3314) circle (2pt);
+            \draw[gray, thick] (3.1314, 1.7657) -- (2.7314, 1.3657);
+            \draw[gray, thick] (3.1314, 1.7657) -- (4.0971, 1.3657);
+            \draw[gray, thick] (3.1314, 1.7657) -- (2.7314, 2.7314);
+            \filldraw[black] (3.1314, 1.7657) circle (2pt);
+            \draw[gray, thick] (-1.7657, 3.1314) -- (-1.3657, 2.7314);
+            \draw[gray, thick] (-1.7657, 3.1314) -- (-1.3657, 4.0971);
+            \draw[gray, thick] (-1.7657, 3.1314) -- (-2.7314, 2.7314);
+            \filldraw[black] (-1.7657, 3.1314) circle (2pt);
+            \draw[gray, thick] (-0.9657, 3.1314) -- (-1.3657, 2.7314);
+            \draw[gray, thick] (-0.9657, 3.1314) -- (-1.3657, 4.0971);
+            \draw[gray, thick] (-0.9657, 3.1314) -- (0, 2.7314);
+            \filldraw[black] (-0.9657, 3.1314) circle (2pt);
+            \draw[gray, thick] (0.9657, 3.1314) -- (1.3657, 2.7314);
+            \draw[gray, thick] (0.9657, 3.1314) -- (1.3657, 4.0971);
+            \draw[gray, thick] (0.9657, 3.1314) -- (0, 2.7314);
+            \filldraw[black] (0.9657, 3.1314) circle (2pt);
+            \draw[gray, thick] (0.4, 3.6971) -- (0, 4.0971);
+            \draw[gray, thick] (0.4, 3.6971) -- (1.3657, 4.0971);
+            \draw[gray, thick] (0.4, 3.6971) -- (0, 2.7314);
+            \filldraw[black] (0.4, 3.6971) circle (2pt);
+            \draw[gray, thick] (-0.4, 3.6971) -- (0, 4.0971);
+            \draw[gray, thick] (-0.4, 3.6971) -- (-1.3657, 4.0971);
+            \draw[gray, thick] (-0.4, 3.6971) -- (0, 2.7314);
+            \filldraw[black] (-0.4, 3.6971) circle (2pt);
+            \draw[gray, thick] (1.7657, 3.1314) -- (1.3657, 2.7314);
+            \draw[gray, thick] (1.7657, 3.1314) -- (1.3657, 4.0971);
+            \draw[gray, thick] (1.7657, 3.1314) -- (2.7314, 2.7314);
+            \filldraw[black] (1.7657, 3.1314) circle (2pt);
+            \draw[gray, thick] (-0.4, 4.4971) -- (0, 4.0971);
+            \draw[gray, thick] (-0.4, 4.4971) -- (-1.3657, 4.0971);
+            \draw[gray, thick] (-0.4, 4.4971) -- (0, 5.4628);
+            \filldraw[black] (-0.4, 4.4971) circle (2pt);
+            \draw[gray, thick] (0.4, 4.4971) -- (0, 4.0971);
+            \draw[gray, thick] (0.4, 4.4971) -- (1.3657, 4.0971);
+            \draw[gray, thick] (0.4, 4.4971) -- (0, 5.4628);
+            \filldraw[black] (0.4, 4.4971) circle (2pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+        \end{tikzpicture}
+        \caption{Full Syndrome Graph}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-2.3314, 0.9657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 0.9657) -- (-2.7314, 0);
+            \filldraw[black] (-2.3314, 0.9657) circle (2pt);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-3.1314, 0.9657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 0.9657) -- (-2.7314, 0);
+            \filldraw[black] (-3.1314, 0.9657) circle (2pt);
+            \draw[blue, thick] (0, 1.3657) -- (0.4, 0.9657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0.4, 0.9657) -- (0, 0);
+            \filldraw[black] (0.4, 0.9657) circle (2pt);
+            \draw[blue, thick] (0, 1.3657) -- (-0.4, 0.9657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-0.4, 0.9657) -- (0, 0);
+            \filldraw[black] (-0.4, 0.9657) circle (2pt);
+            \draw[blue, thick] (2.7314, 1.3657) -- (3.1314, 0.9657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (3.1314, 0.9657) -- (2.7314, 0);
+            \filldraw[black] (3.1314, 0.9657) circle (2pt);
+            \draw[blue, thick] (2.7314, 1.3657) -- (2.3314, 0.9657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.3314, 0.9657) -- (2.7314, 0);
+            \filldraw[black] (2.3314, 0.9657) circle (2pt);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-3.1314, 1.7657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 1.7657) -- (-2.7314, 2.7314);
+            \filldraw[black] (-3.1314, 1.7657) circle (2pt);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-2.3314, 1.7657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 1.7657) -- (-2.7314, 2.7314);
+            \filldraw[black] (-2.3314, 1.7657) circle (2pt);
+            \draw[blue, thick] (0, 1.3657) -- (-0.4, 1.7657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-0.4, 1.7657) -- (0, 2.7314);
+            \filldraw[black] (-0.4, 1.7657) circle (2pt);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-0.9657, 2.3314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 2.3314) -- (0, 2.7314);
+            \filldraw[black] (-0.9657, 2.3314) circle (2pt);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.7657, 2.3314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 2.3314) -- (-2.7314, 2.7314);
+            \filldraw[black] (-1.7657, 2.3314) circle (2pt);
+            \draw[blue, thick] (0, 1.3657) -- (0.4, 1.7657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0.4, 1.7657) -- (0, 2.7314);
+            \filldraw[black] (0.4, 1.7657) circle (2pt);
+            \draw[blue, thick] (2.7314, 1.3657) -- (2.3314, 1.7657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.3314, 1.7657) -- (2.7314, 2.7314);
+            \filldraw[black] (2.3314, 1.7657) circle (2pt);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.7657, 2.3314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.7657, 2.3314) -- (2.7314, 2.7314);
+            \filldraw[black] (1.7657, 2.3314) circle (2pt);
+            \draw[blue, thick] (1.3657, 2.7314) -- (0.9657, 2.3314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0.9657, 2.3314) -- (0, 2.7314);
+            \filldraw[black] (0.9657, 2.3314) circle (2pt);
+            \draw[blue, thick] (2.7314, 1.3657) -- (3.1314, 1.7657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (3.1314, 1.7657) -- (2.7314, 2.7314);
+            \filldraw[black] (3.1314, 1.7657) circle (2pt);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.7657, 3.1314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 3.1314) -- (-2.7314, 2.7314);
+            \filldraw[black] (-1.7657, 3.1314) circle (2pt);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-0.9657, 3.1314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 3.1314) -- (0, 2.7314);
+            \filldraw[black] (-0.9657, 3.1314) circle (2pt);
+            \draw[blue, thick] (1.3657, 2.7314) -- (0.9657, 3.1314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0.9657, 3.1314) -- (0, 2.7314);
+            \filldraw[black] (0.9657, 3.1314) circle (2pt);
+            \draw[blue, thick] (0, 4.0971) -- (0.4, 3.6971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0.4, 3.6971) -- (0, 2.7314);
+            \filldraw[black] (0.4, 3.6971) circle (2pt);
+            \draw[blue, thick] (0, 4.0971) -- (-0.4, 3.6971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-0.4, 3.6971) -- (0, 2.7314);
+            \filldraw[black] (-0.4, 3.6971) circle (2pt);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.7657, 3.1314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (1.7657, 3.1314) -- (2.7314, 2.7314);
+            \filldraw[black] (1.7657, 3.1314) circle (2pt);
+            \draw[blue, thick] (0, 4.0971) -- (-0.4, 4.4971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-0.4, 4.4971) -- (0, 5.4628);
+            \filldraw[black] (-0.4, 4.4971) circle (2pt);
+            \draw[blue, thick] (0, 4.0971) -- (0.4, 4.4971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0.4, 4.4971) -- (0, 5.4628);
+            \filldraw[black] (0.4, 4.4971) circle (2pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+        \end{tikzpicture}
+        \caption{Red-Green Projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.3314, 0.9657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 0.9657) -- (-2.7314, 1.3657);
+            \filldraw[black] (-2.3314, 0.9657) circle (2pt);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-3.1314, 0.9657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 0.9657) -- (-2.7314, 1.3657);
+            \filldraw[black] (-3.1314, 0.9657) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (0.4, 0.9657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (0.4, 0.9657) -- (0, 1.3657);
+            \filldraw[black] (0.4, 0.9657) circle (2pt);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-0.4, 0.9657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (-0.4, 0.9657) -- (0, 1.3657);
+            \filldraw[black] (-0.4, 0.9657) circle (2pt);
+            \draw[red, thick] (4.0971, 1.3657) -- (3.1314, 0.9657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (3.1314, 0.9657) -- (2.7314, 1.3657);
+            \filldraw[black] (3.1314, 0.9657) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.3314, 0.9657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (2.3314, 0.9657) -- (2.7314, 1.3657);
+            \filldraw[black] (2.3314, 0.9657) circle (2pt);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-3.1314, 1.7657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 1.7657) -- (-2.7314, 1.3657);
+            \filldraw[black] (-3.1314, 1.7657) circle (2pt);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.3314, 1.7657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 1.7657) -- (-2.7314, 1.3657);
+            \filldraw[black] (-2.3314, 1.7657) circle (2pt);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-0.4, 1.7657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.4, 1.7657) -- (0, 1.3657);
+            \filldraw[black] (-0.4, 1.7657) circle (2pt);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-0.9657, 2.3314) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 2.3314) -- (-1.3657, 2.7314);
+            \filldraw[black] (-0.9657, 2.3314) circle (2pt);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-1.7657, 2.3314) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 2.3314) -- (-1.3657, 2.7314);
+            \filldraw[black] (-1.7657, 2.3314) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (0.4, 1.7657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.4, 1.7657) -- (0, 1.3657);
+            \filldraw[black] (0.4, 1.7657) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.3314, 1.7657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (2.3314, 1.7657) -- (2.7314, 1.3657);
+            \filldraw[black] (2.3314, 1.7657) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (1.7657, 2.3314) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.7657, 2.3314) -- (1.3657, 2.7314);
+            \filldraw[black] (1.7657, 2.3314) circle (2pt);
+            \draw[red, thick] (1.3657, 1.3657) -- (0.9657, 2.3314) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.9657, 2.3314) -- (1.3657, 2.7314);
+            \filldraw[black] (0.9657, 2.3314) circle (2pt);
+            \draw[red, thick] (4.0971, 1.3657) -- (3.1314, 1.7657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (3.1314, 1.7657) -- (2.7314, 1.3657);
+            \filldraw[black] (3.1314, 1.7657) circle (2pt);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-1.7657, 3.1314) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 3.1314) -- (-1.3657, 2.7314);
+            \filldraw[black] (-1.7657, 3.1314) circle (2pt);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-0.9657, 3.1314) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 3.1314) -- (-1.3657, 2.7314);
+            \filldraw[black] (-0.9657, 3.1314) circle (2pt);
+            \draw[red, thick] (1.3657, 4.0971) -- (0.9657, 3.1314) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.9657, 3.1314) -- (1.3657, 2.7314);
+            \filldraw[black] (0.9657, 3.1314) circle (2pt);
+            \draw[red, thick] (1.3657, 4.0971) -- (0.4, 3.6971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.4, 3.6971) -- (0, 4.0971);
+            \filldraw[black] (0.4, 3.6971) circle (2pt);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-0.4, 3.6971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.4, 3.6971) -- (0, 4.0971);
+            \filldraw[black] (-0.4, 3.6971) circle (2pt);
+            \draw[red, thick] (1.3657, 4.0971) -- (1.7657, 3.1314) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.7657, 3.1314) -- (1.3657, 2.7314);
+            \filldraw[black] (1.7657, 3.1314) circle (2pt);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-0.4, 4.4971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-0.4, 4.4971) -- (0, 4.0971);
+            \filldraw[black] (-0.4, 4.4971) circle (2pt);
+            \draw[red, thick] (1.3657, 4.0971) -- (0.4, 4.4971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (0.4, 4.4971) -- (0, 4.0971);
+            \filldraw[black] (0.4, 4.4971) circle (2pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+        \end{tikzpicture}
+        \caption{Green-Blue Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[green!60!black, thick] (-2.7314, 0) -- (-2.3314, 0.9657) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 0.9657) -- (-1.3657, 1.3657);
+            \filldraw[black] (-2.3314, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (-2.7314, 0) -- (-3.1314, 0.9657) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 0.9657) -- (-4.0971, 1.3657);
+            \filldraw[black] (-3.1314, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (0, 0) -- (0.4, 0.9657) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0.4, 0.9657) -- (1.3657, 1.3657);
+            \filldraw[black] (0.4, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (0, 0) -- (-0.4, 0.9657) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-0.4, 0.9657) -- (-1.3657, 1.3657);
+            \filldraw[black] (-0.4, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 0) -- (3.1314, 0.9657) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (3.1314, 0.9657) -- (4.0971, 1.3657);
+            \filldraw[black] (3.1314, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 0) -- (2.3314, 0.9657) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.3314, 0.9657) -- (1.3657, 1.3657);
+            \filldraw[black] (2.3314, 0.9657) circle (2pt);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-3.1314, 1.7657) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-3.1314, 1.7657) -- (-4.0971, 1.3657);
+            \filldraw[black] (-3.1314, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-2.3314, 1.7657) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.3314, 1.7657) -- (-1.3657, 1.3657);
+            \filldraw[black] (-2.3314, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-0.4, 1.7657) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-0.4, 1.7657) -- (-1.3657, 1.3657);
+            \filldraw[black] (-0.4, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-0.9657, 2.3314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 2.3314) -- (-1.3657, 1.3657);
+            \filldraw[black] (-0.9657, 2.3314) circle (2pt);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-1.7657, 2.3314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 2.3314) -- (-1.3657, 1.3657);
+            \filldraw[black] (-1.7657, 2.3314) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0.4, 1.7657) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0.4, 1.7657) -- (1.3657, 1.3657);
+            \filldraw[black] (0.4, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (2.3314, 1.7657) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.3314, 1.7657) -- (1.3657, 1.3657);
+            \filldraw[black] (2.3314, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (1.7657, 2.3314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.7657, 2.3314) -- (1.3657, 1.3657);
+            \filldraw[black] (1.7657, 2.3314) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0.9657, 2.3314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.9657, 2.3314) -- (1.3657, 1.3657);
+            \filldraw[black] (0.9657, 2.3314) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (3.1314, 1.7657) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (3.1314, 1.7657) -- (4.0971, 1.3657);
+            \filldraw[black] (3.1314, 1.7657) circle (2pt);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-1.7657, 3.1314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.7657, 3.1314) -- (-1.3657, 4.0971);
+            \filldraw[black] (-1.7657, 3.1314) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-0.9657, 3.1314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-0.9657, 3.1314) -- (-1.3657, 4.0971);
+            \filldraw[black] (-0.9657, 3.1314) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0.9657, 3.1314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0.9657, 3.1314) -- (1.3657, 4.0971);
+            \filldraw[black] (0.9657, 3.1314) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0.4, 3.6971) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0.4, 3.6971) -- (1.3657, 4.0971);
+            \filldraw[black] (0.4, 3.6971) circle (2pt);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-0.4, 3.6971) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-0.4, 3.6971) -- (-1.3657, 4.0971);
+            \filldraw[black] (-0.4, 3.6971) circle (2pt);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (1.7657, 3.1314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.7657, 3.1314) -- (1.3657, 4.0971);
+            \filldraw[black] (1.7657, 3.1314) circle (2pt);
+            \draw[green!60!black, thick] (0, 5.4628) -- (-0.4, 4.4971) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-0.4, 4.4971) -- (-1.3657, 4.0971);
+            \filldraw[black] (-0.4, 4.4971) circle (2pt);
+            \draw[green!60!black, thick] (0, 5.4628) -- (0.4, 4.4971) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0.4, 4.4971) -- (1.3657, 4.0971);
+            \filldraw[black] (0.4, 4.4971) circle (2pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+        \end{tikzpicture}
+        \caption{Blue-Red Projection}
+    \end{subfigure}
+    \caption[Syndrome hypergraph for a $d=5$ color code and its three projections.]{The syndrome hypergraph for a distance 5 color code (a) and its decomposition into three independent bipartite surface code graphs (b, c, d) using the projection method. Black circles correspond to possible errors in data qubits, and color circles correspond to the detectors for these errors. The deleted nodes and hyperedges in each projection are shown in faint dotted gray to illustrate the mapping. Before running MWPM on this graph, the parallel edges between nodes are combined into a single, logical edge.}
+    \label{fig:projection_graphs}
+\end{figure}
+
+
+\subsection{The Merge Step}
+Once the MWPM instances process their respective syndromes, they output independent corrections: $C_{RG}$, $C_{GB}$, and $C_{BR}$. These corrections do not propose specific physical qubits, but rather sets of edges on their respective bipartite graphs. As detailed during the projection step, each of these edges maps to two parallel edges (physical qubits) in the original graph. This leaves a 1-to-2 ambiguity: the decoder knows an error occurred along a specific edge, but a single projection alone cannot determine which of its two corresponding physical qubits is the faulty one.
+
+\notatfm{In his 2014 paper, Delfosse formulates this proof using the dual graph ($G^*$) of the color code lattice. In the dual graph, detectors are vertices and physical qubits are triangular faces. The MWPM corrections correspond to the edges of these triangles. Mathematically, the union of the edges is treated as a homological chain sum (modulo 2), $C = C_{RG} \oplus C_{GB} \oplus C_{BR}$. This sum forms a set of closed loops (homological cycles) in the dual graph, and the "lifting" step finds the set of triangular faces (qubits) filling the interior of these cycles.} To resolve this ambiguity and merge the three corrections, the Projection decoder utilizes the topological properties of the dual graph of the lattice (a transformed graph where physical qubits are represented as faces, and detectors as vertices), as illustrated in Figure \ref{fig:dual_projection_graphs}. 
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[blue, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[blue, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[blue, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[blue, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[red, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[red, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[red, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[red, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[red, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[red, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[red, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[red, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[green!60!black, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[green!60!black, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[green!60!black, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[green!60!black, thick] (0, 0) -- (0, 1.3657);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[green!60!black, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{Full Dual Graph $G^*$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \draw[blue, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[blue, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[blue, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[blue, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[blue, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[blue, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[blue, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[blue, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{Red-Green Projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \draw[red, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[red, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[red, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[red, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[red, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[red, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[red, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[red, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[red, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[red, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[red, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[red, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[red, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{Green-Blue Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[green!60!black, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[green!60!black, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[green!60!black, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[green!60!black, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[green!60!black, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[green!60!black, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[green!60!black, thick] (0, 0) -- (0, 1.3657);
+            \draw[green!60!black, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[green!60!black, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{Blue-Red Projection}
+    \end{subfigure}
+    \caption{The dual graph $G^*$ for the distance 5 color code displayed in Figure \ref{fig:projection_graphs} (a) and its three projected bipartite graphs (b, c, d). In this representation, the detectors are vertices and physical qubits are triangular faces. Removing one color of vertices leaves exactly one type of edge, creating independent surface codes. Note how the two parallel edges in the syndrome graph become a single edge in this representation.}
+    \label{fig:dual_projection_graphs}
+\end{figure}
+
+The merging process, illustrated in Figure \ref{fig:dual_merge_step}, overlays the three independent sets of selected edges onto the global dual graph. Since each projected graph is a subgraph of the full dual graph, the edges selected by $C_{RG}$, $C_{GB}$, and $C_{BR}$ can be directly placed on their corresponding geometric locations in the global graph, effectively computing the geometric union of the graphs to combine them. Delfosse proved that this combined set of 1-dimensional edges forms a continuous, closed boundary (a set of polygons) drawn across the dual graph.
+
+With these polygons defined, the algorithm performs a final \textit{lifting} step. Because the physical qubits are represented as triangular faces in this geometry, the lifting operation identifies the set of triangles that geometrically fill the interior of polygons. This mapping guarantees that the final selected set of qubits will satisfy the parity checks of all three colors, resolving the 1-to-2 ambiguity.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[blue, line width=1.5pt] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \node at (0, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \node at (-1.3657, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{MWPM on RG Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[red, line width=1.5pt] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \node at (0, 2.7314) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \node at (-1.3657, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{MWPM on GB Projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[green!60!black, line width=1.5pt] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \node at (0, 2.7314) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \node at (0, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{MWPM on BR Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=0.7]
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (-1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 1.3657) -- (1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 2.7314) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-1.3657, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 4.0971) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 1.3657) -- (-4.0971, 1.3657);
+            \draw[gray!50, densely dotted, thick] (1.3657, 2.7314) -- (1.3657, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 0);
+            \draw[gray!50, densely dotted, thick] (4.0971, 1.3657) -- (2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 4.0971) -- (0, 5.4628);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 1.3657) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (1.3657, 1.3657) -- (2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-4.0971, 1.3657) -- (-2.7314, 0);
+            \draw[gray!50, densely dotted, thick] (-1.3657, 4.0971) -- (-2.7314, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 2.7314) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 5.4628) -- (0, 4.0971);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (-2.7314, 0) -- (-2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (0, 2.7314) -- (1.3657, 2.7314);
+            \draw[gray!50, densely dotted, thick] (0, 0) -- (0, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 2.7314) -- (2.7314, 1.3657);
+            \draw[gray!50, densely dotted, thick] (2.7314, 0) -- (2.7314, 1.3657);
+            \fill[yellow!60] (0, 1.3657) -- (-1.3657, 1.3657) -- (0, 2.7314) -- cycle;
+            \draw[blue, line width=1.5pt] (0, 1.3657) -- (-1.3657, 1.3657);
+            \draw[red, line width=1.5pt] (-1.3657, 1.3657) -- (0, 2.7314);
+            \draw[green!60!black, line width=1.5pt] (0, 2.7314) -- (0, 1.3657);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 0) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=blue!40, draw=black, thick] (0, 2.7314) circle (6pt);
+            \node at (0, 2.7314) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 5.4628) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=red!40, draw=black, thick] (0, 1.3657) circle (6pt);
+            \node at (0, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (2.7314, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 2.7314) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (0, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+            \node at (-1.3657, 1.3657) {\textbf{!}};
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (4.0971, 1.3657) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (-1.3657, 4.0971) circle (6pt);
+            \filldraw[fill=gray!10, draw=gray!50, densely dotted, thick] (1.3657, 4.0971) circle (6pt);
+        \end{tikzpicture}
+        \caption{Lifting in Dual Graph}
+    \end{subfigure}
+    \caption{The merging process on the dual graph displayed in Figure \ref{fig:dual_projection_graphs}: (a, b, c) Each MWPM instance returns a 1-dimensional edge corresponding to its projection . (d) The union of these edges forms a continuous closed boundary (a triangle) in $G^*$. The Lifting operation finds the physical qubit (yellow face) that exactly fills this boundary.}
+    \label{fig:dual_merge_step}
+\end{figure}
+
+
 
 \section{Restriction decoders (Kubica \& Delfosse, 2023)}
 
