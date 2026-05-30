@@ -1,0 +1,202 @@
+        \begin{tikzpicture}[scale=0.45]
+            \pgfdeclarelayer{background}
+            \pgfsetlayers{background,main}
+            \def\L{1.3657} 
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \newcommand{\fullsq}[2]{
+                \filldraw[fill=colR, draw=black, thick] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2-0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2-0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-0.4},{#2+0.4});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+0.4},{#2+0.4});
+                \filldraw[black] ({#1},{#2}) circle (1.5pt);
+            }
+            
+            \newcommand{\fulloct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+                \def\off{0.4}
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2+\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1+\off},{#2-\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2-\off});
+                \draw[black!60, thick] ({#1},{#2}) -- ({#1-\off},{#2+\off});
+                \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1+\off},{#2+\off}) -- ({#1+0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.9657},{#2-0.4});
+                \draw[black!60, thick] ({#1+\off},{#2-\off}) -- ({#1+0.4},{#2-0.9657});
+                \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.4},{#2-0.9657});
+                \draw[black!60, thick] ({#1-\off},{#2-\off}) -- ({#1-0.9657},{#2-0.4});
+                \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1-\off},{#2+\off}) -- ({#1-0.4},{#2+0.9657});
+                \filldraw[black] ({#1+\off},{#2+\off}) circle (1.5pt);
+                \filldraw[black] ({#1+\off},{#2-\off}) circle (1.5pt);
+                \filldraw[black] ({#1-\off},{#2-\off}) circle (1.5pt);
+                \filldraw[black] ({#1-\off},{#2+\off}) circle (1.5pt);
+                \filldraw[black] ({#1},{#2}) circle (1.5pt);
+            }
+    
+            \newcommand{\trapBtop}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
+                    ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
+                \def\ancY{#2+0.68}
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1-0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.4},{#2+0.9657});
+                \draw[black!60, thick] ({#1},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+                \filldraw[black] ({#1},{\ancY}) circle (1.5pt);
+            }
+    
+            \newcommand{\trapBright}[2]{
+                \filldraw[fill=colB, draw=black, thick]
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
+                    ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
+                \def\ancX{#1+0.48}
+                \def\ancY{#2-0.48}
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2+0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.9657},{#2-0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+                \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+            }
+            
+            \newcommand{\trapGleft}[2]{
+                \filldraw[fill=colG, draw=black, thick]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
+                \def\ancX{#1-0.48}
+                \def\ancY{#2-0.48}
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2+0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.9657},{#2-0.4});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1-0.4},{#2-0.9657});
+                \draw[black!60, thick] ({\ancX},{\ancY}) -- ({#1+0.4},{#2-0.9657});
+                \filldraw[black] ({\ancX},{\ancY}) circle (1.5pt);
+            }
+    
+            \newcommand{\fullsqqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\fulloctqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapBtopqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapBrightqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            }
+            
+            \newcommand{\trapGleftqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            }
+    
+            \trapBtop{-3*\L}{0}
+            \trapBtop{-\L}{0}
+            \trapBtop{\L}{0}
+            \trapBtop{3*\L}{0}
+    
+            \fullsq{-3*\L}{\L}
+            \fulloct{-2*\L}{\L}{colG}
+            \fullsq{-\L}{\L}
+            \fulloct{0}{\L}{colG}
+            \fullsq{\L}{\L}
+            \fulloct{2*\L}{\L}{colG}
+            \fullsq{3*\L}{\L}
+            \trapGleft{4*\L}{\L}
+    
+            \trapBright{-3*\L}{2*\L}
+            \fullsq{-2*\L}{2*\L}
+            \fulloct{-\L}{2*\L}{colB}
+            \fullsq{0}{2*\L}
+            \fulloct{\L}{2*\L}{colB}
+            \fullsq{2*\L}{2*\L}
+    
+            \fullsq{-\L}{3*\L}
+            \fulloct{0}{3*\L}{colG}
+            \fullsq{\L}{3*\L}
+            \trapGleft{2*\L}{3*\L}
+    
+            \trapBright{-\L}{4*\L}
+            \fullsq{0}{4*\L}
+    
+            \trapBtopqubits{-3*\L}{0}
+            \trapBtopqubits{-\L}{0}
+            \trapBtopqubits{\L}{0}
+            \trapBtopqubits{3*\L}{0}
+    
+            \fullsqqubits{-3*\L}{\L}
+            \fulloctqubits{-2*\L}{\L}
+            \fullsqqubits{-\L}{\L}
+            \fulloctqubits{0}{\L}
+            \fullsqqubits{\L}{\L}
+            \fulloctqubits{2*\L}{\L}
+            \fullsqqubits{3*\L}{\L}
+            \trapGleftqubits{4*\L}{\L}
+    
+            \trapBrightqubits{-3*\L}{2*\L}
+            \fullsqqubits{-2*\L}{2*\L}
+            \fulloctqubits{-\L}{2*\L}
+            \fullsqqubits{0}{2*\L}
+            \fulloctqubits{\L}{2*\L}
+            \fullsqqubits{2*\L}{2*\L}
+    
+            \fullsqqubits{-\L}{3*\L}
+            \fulloctqubits{0}{3*\L}
+            \fullsqqubits{\L}{3*\L}
+            \trapGleftqubits{2*\L}{3*\L}
+    
+            \trapBrightqubits{-\L}{4*\L}
+            \fullsqqubits{0}{4*\L}
+    
+            \begin{pgfonlayer}{background}
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+    
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
+    
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            \end{pgfonlayer}
+        \end{tikzpicture}

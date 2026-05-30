@@ -1,0 +1,99 @@
+        \begin{tikzpicture}[scale=0.295]
+            \def\L{1.732}
+            \colorlet{colR}{red!20} \colorlet{colG}{green!20} \colorlet{colB}{blue!20}
+            
+            \colorlet{darkR}{red!75!black}
+            \colorlet{lightR}{red}
+            \colorlet{darkB}{blue!75!black}
+            \colorlet{lightB}{cyan!80!blue}
+            
+            \newcommand{\hex}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1-1},{#2}) -- ({#1-0.5},{#2+0.866}) -- ({#1+0.5},{#2+0.866}) --
+                    ({#1+1},{#2}) -- ({#1+0.5},{#2-0.866}) -- ({#1-0.5},{#2-0.866}) -- cycle;
+            }
+
+            \begin{scope}
+                \clip (-4.5, -4.5) rectangle (4.5, 4.5);
+                
+                \foreach \u in {-4,...,4} {
+                    \foreach \v in {-4,...,4} {
+                        \pgfmathparse{int(mod(\u-\v+30, 3))}
+                        \ifnum\pgfmathresult=0 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colR} \fi
+                        \ifnum\pgfmathresult=1 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colG} \fi
+                        \ifnum\pgfmathresult=2 \hex{1.5*\u}{0.866*\u + 1.732*\v}{colB} \fi
+                    }
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \draw[darkB, densely dotted, line width=1.5pt] ({3*\k - 1}, 1.732) -- ({3*\k + 1}, 1.732);
+                    \draw[darkB, line width=1.5pt] ({3*\k + 1}, 1.732) -- ({3*\k + 2}, 1.732);
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \draw[lightR, densely dotted, line width=1.5pt] ({3*\k - 1}, 0) -- ({3*\k + 1}, 0);
+                    \draw[lightR, line width=1.5pt] ({3*\k + 1}, 0) -- ({3*\k + 2}, 0);
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \draw[lightB, densely dotted, line width=1.5pt] (-0.5, {-1.732 + 2.598*\k}) -- (-0.5, {0 + 2.598*\k});
+                        \draw[lightB, line width=1.5pt] (-0.5, {0 + 2.598*\k}) -- (-1.0, {0.866 + 2.598*\k});
+                    \else
+                        \draw[lightB, densely dotted, line width=1.5pt] (-1.0, {-1.732 + 2.598*\k}) -- (-1.0, {0 + 2.598*\k});
+                        \draw[lightB, line width=1.5pt] (-1.0, {0 + 2.598*\k}) -- (-0.5, {0.866 + 2.598*\k});
+                    \fi
+                }
+
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \draw[darkR, densely dotted, line width=1.5pt] (1.0, {-0.866 + 2.598*\k}) -- (1.0, {0.866 + 2.598*\k});
+                        \draw[darkR, line width=1.5pt] (1.0, {0.866 + 2.598*\k}) -- (0.5, {1.732 + 2.598*\k});
+                    \else
+                        \draw[darkR, densely dotted, line width=1.5pt] (0.5, {-0.866 + 2.598*\k}) -- (0.5, {0.866 + 2.598*\k});
+                        \draw[darkR, line width=1.5pt] (0.5, {0.866 + 2.598*\k}) -- (1.0, {1.732 + 2.598*\k});
+                    \fi
+                }
+                
+                \foreach \k in {-2, -1, 0, 1, 2} {
+                    \filldraw[black, fill=white, thick] ({3*\k - 1}, 1.732) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 1}, 1.732) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 2}, 1.732) circle (2.5pt);
+                    
+                    \filldraw[black, fill=white, thick] ({3*\k - 1}, 0) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 1}, 0) circle (2.5pt);
+                    \filldraw[black, fill=white, thick] ({3*\k + 2}, 0) circle (2.5pt);
+                    
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \filldraw[black, fill=white, thick] (-0.5, {-1.732 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-0.5, {0 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-1.0, {0.866 + 2.598*\k}) circle (2.5pt);
+                    \else
+                        \filldraw[black, fill=white, thick] (-1.0, {-1.732 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-1.0, {0 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (-0.5, {0.866 + 2.598*\k}) circle (2.5pt);
+                    \fi
+                    
+                    \pgfmathparse{mod(abs(\k), 2) == 1 ? 1 : 0}
+                    \ifnum\pgfmathresult=1
+                        \filldraw[black, fill=white, thick] (1.0, {-0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (1.0, {0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (0.5, {1.732 + 2.598*\k}) circle (2.5pt);
+                    \else
+                        \filldraw[black, fill=white, thick] (0.5, {-0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (0.5, {0.866 + 2.598*\k}) circle (2.5pt);
+                        \filldraw[black, fill=white, thick] (1.0, {1.732 + 2.598*\k}) circle (2.5pt);
+                    \fi
+                }
+            \end{scope}
+
+            \node[above, darkB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-3.5, 1.732) {$\mathbf{X_{L1}, Z_{L2}}$};
+            \node[below, lightR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (3.5, 0) {$\mathbf{Z_{L3}, X_{L4}}$};
+            
+            \node[above, darkR, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (2, 4.0) {$\mathbf{X_{L3}, Z_{L4}}$};
+            \node[below, lightB, fill=white, fill opacity=0.7,text opacity=1, inner sep=1pt, rounded corners=2pt] at (-2, -4.0) {$\mathbf{Z_{L1}, X_{L2}}$};
+            
+        \end{tikzpicture}

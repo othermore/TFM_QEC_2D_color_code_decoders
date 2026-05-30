@@ -1,0 +1,54 @@
+        \begin{tikzpicture}[scale=0.7]
+            % L = distance between centers of adjacent squares/octagons
+            \def\L{1.3657} 
+            
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            % Macro for drawing a Square and its 4 data qubits
+            \newcommand{\sq}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1 - 0.4}, {#2 - 0.4}) --
+                    ({#1 + 0.4}, {#2 - 0.4}) --
+                    ({#1 + 0.4}, {#2 + 0.4}) --
+                    ({#1 - 0.4}, {#2 + 0.4}) -- cycle;
+                
+                \foreach \vx/\vy in {-0.4/-0.4, 0.4/-0.4, 0.4/0.4, -0.4/0.4} {
+                    \filldraw[black, fill=white, thick] ({#1 + \vx}, {#2 + \vy}) circle (2.5pt);
+                }
+            }
+        
+            % Macro for drawing an Octagon and its 8 data qubits
+            \newcommand{\oct}[3]{
+                \filldraw[fill=#3, draw=black, thick]
+                    ({#1 - 0.4}, {#2 - 0.9657}) --
+                    ({#1 + 0.4}, {#2 - 0.9657}) --
+                    ({#1 + 0.9657}, {#2 - 0.4}) --
+                    ({#1 + 0.9657}, {#2 + 0.4}) --
+                    ({#1 + 0.4}, {#2 + 0.9657}) --
+                    ({#1 - 0.4}, {#2 + 0.9657}) --
+                    ({#1 - 0.9657}, {#2 + 0.4}) --
+                    ({#1 - 0.9657}, {#2 - 0.4}) -- cycle;
+                    
+                \foreach \vx/\vy in {
+                    -0.4/-0.9657, 0.4/-0.9657, 0.9657/-0.4, 0.9657/0.4,
+                    0.4/0.9657, -0.4/0.9657, -0.9657/0.4, -0.9657/-0.4
+                } {
+                    \filldraw[black, fill=white, thick] ({#1 + \vx}, {#2 + \vy}) circle (2.5pt);
+                }
+            }
+        
+            % Octagons (Green vertical, Blue horizontal)
+            \oct{0}{\L}{colG}
+            \oct{0}{-\L}{colG}
+            \oct{\L}{0}{colB}
+            \oct{-\L}{0}{colB}
+            
+            % Squares (Red)
+            \sq{0}{0}{colR}
+            \sq{\L}{\L}{colR}
+            \sq{-\L}{\L}{colR}
+            \sq{\L}{-\L}{colR}
+            \sq{-\L}{-\L}{colR}
+        \end{tikzpicture}

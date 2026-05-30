@@ -1,0 +1,45 @@
+        \begin{tikzpicture}[scale=0.55]
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            % Central dodecagon
+            \filldraw[fill=colR, draw=black, thick] 
+                (15:1.5455) \foreach \a in {45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345} { -- (\a:1.5455) } -- cycle;
+            
+            % Surrounding squares
+            \foreach \angle in {0, 60, 120, 180, 240, 300} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[fill=colB, draw=black, thick]
+                        (1.4928, -0.4) -- (1.4928, 0.4) -- (2.2928, 0.4) -- (2.2928, -0.4) -- cycle;
+                \end{scope}
+            }
+            
+            % Surrounding hexagons
+            \foreach \angle in {30, 90, 150, 210, 270, 330} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[fill=colG, draw=black, thick]
+                        (1.4928, -0.4) -- (1.4928, 0.4) -- (2.1856, 0.8) --
+                        (2.8784, 0.4) -- (2.8784, -0.4) -- (2.1856, -0.8) -- cycle;
+                \end{scope}
+            }
+            
+            % Data qubits
+            \foreach \a in {15, 45, 75, 105, 135, 165, 195, 225, 255, 285, 315, 345} {
+                \filldraw[black, fill=white, thick] (\a:1.5455) circle (3pt);
+            }
+            
+            \foreach \angle in {0, 60, 120, 180, 240, 300} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[black, fill=white, thick] (2.2928, 0.4) circle (3pt);
+                    \filldraw[black, fill=white, thick] (2.2928, -0.4) circle (3pt);
+                \end{scope}
+            }
+            
+            \foreach \angle in {30, 90, 150, 210, 270, 330} {
+                \begin{scope}[rotate=\angle]
+                    \filldraw[black, fill=white, thick] (2.8784, 0.4) circle (3pt);
+                    \filldraw[black, fill=white, thick] (2.8784, -0.4) circle (3pt);
+                \end{scope}
+            }
+        \end{tikzpicture}

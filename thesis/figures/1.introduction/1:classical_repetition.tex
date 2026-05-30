@@ -1,0 +1,17 @@
+    \begin{tikzpicture}[
+        box/.style={draw, rectangle, minimum height=1cm, minimum width=2cm, align=center, font=\sffamily\small},
+        arrow/.style={-{Stealth}, thick}
+    ]
+        % Nodes
+        \node (input) {Logical $0$};
+        \node[box, right=1cm of input] (encode) {Encoding\\$0 \rightarrow 000$};
+        \node[box, right=1cm of encode] (noise) {Noisy Channel\\(Bit-flip: $010$)};
+        \node[box, right=1cm of noise] (decode) {Decoding\\(Majority Vote)};
+        \node[right=1cm of decode] (output) {Logical $0$};
+    
+        % Arrows
+        \draw[arrow] (input) -- (encode);
+        \draw[arrow] (encode) -- node[above] {$000$} (noise);
+        \draw[arrow] (noise) -- node[above] {$010$} (decode);
+        \draw[arrow] (decode) -- (output);
+    \end{tikzpicture}   

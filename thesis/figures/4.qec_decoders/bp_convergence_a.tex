@@ -1,0 +1,18 @@
+        \begin{tikzpicture}
+            \drawnodes
+            \drawedges
+            
+            \draw[msgup, bend left=15] (V1) to node[lbl] {0.1} (C1);
+            \draw[msgup, bend right=15] (V2) to node[lbl] {0.4} (C1);
+            
+            \draw[msgup, bend left=15] (V2) to node[lbl] {0.4} (C2);
+            \draw[msgup, bend right=15] (V3) to node[lbl] {0.1} (C2);
+            
+            \draw[msgup, bend left=15] (V3) to node[lbl] {0.1} (C3);
+            \draw[msgup, bend right=15] (V4) to node[lbl] {0.1} (C3);
+            
+            \node[below=8pt, font=\small] at (V1) {$p=0.1$};
+            \node[below=8pt, font=\small] at (V2) {$p=0.4$};
+            \node[below=8pt, font=\small] at (V3) {$p=0.1$};
+            \node[below=8pt, font=\small] at (V4) {$p=0.1$};
+        \end{tikzpicture}

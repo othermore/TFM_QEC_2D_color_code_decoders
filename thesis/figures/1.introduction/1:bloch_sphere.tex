@@ -1,0 +1,40 @@
+\begin{tikzpicture}[line cap=round, line join=round, >=Stealth, scale=2]
+    \tikzstyle{axis} = [->, thick, gray!80]
+    \tikzstyle{back_axis} = [dotted,  thin, gray!60] 
+    \tikzstyle{vector} = [->, very thick, red]
+    \tikzstyle{projection} = [dashed, gray!70, thin] 
+    \tikzstyle{label_state} = [font=\small, black]
+    
+    \draw[gray!30] (0,0) circle (1); 
+    \draw[gray!70,  dotted, very thin] (0,0) ellipse (1 and 0.25); 
+    \draw[gray!60] (1,0) arc (0:-180:1 and 0.25);      
+
+    \draw[axis] (0,0) -- (0,1.2) node[anchor=south, label_state]{$|0\rangle$};
+    \draw[thick, gray!80] (0,0) -- (0,-1.1) node[anchor=north, label_state]{$|1\rangle$};
+
+    \draw[axis] (0,0) -- (-0.75,-0.22) node[anchor=east, label_state, xshift=-1pt]{$|+\rangle$};
+    \draw[back_axis] (0,0) -- (0.75,0.22) node[anchor=west, gray!40, font=\footnotesize, xshift=1pt]{$|-\rangle$};
+
+    \draw[axis] (0,0) -- (1.2,0) node[anchor=west, label_state]{$|+i\rangle$};
+    \draw[back_axis] (0,0) -- (-1.2,0) node[anchor=east, gray!40, font=\footnotesize]{$|-i\rangle$};
+
+    \coordinate (P) at (0.45, 0.75); 
+    \coordinate (P_base) at (0.45, -0.05); 
+
+    \draw[projection] (0,0) -- (P_base);
+    \draw[projection] (P_base) -- (P);
+
+    \draw[vector] (0,0) -- (P) node[anchor=south west, black] {$|\psi\rangle$};
+
+    \draw[->, thick, blue] (0,0.5) to [bend left=20] (0.25, 0.42);
+    \node[blue, font=\footnotesize] at (0.12, 0.6) {$\theta$};
+
+    \draw[->, thick, blue] (-0.25,-0.07) to [bend right=20] (0.28,-0.04);
+    \node[blue, font=\footnotesize] at (0.05, -0.2) {$\phi$};
+
+    \node[draw, fill=white, rounded corners, align=left, font=\small] at (1.7, 0.8) {
+        $|\psi\rangle = \alpha|0\rangle + \beta|1\rangle$ \\
+        $\alpha = \cos(\frac{\theta}{2})$ \\
+        $\beta = e^{i\phi}\sin(\frac{\theta}{2})$
+    };
+\end{tikzpicture}

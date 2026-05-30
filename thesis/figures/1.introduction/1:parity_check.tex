@@ -1,0 +1,28 @@
+    \begin{tikzpicture}[
+        bit/.style={draw, rectangle, minimum size=0.8cm, font=\sffamily},
+        parity/.style={draw, rectangle, minimum size=0.8cm, fill=gray!20, font=\sffamily\bfseries},
+        arrow/.style={-{Stealth}, thick}
+    ]
+        % Data bits in a row
+        \node[bit] (d1) at (0,0) {1};
+        \node[bit, right=0cm of d1] (d2) {0};
+        \node[bit, right=0cm of d2] (d3) {1};
+        
+        % Parity bit in the same line
+        \node[parity, right=0.8cm of d3] (p) {0};
+        
+        % Labels
+        \node[above=0.1cm of d2, font=\footnotesize] {Data bits (Message)};
+        \node[above=0.1cm of p, font=\footnotesize] {Parity bit};
+    
+        % Brace and dependency line
+        \draw [thick, decoration={brace, mirror, raise=0.2cm}, decorate] 
+            (d1.south west) -- (d3.south east) 
+            node [pos=0.5, anchor=north, yshift=-0.3cm] (logic) {\footnotesize Parity calculation};
+            
+        \draw[arrow] (logic.east) -- ++(0.4,0) -- ++(0,0.4) -- (p.west);
+        
+        % Dashed box for the whole codeword
+        \draw[dashed, gray] ($(d1.north west)+(-0.2,0.6)$) rectangle ($(p.south east)+(0.2,-1.1)$);
+        \node[below=0.7cm of p, font=\scriptsize\color{gray}] {Data block};
+    \end{tikzpicture}

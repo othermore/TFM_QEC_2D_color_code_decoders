@@ -1,0 +1,32 @@
+        \begin{tikzpicture}[scale=0.55]
+            \def\R{1.2}
+            \def\dX{2.07846} 
+            
+            \colorlet{colR}{red!20}
+            \colorlet{colG}{green!20}
+            \colorlet{colB}{blue!20}
+        
+            \newcommand{\hex}[1]{
+                \filldraw[fill=#1, draw=black, thick] 
+                    (30:\R) -- (90:\R) -- (150:\R) -- 
+                    (210:\R) -- (270:\R) -- (330:\R) -- cycle;
+            }
+        
+            % Central hexagon
+            \begin{scope}
+                \hex{colR}
+                \foreach \a in {30, 90, 150, 210, 270, 330} {
+                    \filldraw[black, fill=white, thick] (\a:\R) circle (2.5pt);
+                }
+            \end{scope}
+        
+            % Surrounding hexagons
+            \foreach \cAngle/\col in {0/colG, 60/colB, 120/colG, 180/colB, 240/colG, 300/colB} {
+                \begin{scope}[shift={(\cAngle:\dX)}]
+                    \hex{\col}
+                    \foreach \a in {30, 90, 150, 210, 270, 330} {
+                        \filldraw[black, fill=white, thick] (\a:\R) circle (2.5pt);
+                    }
+                \end{scope}
+            }
+        \end{tikzpicture}
