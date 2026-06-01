@@ -480,8 +480,60 @@ With these polygons defined, the algorithm performs a final \textit{lifting} ste
 \end{figure}
 
 
+\section{The Restriction Decoder}
+\label{sec:restriction_decoder}
 
-\section{Restriction decoders (Kubica \& Delfosse, 2023)}
+\notatfm{While the Projection Decoder requires three distinct bipartite graphs, the Restriction Decoder achieves full decoding with only two. This is because fixing the boundaries on two of the three colors is mathematically sufficient to uniquely constrain the third color, given the properties of the color code lattice.} As previously explored, the Projection Decoder resolves the hypergraph challenge of the color code by transforming the Color Code into three separate surface codes. While this divide-and-conquer strategy succeeds in enabling MWPM decoding, the structural ambiguity when the results are combined and analyzed at the global level, limits its accuracy. To address this, Kubica and Delfosse introduced the Restriction Decoder in 2023 \cite{Kubica_2023}. This algorithm improves upon the Projection Decoder in two fundamental ways: it reduces the problem to only \textbf{two} restricted lattices instead of three, and it replaces the global geometric lifting (finding closed cycles in the dual graph) with an approach based on logical restrictions (constraints) and satisfaction requirements (finding a solution that meets these constraints). This allows the algorithm to preserve the topological structure of the code during the restriction process, improving the decoding threshold.
+
+\subsection{The Restriction Step}
+Similar to the Projection Decoder, the algorithm begins by dropping one color of faces from the lattice to form a bipartite syndrome graph. However, the crucial difference lies in the number of required projections. 
+
+When creating a restricted lattice, for instance the Red-Green ($\mathcal{L}_{RG}$) restricted lattice, all Blue faces are removed. In this new graph, the original Red and Green faces become the vertices, and the physical data qubits become the edges connecting a Red vertex to a Green vertex. 
+
+This transformation is applied to create just \textbf{two} restricted lattices (e.g., $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$), whereas the Projection Decoder required all three. At the decoding phase, the full syndrome is mapped onto these two restricted graphs. The syndromes $s_{RG}$ and $s_{RB}$ are then independently decoded using MWPM to find matchings $p_{RG}$ and $p_{RB}$. 
+
+
+\subsection{The Local Lifting Step}
+
+While $p_{RG}$ and $p_{RB}$ neutralize the syndromes on their respective restricted lattices, they are independent solutions that must be reconciled. A valid physical correction must simultaneously satisfy the syndrome conditions on all three colors, meaning the two solutions must perfectly agree on the selected physical qubits.
+
+Unlike the Projection Decoder, which resolves conflicts globally using a geometric dual spanning tree (i.e. examines the complete graph to find closed loops to fill), the Restriction Decoder guarantees a physically consistent global correction by performing a strictly \textbf{local} analysis around the active detectors. 
+
+To achieve this local reconciliation, the algorithm constructs a purely algebraic \textbf{Lifting Graph}. This bipartite graph operates in a conceptually inverted manner compared to standard syndrome graphs:
+\begin{itemize}
+    \item \textbf{Nodes:} The nodes of the Lifting Graph are the specific edges activated by the restricted lattices $e_{RG} \in \mathcal{L}_{RG}$ and $e_{RB} \in \mathcal{L}_{RB}$.
+    \item \textbf{Edges:} Each true physical qubit $q$ connects the node representing its corresponding edge in $\mathcal{L}_{RG}$ to the node representing its corresponding edge in $\mathcal{L}_{RB}$.
+\end{itemize}
+
+The active syndrome (the ``defects'') fed into this Lifting Graph is exactly the combined set of edges selected by the previous restricted matchings: $s_{lift} = p_{RG} \oplus p_{RB}$. 
+
+By solving a final MWPM instance over this bipartite Lifting Graph, the algorithm identifies the minimal set of physical qubits that connect the active nodes. Geometrically, this is perfectly equivalent to examining every single vertex and finding a set of physical qubits whose boundaries exactly match the active edges predicted around that specific vertex. 
+
+\notatfm{{To select the physical qubits around a red vertex, two conditions must be met: they must touch the red vertex and their restricted boundaries must match the active edges. In this context, restricted boundaries means the boundary edges for the set of qubits that are within the set of all active edges} For every single Red vertex $v$ in the lattice that belongs to an active edge, the algorithm examines the local neighborhood:
+\begin{itemize}
+    \item It looks at the specific edges from $p_{RG}$ and $p_{RB}$ that are incident to $v$.
+    \item It selects a local subset of physical qubits, $\tau_v$, strictly from the ones touching $v$, such that their boundaries perfectly match the active edges touching this red vertex.
+\end{itemize}
+Because the maximum number of physical qubits touching a single vertex is small (e.g., 4 or 8 on the 4.8.8 lattice), this local constraint-satisfaction can be trivially solved independently for each Red vertex.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        % \input{figures/4.qec_decoders/local_lifting_a.tex}
+        \caption{Active Restricted Edges at vertex $v$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        % \input{figures/4.qec_decoders/local_lifting_b.tex}
+        \caption{Local subset $\tau_v$ matching the edges}
+    \end{subfigure}
+    \caption{Placeholder: (a) The active edges predicted by the restricted decoders arriving at a specific Red vertex. (b) The local lifting step, selecting the specific physical qubits around the vertex whose boundaries satisfy the incoming edges.}
+    \label{fig:local_lifting_step}
+\end{figure}
+
+\notatfm{Neutralizing the syndrome means finding a set of qubits that, if flipped, deactivate all the active detectors. That does not mean finding the original set of errors that activated these detectors.} The final global correction is simply the union of all these subsets of qubits ($\tau_v$). The output correction is mathematically guaranteed to neutralize the full original syndrome. If there are multiple sets of physical qubits that locally resolve the constraints (i.e. that touch the red vertex and contain all and only the active edges incident to it), their difference will inevitably form a closed loop (a stabilizer) around the vertex. Therefore, both sets will similarly correct the logical observable.
+
 
 \section{Möbius decoder (Sahay \& Brown, PRX Quantum, 2022)}
 
