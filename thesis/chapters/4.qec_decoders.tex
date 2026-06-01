@@ -413,36 +413,10 @@ Once the MWPM instances process their respective syndromes, they output independ
 
 \notatfm{In his 2014 paper, Delfosse formulates this proof using the dual graph ($G^*$) of the color code lattice. In the dual graph, detectors are vertices and physical qubits are triangular faces. The MWPM corrections correspond to the edges of these triangles. Mathematically, the union of the edges is treated as a homological chain sum (modulo 2), $C = C_{RG} \oplus C_{GB} \oplus C_{BR}$. This sum forms a set of closed loops (homological cycles) in the dual graph, and the "lifting" step finds the set of triangular faces (qubits) filling the interior of these cycles.} To resolve this ambiguity and merge the three corrections, the Projection decoder utilizes the topological properties of the dual graph of the lattice (a transformed graph where physical qubits are represented as faces, and detectors as vertices), as illustrated in Figure \ref{fig:dual_projection_graphs}. 
 
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \input{figures/4.qec_decoders/dual_projection_graphs_a.tex}
-        \caption{Full Dual Graph $G^*$}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \input{figures/4.qec_decoders/dual_projection_graphs_b.tex}
-        \caption{Red-Green Projection}
-    \end{subfigure}
 
-    \vspace{0.5cm}
 
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \input{figures/4.qec_decoders/dual_projection_graphs_c.tex}
-        \caption{Green-Blue Projection}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
-        \centering
-        \input{figures/4.qec_decoders/dual_projection_graphs_d.tex}
-        \caption{Blue-Red Projection}
-    \end{subfigure}
-    \caption{The dual graph $G^*$ for the distance 5 color code displayed in Figure \ref{fig:projection_graphs} (a) and its three projected bipartite graphs (b, c, d). In this representation, the detectors are vertices and physical qubits are triangular faces. Removing one color of vertices leaves exactly one type of edge, creating independent surface codes. Note how the two parallel edges in the syndrome graph become a single edge in this representation.}
-    \label{fig:dual_projection_graphs}
-\end{figure}
+
+
 
 The merging process, illustrated in Figure \ref{fig:dual_merge_step}, overlays the three independent sets of selected edges onto the global dual graph. Since each projected graph is a subgraph of the full dual graph, the edges selected by $C_{RG}$, $C_{GB}$, and $C_{BR}$ can be directly placed on their corresponding geometric locations in the global graph, effectively computing the geometric union of the graphs to combine them. Delfosse proved that this combined set of 1-dimensional edges forms a continuous, closed boundary (a set of polygons) drawn across the dual graph.
 
