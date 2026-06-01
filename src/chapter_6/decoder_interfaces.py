@@ -6,7 +6,19 @@ try:
     from ldpc import SinterBpOsdDecoder
 except ImportError:
     SinterBpOsdDecoder = None
+    
+try:
+    from sinter_projection_decoder import ProjectionDecoder
+except ImportError:
+    ProjectionDecoder = None
 
+def get_projection_decoder() -> sinter.Decoder:
+    """
+    Returns a Sinter Decoder instance for the Projection Decoder.
+    """
+    if ProjectionDecoder is None:
+        raise ImportError("ProjectionDecoder could not be imported.")
+    return ProjectionDecoder()
 
 def get_bposd_decoder(max_iter: int = 30, osd_method: str = 'osd_cs', osd_order: int = 10) -> sinter.Decoder:
     """
@@ -31,5 +43,7 @@ def get_custom_decoders() -> Dict[str, sinter.Decoder]:
     decoders = {}
     if SinterBpOsdDecoder is not None:
         decoders['bposd'] = get_bposd_decoder()
+    if ProjectionDecoder is not None:
+        decoders['projection'] = get_projection_decoder()
     return decoders
 

@@ -20,9 +20,8 @@ def build_rep_code_cirq(distance: int, p: float) -> stim.Circuit:
     rounds = distance
     
     for r in range(rounds):
-        # Add noise to data qubits
-        # the NEW_THEN_INLINE strategy is used to prevent the noise annotation to be pushed to the earliest
-        # possible step, which would result in an incorrect simulation.
+        # Add noise to data qubits. he NEW_THEN_INLINE prevents
+        # the noise annotation to be moved to the beginning.
         circuit.append([cirq.depolarize(p).on(q) for q in qubits[0::2]], strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
         
         # CNOTs to compute parity -- First qubit is a data qubit. Then we alternate ancillas and qubits. Each ancilla

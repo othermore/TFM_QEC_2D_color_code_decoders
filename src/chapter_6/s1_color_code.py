@@ -214,10 +214,11 @@ class ColorCode:
         Custom Cirq Noise Model that supports independent error rates for 
         data qubits (code-capacity), measurements, and physical gates.
         """
-        def __init__(self, p_data: float = 0.0, p_meas: float = 0.0, p_gate: float = 0.0):
+        def __init__(self, p_data: float = 0.0, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing'):
             self.p_data = p_data
             self.p_meas = p_meas
             self.p_gate = p_gate
+            self.noise_type = noise_type
 
         def noisy_operation(self, operation: cirq.Operation):
             if isinstance(operation.untagged, (stimcirq.DetAnnotation, stimcirq.CumulativeObservableAnnotation)):
@@ -232,17 +233,26 @@ class ColorCode:
             elif operation.gate == cirq.I:
                 yield operation
                 if self.p_data > 0:
-                    yield cirq.depolarize(p=self.p_data).on_each(*operation.qubits)
+                    if self.noise_type == 'X':
+                        yield cirq.bit_flip(p=self.p_data).on_each(*operation.qubits)
+                    else:
+                        yield cirq.depolarize(p=self.p_data).on_each(*operation.qubits)
                     
             elif len(operation.qubits) == 1:
                 yield operation
                 if self.p_gate > 0:
-                    yield cirq.depolarize(p=self.p_gate).on_each(*operation.qubits)
+                    if self.noise_type == 'X':
+                        yield cirq.bit_flip(p=self.p_gate).on_each(*operation.qubits)
+                    else:
+                        yield cirq.depolarize(p=self.p_gate).on_each(*operation.qubits)
                     
             elif len(operation.qubits) == 2:
                 yield operation
                 if self.p_gate > 0:
-                    yield cirq.depolarize(p=self.p_gate).on_each(*operation.qubits)
+                    if self.noise_type == 'X':
+                        yield cirq.bit_flip(p=self.p_gate).on_each(*operation.qubits)
+                    else:
+                        yield cirq.depolarize(p=self.p_gate).on_each(*operation.qubits)
             else:
                 yield operation
 
@@ -288,7 +298,7 @@ class ColorCode:
                 'color': face['color']
             })
 
-    def build_clean_circuit(self, rounds: int = 1) -> cirq.Circuit:
+    def build_clean_circuit(self, rounds: int = 1, noise_type: str = 'depolarizing') -> cirq.Circuit:
         """
         Builds the clean Cirq circuit, including STIM annotations for decoding.
         
@@ -322,29 +332,30 @@ class ColorCode:
             if r > 0:
                 circuit.append([cirq.I(q) for q in self.data_qubits], strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
             
-            for face in self.faces:
-                a = face['ancilla']
-                circuit.append(cirq.H(a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
-                for dq in face['data']:
-                    circuit.append(cirq.CNOT(a, dq), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
-                circuit.append(cirq.H(a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
-                
-            meas_x = [cirq.measure(f['ancilla'], key=f"mX_{r}_{f['ancilla'].row}_{f['ancilla'].col}") for f in self.faces]
-            circuit.append(cirq.Moment(meas_x))
-            
-            # X outcomes in round 0 are random due to |0> initialization, so we only 
-            # create X detectors starting from round 1 to compare against previous round.
-            if r > 0:
-                det_ops = []
+            if noise_type != 'X':
                 for face in self.faces:
-                    ax, ay = self.plot_coords[face['ancilla']]
-                    det_ops.append(stimcirq.DetAnnotation(
-                        parity_keys=[f"mX_{r}_{face['ancilla'].row}_{face['ancilla'].col}", f"mX_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}"],
-                        coordinate_metadata=(ax, ay, r)
-                    ))
-                circuit.append(cirq.Moment(det_ops))
+                    a = face['ancilla']
+                    circuit.append(cirq.H(a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
+                    for dq in face['data']:
+                        circuit.append(cirq.CNOT(a, dq), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
+                    circuit.append(cirq.H(a), strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
                     
-            circuit.append(cirq.Moment([cirq.reset(q) for q in self.ancilla_qubits]))
+                meas_x = [cirq.measure(f['ancilla'], key=f"mX_{r}_{f['ancilla'].row}_{f['ancilla'].col}") for f in self.faces]
+                circuit.append(cirq.Moment(meas_x))
+                
+                # X outcomes in round 0 are random due to |0> initialization, so we only 
+                # create X detectors starting from round 1 to compare against previous round.
+                if r > 0:
+                    det_ops = []
+                    for face in self.faces:
+                        ax, ay = self.plot_coords[face['ancilla']]
+                        det_ops.append(stimcirq.DetAnnotation(
+                            parity_keys=[f"mX_{r}_{face['ancilla'].row}_{face['ancilla'].col}", f"mX_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}"],
+                            coordinate_metadata=(ax, ay, r)
+                        ))
+                    circuit.append(cirq.Moment(det_ops))
+                        
+                circuit.append(cirq.Moment([cirq.reset(q) for q in self.ancilla_qubits]))
             
             for face in self.faces:
                 a = face['ancilla']
@@ -390,23 +401,23 @@ class ColorCode:
         
         return circuit
 
-    def get_noisy_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0) -> cirq.Circuit:
+    def get_noisy_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing') -> cirq.Circuit:
         """
         Builds the circuit and applies the custom NoiseModel.
         Default is Code-Capacity (1:0:0) using p_data.
         """
-        clean_circ = self.build_clean_circuit(rounds)
-        noise_model = self.NoiseModel(p_data=p_data, p_meas=p_meas, p_gate=p_gate)
+        clean_circ = self.build_clean_circuit(rounds, noise_type)
+        noise_model = self.NoiseModel(p_data=p_data, p_meas=p_meas, p_gate=p_gate, noise_type=noise_type)
         return clean_circ.with_noise(noise_model)
 
-    def get_stim_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0) -> stim.Circuit:
+    def get_stim_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing') -> stim.Circuit:
         """Returns the STIM compiled version of the noisy circuit, ready for Sinter/PyMatching."""
-        noisy_circ = self.get_noisy_circuit(rounds, p_data, p_meas, p_gate)
+        noisy_circ = self.get_noisy_circuit(rounds, p_data, p_meas, p_gate, noise_type)
         return stimcirq.cirq_circuit_to_stim_circuit(noisy_circ)
 
-    def draw_circuit(self, rounds: int = 1):
+    def draw_circuit(self, rounds: int = 1, noise_type: str = 'depolarizing'):
         """Prints the ASCII representation of the clean circuit."""
-        circuit = self.build_clean_circuit(rounds)
+        circuit = self.build_clean_circuit(rounds, noise_type)
         print(circuit)
 
     def plot_lattice(self, save_path=None):

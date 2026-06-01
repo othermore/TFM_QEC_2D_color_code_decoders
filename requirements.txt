@@ -1,4 +1,5 @@
 attrs==26.1.0
+bposd==2.1
 cairosvg
 certifi==2026.4.22
 cffi==2.0.0
@@ -23,6 +24,7 @@ grpcio-status==1.71.2
 grpcio==1.80.0
 idna==3.13
 kiwisolver==1.5.0
+ldpc==2.4.1
 matplotlib==3.10.8
 mpmath==1.3.0
 networkx==3.6.1

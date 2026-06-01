@@ -16,7 +16,9 @@ def run_color_code_simulations(
     rounds_func=lambda d: d,
     max_shots: int = 1_000_000,
     max_errors: int = 500,
-    num_workers: Optional[int] = None
+    num_workers: Optional[int] = None,
+    append: bool = False,
+    noise_type: str = 'depolarizing'
 ) -> str:
     """
     Runs large-scale threshold simulations using Sinter and the 4.8.8 Color Code.
@@ -51,18 +53,21 @@ def run_color_code_simulations(
     
     is_first = True
     
+    color_codes = {}
+    
     for d in distances:
         rounds = rounds_func(d)
         cc = ColorCode(distance=d)
+        color_codes[d] = cc
         print(f"--> Generating circuits and Detector Error Models (DEM) for distance d={d}...", flush=True)
         for p in p_rates:
             # Caching filenames
-            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000.stim")
-            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000.dem")
+            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.stim")
+            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.dem")
             
             import stim
             if is_first:
-                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0)
+                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0, noise_type=noise_type)
                 dem_new = stim_circ_new.detector_error_model(decompose_errors=False)
                 
                 if os.path.exists(circ_path) and os.path.exists(dem_path):
@@ -102,7 +107,7 @@ def run_color_code_simulations(
                     dem = stim.DetectorErrorModel.from_file(dem_path)
                 else:
                     p_meas_val = p if rounds > 1 else 0.0
-                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0)
+                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0, noise_type=noise_type)
                     dem = stim_circ.detector_error_model(decompose_errors=False)
                     stim_circ.to_file(circ_path)
                     dem.to_file(dem_path)
@@ -117,6 +122,37 @@ def run_color_code_simulations(
             
     custom_decoders = get_custom_decoders()
     
+    if decoder_name == 'projection' and 'projection' in custom_decoders:
+        decoder = custom_decoders['projection']
+        
+        # Build coord to color maps for each distance used
+        coord_to_color_by_d = {}
+        for d in distances:
+            cc = color_codes[d]
+            coord_to_color = {}
+            for face in cc.faces:
+                ax, ay = cc.plot_coords[face['ancilla']]
+                coord_to_color[(ax, ay)] = face['color']
+            coord_to_color_by_d[d] = coord_to_color
+            
+        # Register colors for each task
+        for task in tasks:
+            d = task.json_metadata['d']
+            coord_to_color = coord_to_color_by_d[d]
+            
+            detector_colors = {}
+            det_id = 0
+            for instr in task.circuit:
+                if instr.name == "DETECTOR":
+                    coords = instr.gate_args_copy()
+                    if len(coords) >= 2:
+                        ax, ay = coords[0], coords[1]
+                        color = coord_to_color.get((ax, ay), 'Unknown')
+                        detector_colors[det_id] = color
+                    det_id += 1
+                    
+            decoder.register_colors(task.circuit.num_detectors, detector_colors)
+    
     print(f"Starting Sinter parallel sampling across {num_workers} workers...")
     print(f"Decoder: {decoder_name} | Max shots: {max_shots} | Max errors: {max_errors}")
     
@@ -130,10 +166,12 @@ def run_color_code_simulations(
         print_progress=True
     )
     
-    print(f"Saving results to {csv_path}...")
-    with open(csv_path, 'w', newline='') as f:
+    print(f"{'Appending' if append else 'Saving'} results to {csv_path}...")
+    mode = 'a' if append else 'w'
+    with open(csv_path, mode, newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["decoder", "distance", "rounds", "p_physical", "p_logical", "p_logical_err", "shots", "errors", "avg_time_sec"])
+        if not append:
+            writer.writerow(["decoder", "distance", "rounds", "p_physical", "p_logical", "p_logical_err", "shots", "errors", "avg_time_sec"])
         
         for s in stats:
             d = s.json_metadata['d']
@@ -159,8 +197,15 @@ def run_color_code_simulations(
                 
             writer.writerow([decoder_name, d, r, p, p_L, p_L_err, shots, errors, avg_time])
             
+    if append:
+        import pandas as pd
+        df = pd.read_csv(csv_path)
+        df = df.sort_values(by=['distance', 'p_physical']).reset_index(drop=True)
+        df.to_csv(csv_path, index=False)
+            
     print(f"Simulation complete. Results saved at {csv_path}")
     return csv_path
 
 if __name__ == "__main__":
     pass
+
