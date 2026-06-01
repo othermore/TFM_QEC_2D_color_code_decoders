@@ -109,6 +109,9 @@ Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a di
     \label{fig:6:circuit_d3}
 \end{figure}
 
+\subsection{X and depolarizing noise types}
+Our circuit generation is parametrized, allowing for two noise types: depolarizing and X. Because we are defining an observable in the computing basis, Z-type errors do not affect the observable. Adding Z and Y noise influences the results. While we want our decoders to be able to handle this type of noise in the DEM, to compare decoders failrly (both between them and with the published results by other researchers), a model with only X-type errors is preferred. In this model, all the Z detectors are removed and the error changes from depolarizing to bit-flip. 
+
 \section{Simulation Architecture and Evaluation Metrics}
 \label{sec:simulation_architecture}
 
@@ -219,9 +222,9 @@ Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ fro
 \subsection{Threshold Evaluation}
 \label{subsec:bposd_threshold}
 
-With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=3$ up to $d=11$. To guarantee robust statistics specially at low physical error rates, the simulation executed up to $20 \times 10^6$ shots per configuration, but stopping when $300$ logical errors have ocurred.
+With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=5$ up to $d=19$. To guarantee robust statistics specially at low physical error rates, the simulation executed up to $25 \times 10^6$ shots per configuration, but stopping when $400$ logical errors have occurred. While the simulations have been run both with depolarizing and bit-flip noise types, we show below strictly the results for bit-flip noise.
 
-\notatfm{The threshold is calculated by interpolating the logical error curves for different distances and finding their crossing point, in a logarithmic representation.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 14.32\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
+\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 8.7\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
 
 \begin{figure}[htbp]
     \centering
@@ -240,6 +243,78 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
 
 
 \section{Projection decoder + MWPM}
+In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. But we are not only missing the \texttt{sinter} interface, but the decoder itself, for which we have not found any library or existing implementation. Delfosse (\cite{Delfosse_2014}) details the lifting process in an Appendix. Stephens (\cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a refference to validate our implementation. 
+
+Our implementation is divided into three stages: the Projection step (where the lattice is decomposed), the Minimum Weight Perfect Matching (MWPM) step, and the Lifting step. To improve performance, the projections and graph transformations are pre-compiled and cached for each specific code distance.
+
+\subsection{The Projection Step and DEM Generation}
+The first step of the algorithm consists of transforming the original 2D Color Code Detector Error Model (DEM) into three independent Surface Code DEMs (representing the $RG$, $GB$, and $BR$ projections). 
+
+We iterate through all the independent error mechanisms defined in the original DEM. For a specific projection (e.g., $RG$), any error that triggers a Blue detector is modified to ignore that detector. If an error mechanism triggers exactly two detectors of the remaining colors (one Red and one Green), it forms a valid 1-dimensional edge in the projected graph.
+
+\notatfm{In this chapter, we often refer to physical qubits in the graph. This is a simplification, as the DEM and the corresponding graph actually contains possible errors causing the syndrome. Therefore, rather than physical qubits, the graph contains possible errors (e.g. X, Y and Z errors) affecting the physical qubit. For each physical qubit, in a depolarizing noise model, there are three possible errors} Because multiple physical qubits in the Color Code can collapse into the same parallel edge in the projected graph, we mathematically merge these parallel edges into a single virtual edge, keeping a map to identify the original physical qubits. In a full circuit-level noise simulation, the probability of this new merged edge would be calculated as a weighted sum of the independent error probabilities of its physical qubits. However, since our evaluation focuses on the code-capacity noise model, we implemented a simplified unweighted approach. Every edge is assigned the same error probability (e.g., $p=0.01$).
+
+Finally, these filtered and merged edges are compiled into three new, independent \texttt{stim.DetectorErrorModel} objects.
+
+\subsection{Running MWPM on the projected surface codes}
+With the three projected DEMs generated, the algorithm must decode them. We utilize \texttt{PyMatching} as the core MWPM engine for this task. 
+
+Typically, \texttt{PyMatching} takes a syndrome as input and returns a boolean array predicting whether the logical observables of the code have been flipped. However, the Projection Decoder requires knowing \textit{exactly which physical edges} were selected by the MWPM algorithm to form the correction paths.
+
+To force \texttt{PyMatching} to output this specific internal pathing information, we modify the DEM generation: we assign a unique, virtual logical observable ($L_i$) to every single edge in the projected graph. Consequently, when the MWPM algorithm is executed, the returned "observable flip" tell us all the edges that were identified as flipping in the projection. A value of $1$ at index $i$ indicates that the edge $i$ was flipped (included in the correction path), while a $0$ indicates it was not.
+
+\subsection{The Lifting Step}
+The final stage of the decoder is the "Lifting" process. The three MWPM instances returned a set of edges. When combined, these edges form continuous, closed homological cycles (loops) in the dual graph ($G^*$) of the Color Code. The objective of the lifting step is to find the exact set of physical qubits (which correspond to the triangular faces in $G^*$) that are enclosed within these boundaries.
+
+\notatfm{Rather than assuming that the root of the Spanning Tree is the OUTSIDE node, we can first determine if the outside node is, in the spanning tree, in the same region as the root. If it is, then a path from the root crossing an even number of times remains in the same region. If the root is in a region different to the OUTSIDE node, we have to apply a global flip} To solve this efficiently, we build a Spanning Tree of the dual graph using a Breadth-First Search (BFS) algorithm. We add a virtual node called the \textit{OUTSIDE}, which represents the external boundary of the lattice and is defined to always have a state of $0$ (no error). The spanning tree determines the paths (as in edges that must be crossed) from a common root node (which for simplification we can assume it's the OUTSIDE node) to any other node in the graph.
+
+Because the OUTSIDE node is exterior, if the path to a node crosses active edges an even number of times, it must be outside a boundary. If it crosses them an even number of times, it must be inside the boundary.
+
+With this logic, we can identify every physical qubit that is contained inside the loops in $O(N)$ time. 
+
+Finally, the algorithm checks the logical observables of the Color Code (from its original DEM) against this recovered set of physical errors. If the physical errors trigger a logical flip, the decoder registers a logical failure.
+
+
+\subsection{Threshold Evaluation}
+\label{subsec:projection_threshold}
+
+\notatfm{With Color Codes of small distances, the removal of detectors during the projection results in small surface codes for which the results are inconsistent. This is why only simulate distances $d\geq9$.} We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=9$ up to $d=19$.
+
+The grid was evaluated starting from $p=0.02$. The simulation was bounded to a maximum of $25 \times 10^6$ shots per configuration, terminating early as soon as $400$ logical errors were observed. 
+
+Furthermore, to gain a deeper insight into the topological capabilities of the decoder, we ran separate full evaluations for both standard Depolarizing noise and pure X-only (bit-flip) noise.
+
+The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. Using Kernel Density Estimation (KDE) to find the continuous mode of the crossing points (thereby naturally filtering out early finite-size intersection anomalies), we observe an empirical threshold of $p_{th} \approx \text{XX.X}\%$ for the Depolarizing noise model, and $p_{th} \approx \text{YY.Y}\%$ for the pure X noise model. 
+
+Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances. To obtain a finer resolution of the exact transition phase, Figure \ref{fig:projection_threshold_zoom} displays an amplified high-resolution sweep of the sub-threshold region. During this zoom phase, the early stopping condition was quadrupled to $1600$ logical errors per data point, completely smoothing out any statistical noise.
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_threshold.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_X_threshold.png}
+    \end{minipage}
+    \caption[Simulation 3: Projection decoder thresholds.]{Main threshold evaluation for the topological Projection Decoder. (Left) Performance under standard depolarizing noise showing a threshold of $p_{th} \approx \text{XX.X}\%$. (Right) Performance under a pure X-only noise model showing a threshold of $p_{th} \approx \text{YY.Y}\%$.}
+    \label{fig:projection_threshold}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_threshold_zoom.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_X_threshold_zoom.png}
+    \end{minipage}
+    \caption[Simulation 3: Projection decoder threshold zooms.]{High-resolution evaluation centered precisely around the estimated thresholds to confirm the crossover behavior devoid of finite-size statistical fluctuations.}
+    \label{fig:projection_threshold_zoom}
+\end{figure}
 
 
 \section{Restriction decoder + MWPM}
