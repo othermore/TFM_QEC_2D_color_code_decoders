@@ -413,10 +413,36 @@ Once the MWPM instances process their respective syndromes, they output independ
 
 \notatfm{In his 2014 paper, Delfosse formulates this proof using the dual graph ($G^*$) of the color code lattice. In the dual graph, detectors are vertices and physical qubits are triangular faces. The MWPM corrections correspond to the edges of these triangles. Mathematically, the union of the edges is treated as a homological chain sum (modulo 2), $C = C_{RG} \oplus C_{GB} \oplus C_{BR}$. This sum forms a set of closed loops (homological cycles) in the dual graph, and the "lifting" step finds the set of triangular faces (qubits) filling the interior of these cycles.} To resolve this ambiguity and merge the three corrections, the Projection decoder utilizes the topological properties of the dual graph of the lattice (a transformed graph where physical qubits are represented as faces, and detectors as vertices), as illustrated in Figure \ref{fig:dual_projection_graphs}. 
 
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \input{figures/4.qec_decoders/dual_projection_graphs_a.tex}
+        \caption{Full Dual Graph $G^*$}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \input{figures/4.qec_decoders/dual_projection_graphs_b.tex}
+        \caption{Red-Green Projection}
+    \end{subfigure}
 
+    \vspace{0.5cm}
 
-
-
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \input{figures/4.qec_decoders/dual_projection_graphs_c.tex}
+        \caption{Green-Blue Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \input{figures/4.qec_decoders/dual_projection_graphs_d.tex}
+        \caption{Blue-Red Projection}
+    \end{subfigure}
+    \caption{The dual graph $G^*$ for the distance 5 color code displayed in Figure \ref{fig:projection_graphs} (a) and its three projected bipartite graphs (b, c, d). In this representation, the detectors are vertices and physical qubits are triangular faces. Removing one color of vertices leaves exactly one type of edge, creating independent surface codes. Note how the two parallel edges in the syndrome graph become a single edge in this representation.}
+    \label{fig:dual_projection_graphs}
+\end{figure}
 
 The merging process, illustrated in Figure \ref{fig:dual_merge_step}, overlays the three independent sets of selected edges onto the global dual graph. Since each projected graph is a subgraph of the full dual graph, the edges selected by $C_{RG}$, $C_{GB}$, and $C_{BR}$ can be directly placed on their corresponding geometric locations in the global graph, effectively computing the geometric union of the graphs to combine them. Delfosse proved that this combined set of 1-dimensional edges forms a continuous, closed boundary (a set of polygons) drawn across the dual graph.
 
@@ -466,14 +492,13 @@ When creating a restricted lattice, for instance the Red-Green ($\mathcal{L}_{RG
 
 This transformation is applied to create just \textbf{two} restricted lattices (e.g., $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$), whereas the Projection Decoder required all three. At the decoding phase, the full syndrome is mapped onto these two restricted graphs. The syndromes $s_{RG}$ and $s_{RB}$ are then independently decoded using MWPM to find matchings $p_{RG}$ and $p_{RB}$. 
 
-
 \subsection{The Local Lifting Step}
 
 While $p_{RG}$ and $p_{RB}$ neutralize the syndromes on their respective restricted lattices, they are independent solutions that must be reconciled. A valid physical correction must simultaneously satisfy the syndrome conditions on all three colors, meaning the two solutions must perfectly agree on the selected physical qubits.
 
 Unlike the Projection Decoder, which resolves conflicts globally using a geometric dual spanning tree (i.e. examines the complete graph to find closed loops to fill), the Restriction Decoder guarantees a physically consistent global correction by performing a strictly \textbf{local} analysis around the active detectors. 
 
-To achieve this local reconciliation, the algorithm constructs a purely algebraic \textbf{Lifting Graph}. This bipartite graph operates in a conceptually inverted manner compared to standard syndrome graphs:
+To achieve this local reconciliation, the algorithm, illustrated in Figure \ref{fig:restriction_decoder_steps} constructs a purely algebraic \textbf{Lifting Graph}. This bipartite graph operates in a conceptually inverted manner compared to standard syndrome graphs:
 \begin{itemize}
     \item \textbf{Nodes:} The nodes of the Lifting Graph are the specific edges activated by the restricted lattices $e_{RG} \in \mathcal{L}_{RG}$ and $e_{RB} \in \mathcal{L}_{RB}$.
     \item \textbf{Edges:} Each true physical qubit $q$ connects the node representing its corresponding edge in $\mathcal{L}_{RG}$ to the node representing its corresponding edge in $\mathcal{L}_{RB}$.
@@ -489,22 +514,38 @@ By solving a final MWPM instance over this bipartite Lifting Graph, the algorith
     \item It selects a local subset of physical qubits, $\tau_v$, strictly from the ones touching $v$, such that their boundaries perfectly match the active edges touching this red vertex.
 \end{itemize}
 Because the maximum number of physical qubits touching a single vertex is small (e.g., 4 or 8 on the 4.8.8 lattice), this local constraint-satisfaction can be trivially solved independently for each Red vertex.
+
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        % \input{figures/4.qec_decoders/local_lifting_a.tex}
-        \caption{Active Restricted Edges at vertex $v$}
+        \resizebox{\linewidth}{!}{\input{figures/4.qec_decoders/restriction_graphs_a.tex}}
+        \caption{Full syndrome graph}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        % \input{figures/4.qec_decoders/local_lifting_b.tex}
-        \caption{Local subset $\tau_v$ matching the edges}
+        \resizebox{\linewidth}{!}{\input{figures/4.qec_decoders/restriction_graphs_b.tex}}
+        \caption{Red-Green Projection ($\mathcal{L}_{RG}$)}
     \end{subfigure}
-    \caption{Placeholder: (a) The active edges predicted by the restricted decoders arriving at a specific Red vertex. (b) The local lifting step, selecting the specific physical qubits around the vertex whose boundaries satisfy the incoming edges.}
-    \label{fig:local_lifting_step}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{\input{figures/4.qec_decoders/restriction_graphs_c.tex}}
+        \caption{Red-Blue Projection ($\mathcal{L}_{RB}$)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{\input{figures/4.qec_decoders/restriction_graphs_d.tex}}
+        \caption{Local Lifting}
+    \end{subfigure}
+    \caption{The Restriction Decoder methodology: (a) A chain of two physical errors occurs, activating two Green and two Blue detectors. (b, c) The syndromes are projected onto $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$ and independently decoded via MWPM, finding 1D paths connecting the active detectors through intermediate unlit vertices. (d) The local lifting step superimposes the edges and finds the specific physical qubits whose local boundaries satisfy both matchings simultaneously.}
+    \label{fig:restriction_decoder_steps}
 \end{figure}
+
 
 \notatfm{Neutralizing the syndrome means finding a set of qubits that, if flipped, deactivate all the active detectors. That does not mean finding the original set of errors that activated these detectors.} The final global correction is simply the union of all these subsets of qubits ($\tau_v$). The output correction is mathematically guaranteed to neutralize the full original syndrome. If there are multiple sets of physical qubits that locally resolve the constraints (i.e. that touch the red vertex and contain all and only the active edges incident to it), their difference will inevitably form a closed loop (a stabilizer) around the vertex. Therefore, both sets will similarly correct the logical observable.
 
