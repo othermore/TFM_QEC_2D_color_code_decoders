@@ -224,26 +224,26 @@ Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ fro
 
 With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=5$ up to $d=19$. To guarantee robust statistics specially at low physical error rates, the simulation executed up to $25 \times 10^6$ shots per configuration, but stopping when $400$ logical errors have occurred. While the simulations have been run both with depolarizing and bit-flip noise types, we show below strictly the results for bit-flip noise.
 
-\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 8.7\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
+\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision. Finally, we determine the continuous mode of all the crossing points.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 8.71\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_threshold.png}
+        \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_X_threshold.png}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_time.png}
     \end{subfigure}
-    \caption[Simulation 2: BP+OSD decoder.]{Main simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 14.32\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
+    \caption[Simulation 2: BP+OSD decoder.]{Main simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 8.71\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
     \label{fig:bposd_threshold}
 \end{figure}
 
 
 \section{Projection decoder + MWPM}
-In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. But we are not only missing the \texttt{sinter} interface, but the decoder itself, for which we have not found any library or existing implementation. Delfosse (\cite{Delfosse_2014}) details the lifting process in an Appendix. Stephens (\cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a refference to validate our implementation. 
+In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. We need to also implement the decoder itself, for which we have not found any library or existing implementation. Delfosse (\cite{Delfosse_2014}) details the lifting process in an Appendix. Stephens (\cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a reference to validate our implementation. 
 
 Our implementation is divided into three stages: the Projection step (where the lattice is decomposed), the Minimum Weight Perfect Matching (MWPM) step, and the Lifting step. To improve performance, the projections and graph transformations are pre-compiled and cached for each specific code distance.
 
@@ -278,42 +278,24 @@ Finally, the algorithm checks the logical observables of the Color Code (from it
 \subsection{Threshold Evaluation}
 \label{subsec:projection_threshold}
 
-\notatfm{With Color Codes of small distances, the removal of detectors during the projection results in small surface codes for which the results are inconsistent. This is why only simulate distances $d\geq9$.} We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=9$ up to $d=19$.
+\notatfm{With Color Codes of small distances, the removal of detectors during the projection results in small surface codes for which the results are inconsistent. This is why only simulate distances $d\geq9$.} We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=9$ up to $d=19$ and the same ranges and number of shots used in prior simulations. Once again, while we've run simulations for both depolarizing and X-type noise, we present here the results of the latter. 
 
-The grid was evaluated starting from $p=0.02$. The simulation was bounded to a maximum of $25 \times 10^6$ shots per configuration, terminating early as soon as $400$ logical errors were observed. 
+The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. We observe an empirical threshold of $p_{th} \approx \text{7.3}\%$. 
 
-Furthermore, to gain a deeper insight into the topological capabilities of the decoder, we ran separate full evaluations for both standard Depolarizing noise and pure X-only (bit-flip) noise.
-
-The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. Using Kernel Density Estimation (KDE) to find the continuous mode of the crossing points (thereby naturally filtering out early finite-size intersection anomalies), we observe an empirical threshold of $p_{th} \approx \text{XX.X}\%$ for the Depolarizing noise model, and $p_{th} \approx \text{YY.Y}\%$ for the pure X noise model. 
-
-Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances. To obtain a finer resolution of the exact transition phase, Figure \ref{fig:projection_threshold_zoom} displays an amplified high-resolution sweep of the sub-threshold region. During this zoom phase, the early stopping condition was quadrupled to $1600$ logical errors per data point, completely smoothing out any statistical noise.
+Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances.
 
 \begin{figure}[htpb]
     \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_threshold.png}
-    \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_X_threshold.png}
-    \end{minipage}
-    \caption[Simulation 3: Projection decoder thresholds.]{Main threshold evaluation for the topological Projection Decoder. (Left) Performance under standard depolarizing noise showing a threshold of $p_{th} \approx \text{XX.X}\%$. (Right) Performance under a pure X-only noise model showing a threshold of $p_{th} \approx \text{YY.Y}\%$.}
-    \label{fig:projection_threshold}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_threshold_zoom.png}
     \end{minipage}\hfill
     \begin{minipage}{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_X_threshold_zoom.png}
+        \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_time.png}
     \end{minipage}
-    \caption[Simulation 3: Projection decoder threshold zooms.]{High-resolution evaluation centered precisely around the estimated thresholds to confirm the crossover behavior devoid of finite-size statistical fluctuations.}
-    \label{fig:projection_threshold_zoom}
+    \caption[Simulation 3: Projection decoder thresholds.]{Threshold evaluation for the topological Projection Decoder. (Left) Performance under a pure X-only noise model showing a threshold of $p_{th} \approx \text{7.3}\%$. (Right) Decoding execution time as a function of the distance.}
+    \label{fig:projection_threshold}
 \end{figure}
 
 
