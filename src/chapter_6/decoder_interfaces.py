@@ -12,6 +12,12 @@ try:
 except ImportError:
     ProjectionDecoder = None
 
+try:
+    from sinter_restriction_decoder import RestrictionDecoder
+except ImportError:
+    RestrictionDecoder = None
+
+
 def get_projection_decoder() -> sinter.Decoder:
     """
     Returns a Sinter Decoder instance for the Projection Decoder.
@@ -19,6 +25,14 @@ def get_projection_decoder() -> sinter.Decoder:
     if ProjectionDecoder is None:
         raise ImportError("ProjectionDecoder could not be imported.")
     return ProjectionDecoder()
+
+def get_restriction_decoder() -> sinter.Decoder:
+    """
+    Returns a Sinter Decoder instance for the Restriction Decoder.
+    """
+    if RestrictionDecoder is None:
+        raise ImportError("RestrictionDecoder could not be imported.")
+    return RestrictionDecoder()
 
 def get_bposd_decoder(max_iter: int = 30, osd_method: str = 'osd_cs', osd_order: int = 10) -> sinter.Decoder:
     """
@@ -45,5 +59,7 @@ def get_custom_decoders() -> Dict[str, sinter.Decoder]:
         decoders['bposd'] = get_bposd_decoder()
     if ProjectionDecoder is not None:
         decoders['projection'] = get_projection_decoder()
+    if RestrictionDecoder is not None:
+        decoders['restriction'] = get_restriction_decoder()
     return decoders
 

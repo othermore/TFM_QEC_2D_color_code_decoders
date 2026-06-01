@@ -327,13 +327,13 @@ class ProjectionDecoder(sinter.Decoder):
         dem = stim.DetectorErrorModel.from_file(dem_path)
         cache_key = str(dem_path)
         
-        # 1. Compilation Phase
+        # Compilation Phase
         if cache_key not in self.compiled_cache:
             self._compile_decoder(dem, num_dets, num_obs, cache_key)
             
         compiled_data = self.compiled_cache[cache_key]
         
-        # 2. Read syndromes
+        # Read syndromes
 
         # Decode the binary packed syndromes to a numpy array of shape (num_shots, num_dets)
         syndromes = np.fromfile(dets_b8_in_path, dtype=np.uint8)
@@ -341,13 +341,13 @@ class ProjectionDecoder(sinter.Decoder):
         syndromes = syndromes.reshape(num_shots, bytes_per_shot)
         syndromes_unpacked = np.unpackbits(syndromes, axis=1, bitorder='little')[:, :num_dets]
         
-        # 3. MWPM Phase
+        # MWPM Phase
         weights = self._execute_mwpm(syndromes_unpacked, compiled_data, num_dets)
         
-        # 4. Topological Lifting Phase
+        # Topological Lifting Phase
         final_correction = self._execute_topological_lifting(weights, compiled_data, num_shots)
         
-        # 5. Evaluate Logical Observables - Basically, capture for each observable, the 
+        # Evaluate Logical Observables - Basically, capture for each observable, the 
         # parity of the possible errors that would affect this observable
         logical_preds = (final_correction @ compiled_data['L_matrix'].T) % 2
         
