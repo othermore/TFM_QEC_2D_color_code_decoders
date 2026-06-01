@@ -479,7 +479,6 @@ With these polygons defined, the algorithm performs a final \textit{lifting} ste
     \label{fig:dual_merge_step}
 \end{figure}
 
-
 \section{The Restriction Decoder}
 \label{sec:restriction_decoder}
 
@@ -498,17 +497,17 @@ While $p_{RG}$ and $p_{RB}$ neutralize the syndromes on their respective restric
 
 Unlike the Projection Decoder, which resolves conflicts globally using a geometric dual spanning tree (i.e. examines the complete graph to find closed loops to fill), the Restriction Decoder guarantees a physically consistent global correction by performing a strictly \textbf{local} analysis around the active detectors. 
 
-To achieve this local reconciliation, the algorithm, illustrated in Figure \ref{fig:restriction_decoder_steps} constructs a purely algebraic \textbf{Lifting Graph}. This bipartite graph operates in a conceptually inverted manner compared to standard syndrome graphs:
+To achieve this local reconciliation, the algorithm, illustrated in Figure \ref{fig:restriction_decoder_steps}, constructs a purely algebraic \textbf{Lifting Graph}. This bipartite graph operates in a conceptually inverted way compared to standard syndrome graphs:
 \begin{itemize}
     \item \textbf{Nodes:} The nodes of the Lifting Graph are the specific edges activated by the restricted lattices $e_{RG} \in \mathcal{L}_{RG}$ and $e_{RB} \in \mathcal{L}_{RB}$.
     \item \textbf{Edges:} Each true physical qubit $q$ connects the node representing its corresponding edge in $\mathcal{L}_{RG}$ to the node representing its corresponding edge in $\mathcal{L}_{RB}$.
 \end{itemize}
 
-The active syndrome (the ``defects'') fed into this Lifting Graph is exactly the combined set of edges selected by the previous restricted matchings: $s_{lift} = p_{RG} \oplus p_{RB}$. 
+The active syndrome (the "defects") fed into this Lifting Graph is the combined set of edges selected by the previous restricted matchings: $s_{lift} = p_{RG} \oplus p_{RB}$. 
 
 By solving a final MWPM instance over this bipartite Lifting Graph, the algorithm identifies the minimal set of physical qubits that connect the active nodes. Geometrically, this is perfectly equivalent to examining every single vertex and finding a set of physical qubits whose boundaries exactly match the active edges predicted around that specific vertex. 
 
-\notatfm{{To select the physical qubits around a red vertex, two conditions must be met: they must touch the red vertex and their restricted boundaries must match the active edges. In this context, restricted boundaries means the boundary edges for the set of qubits that are within the set of all active edges} For every single Red vertex $v$ in the lattice that belongs to an active edge, the algorithm examines the local neighborhood:
+\notatfm{To select the physical qubits around a red vertex, two conditions must be met: they must touch the red vertex and their restricted boundaries must match the active edges. In this context, restricted boundaries means the boundary edges for the set of qubits that are within the set of all active edges.} For every single Red vertex $v$ in the lattice that belongs to an active edge, the algorithm examines the local neighborhood:
 \begin{itemize}
     \item It looks at the specific edges from $p_{RG}$ and $p_{RB}$ that are incident to $v$.
     \item It selects a local subset of physical qubits, $\tau_v$, strictly from the ones touching $v$, such that their boundaries perfectly match the active edges touching this red vertex.
