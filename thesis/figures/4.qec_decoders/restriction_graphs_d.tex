@@ -1,6 +1,7 @@
 \begin{tikzpicture}[scale=0.7]
-    \fill[yellow!50] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-4.0971,1.3657) -- cycle;
-    \fill[yellow!50] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
+    \fill[pattern=north east lines, pattern color=purple!50] (2.7314,1.3657) -- (2.7314,2.7314) -- (4.0971,1.3657) -- cycle;
+    \draw[orange, ultra thick] (-4.0971,1.3657) -- (-2.7314,0.0) -- (-2.7314,1.3657) -- cycle;
+    \draw[orange, ultra thick] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
     \draw[gray!50, densely dotted, thick] (2.7314,1.3657) -- (4.0971,1.3657);
     \draw[gray!50, densely dotted, thick] (1.3657,2.7314) -- (1.3657,1.3657);
     \draw[gray!50, densely dotted, thick] (-1.3657,2.7314) -- (-1.3657,4.0971);
@@ -10,10 +11,8 @@
     \draw[gray!50, densely dotted, thick] (0.0,1.3657) -- (1.3657,1.3657);
     \draw[gray!50, densely dotted, thick] (-1.3657,2.7314) -- (-1.3657,1.3657);
     \draw[gray!50, densely dotted, thick] (-2.7314,1.3657) -- (-1.3657,1.3657);
-    \draw[orange, ultra thick] (-2.7314,1.3657) -- (-1.3657,1.3657);
     \draw[gray!50, densely dotted, thick] (0.0,4.0971) -- (1.3657,4.0971);
     \draw[gray!50, densely dotted, thick] (-2.7314,1.3657) -- (-4.0971,1.3657);
-    \draw[orange, ultra thick] (-2.7314,1.3657) -- (-4.0971,1.3657);
     \draw[gray!50, densely dotted, thick] (1.3657,2.7314) -- (1.3657,4.0971);
     \draw[gray!50, densely dotted, thick] (-1.3657,4.0971) -- (0.0,5.4628);
     \draw[gray!50, densely dotted, thick] (1.3657,4.0971) -- (0.0,2.7314);
@@ -41,7 +40,6 @@
     \draw[gray!50, densely dotted, thick] (0.0,5.4628) -- (0.0,4.0971);
     \draw[gray!50, densely dotted, thick] (2.7314,2.7314) -- (1.3657,2.7314);
     \draw[gray!50, densely dotted, thick] (-2.7314,0.0) -- (-2.7314,1.3657);
-    \draw[purple, ultra thick] (-2.7314,0.0) -- (-2.7314,1.3657);
     \draw[gray!50, densely dotted, thick] (0.0,2.7314) -- (1.3657,2.7314);
     \draw[gray!50, densely dotted, thick] (0.0,0.0) -- (0.0,1.3657);
     \draw[gray!50, densely dotted, thick] (2.7314,2.7314) -- (2.7314,1.3657);
@@ -51,18 +49,18 @@
     \filldraw[fill=gray!30, draw=gray!50, thick] (2.7314, 0.0) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (-2.7314, 2.7314) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (0.0, 2.7314) circle (6pt);
-    \filldraw[fill=gray!30, draw=gray!50, thick] (2.7314, 2.7314) circle (6pt);
+    \filldraw[fill=blue, draw=blue!50!black, ultra thick] (2.7314, 2.7314) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (0.0, 5.4628) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (-2.7314, 1.3657) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (0.0, 1.3657) circle (6pt);
-    \filldraw[fill=gray!30, draw=gray!50, thick] (2.7314, 1.3657) circle (6pt);
+    \filldraw[fill=red, draw=red!50!black, ultra thick] (2.7314, 1.3657) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (-1.3657, 2.7314) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (1.3657, 2.7314) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (0.0, 4.0971) circle (6pt);
-    \node[fill=green!40, draw=yellow, ultra thick, star, star points=7, star point ratio=2.5, inner sep=2pt] at (-4.0971, 1.3657) {};
-    \node[fill=green!40, draw=yellow, ultra thick, star, star points=7, star point ratio=2.5, inner sep=2pt] at (-1.3657, 1.3657) {};
+    \filldraw[fill=green, draw=green!50!black, ultra thick] (-4.0971, 1.3657) circle (6pt);
+    \filldraw[fill=green, draw=green!50!black, ultra thick] (-1.3657, 1.3657) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (1.3657, 1.3657) circle (6pt);
-    \filldraw[fill=gray!30, draw=gray!50, thick] (4.0971, 1.3657) circle (6pt);
+    \filldraw[fill=green, draw=green!50!black, ultra thick] (4.0971, 1.3657) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (-1.3657, 4.0971) circle (6pt);
     \filldraw[fill=gray!30, draw=gray!50, thick] (1.3657, 4.0971) circle (6pt);
 \end{tikzpicture}
