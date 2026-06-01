@@ -186,10 +186,10 @@
 \NewExpandableDocumentCommand{\getsnippetfilename}{}{
   \tl_to_str:V \g_snippet_clean_file_tl 
 }
-
 \NewDocumentCommand{\snippetsprintcaption}{}{
   \tl_if_empty:NF \snippetcaption
    {
+    \nopagebreak
     \vspace{-0.8ex} 
     \captionsetup{type=lstlisting, hypcap=false}
     \captionof{lstlisting}{\snippetcaption}
@@ -212,45 +212,43 @@
     \extractsnippet{#2}{#3}%
     \par\addvspace{1.5ex} 
     \noindent
-    \begin{minipage}{\linewidth}
-        \ifsnipterror{%
-            \begin{notebox}
-                \ttfamily\getsnipterror
-            \end{notebox}
-        }{%
-            \begin{tcolorbox}[
-                enhanced,
-                boxrule=0.5pt,
-                colframe=black!20,
-                colback=backcolour,
-                coltitle=nebrijared,
-                colbacktitle=backcolour,
-                fonttitle=\small\sffamily\bfseries,
-                title={Source:\ \textcolor{black}{\ttfamily\getsnippetfilename}},
-                titlerule=0.5pt,
-                titlerule style={black!20},
-                arc=3pt,
-                left=4pt, right=4pt, top=2pt, bottom=2pt,
-                toptitle=3pt, bottomtitle=3pt,
-                boxsep=0pt,
-                width=\linewidth
-            ]
-            \lstinputlisting[%
-                style=mystyle,
-                frame=none,
-                backgroundcolor={},
-                aboveskip=0pt,
-                belowskip=0pt,
-                firstnumber=\getsnippetfirstline 
-            ]{\jobname.snippet.tmp}%
-            \end{tcolorbox}%
-            \snippetsprintcaption
-        }%
-    \end{minipage}
+    \ifsnipterror{%
+        \begin{notebox}
+            \ttfamily\getsnipterror
+        \end{notebox}
+    }{%
+        \begin{tcolorbox}[
+            enhanced,
+            breakable,
+            boxrule=0.5pt,
+            colframe=black!20,
+            colback=backcolour,
+            coltitle=nebrijared,
+            colbacktitle=backcolour,
+            fonttitle=\small\sffamily\bfseries,
+            title={Source:\ \textcolor{black}{\ttfamily\getsnippetfilename}},
+            titlerule=0.5pt,
+            titlerule style={black!20},
+            arc=3pt,
+            left=4pt, right=4pt, top=2pt, bottom=2pt,
+            toptitle=3pt, bottomtitle=3pt,
+            boxsep=0pt,
+            width=\linewidth
+        ]
+        \lstinputlisting[%
+            style=mystyle,
+            frame=none,
+            backgroundcolor={},
+            aboveskip=0pt,
+            belowskip=0pt,
+            firstnumber=\getsnippetfirstline 
+        ]{\jobname.snippet.tmp}%
+        \end{tcolorbox}%
+        \snippetsprintcaption
+    }%
     \par\addvspace{1.5ex} 
     \endgroup
 }
-
 
 
 \newtcolorbox{notebox}[1]{
