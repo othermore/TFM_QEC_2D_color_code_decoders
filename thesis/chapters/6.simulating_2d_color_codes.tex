@@ -242,7 +242,7 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
 \end{figure}
 
 
-\section{Projection decoder + MWPM}
+\section{Projection decoder}
 In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. We need to also implement the decoder itself, for which we have not found any library or existing implementation. Delfosse (\cite{Delfosse_2014}) details the lifting process in an Appendix. Stephens (\cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a reference to validate our implementation. 
 
 Our implementation is divided into three stages: the Projection step (where the lattice is decomposed), the Minimum Weight Perfect Matching (MWPM) step, and the Lifting step. To improve performance, the projections and graph transformations are pre-compiled and cached for each specific code distance.
@@ -299,7 +299,66 @@ Below this crossover point, the logical error curves exhibit a robust exponentia
 \end{figure}
 
 
-\section{Restriction decoder + MWPM}
+\section{Restriction Decoder}
+\label{sec:restriction_decoder_simulation}
+
+Following the same architectural principles used for the Projection Decoder, we have implemented the Restriction Decoder as a custom \texttt{sinter} plugin. The Restriction Decoder introduces a localized approach to resolving the decoding constraints, relying on only two restricted lattices instead of three projections, and performing a local lifting rather than a global search. 
+
+Our implementation is similarly divided into three stages: the Restriction Step, the execution of MWPM on the restricted lattices, and the Local Lifting Step. As before, all graph transformations are compiled and cached per lattice distance to accelerate the Monte Carlo simulations.
+
+\subsection{The Restriction Step and DEM Generation}
+\label{subsec:restriction_dem_generation}
+
+The first step translates the 2D Color Code Detector Error Model (DEM) into two independent Surface Code DEMs, corresponding to the restricted lattices $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
+
+The Restriction Decoder operates by simply deleting vertices of a specific color. To form $\mathcal{L}_{RG}$, we ignore all Blue detectors. Any physical error that previously triggered a Blue detector is modified to only register its Red and Green syndrome. If it triggers exactly one Red and one Green detector, it forms a valid 1D edge in the $\mathcal{L}_{RG}$ lattice. We apply the same logic to form $\mathcal{L}_{RB}$ by dropping the Green detectors.
+
+Since our implementation merges parallel physical qubits into a single virtual edge in the restricted DEM. We keep an internal mapping that associates each physical qubit to its corresponding virtual edge in both $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
+
+\subsection{Running MWPM on the restricted lattices}
+\label{subsec:restriction_mwpm}
+
+Once the two restricted DEMs are generated, we decode them independently using \texttt{PyMatching}. 
+
+As with the Projection Decoder, we need the MWPM algorithm to return the exact path of selected edges rather than a single logical observable prediction. We employ the same technique: assigning a unique virtual observable ($L_i$) to every edge in the restricted graphs. After decoding, the returned boolean array indicates exactly which virtual edges in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$ were selected to form the matching paths connecting the active detectors.
+
+\subsection{The Local Lifting Step}
+\label{subsec:restriction_lifting}
+
+The Local Lifting step reconciles the 1D paths found in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$ to identify the final 2D correction of physical qubits. Theoretically, this is a strictly local operation: for every Red vertex, the algorithm examines the selected incident edges and finds a subset of neighboring physical qubits whose boundaries match those selected edges. 
+
+While iterating vertex by vertex is possible, it can be slow in a Python-based simulation environment. To optimize this, we leverage \texttt{PyMatching}, natively implemented in C++, to solve the local constraints simultaneously across the entire lattice.
+
+To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) with the following  structure:
+\begin{itemize}
+    \item \textbf{Nodes:} The nodes (DEM detectors) of the Lifting Graph are the virtual edges defined in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
+    \item \textbf{Edges:} The edges (DEM physical errors) of the Lifting Graph represent the actual physical qubits (the triangles in the Dual Graph).
+\end{itemize}
+
+By running a final MWPM instance on this Lifting Graph, the decoder automatically selects the minimal set of physical qubits that connect all the active restricted edges. While this is a global process, because of how we define it, it's equivalent to the local solution defined by the theoretical algorithm. If multiple sets of physical qubits can be selected, MWPM selects the minimum-weight combination.
+
+\subsection{Threshold Evaluation}
+\label{subsec:restriction_threshold}
+
+We evaluated the performance of our Restriction Decoder implementation using the same full Monte Carlo methodology, examining lattice distances from $d=9$ to $d=19$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced). 
+
+The results of this simulation are shown in Figure \ref{fig:restriction_threshold}. The Restriction Decoder achieves a threshold of $p_{th} \approx 9.23\%$.). 
+
+\begin{figure}[htpb]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s4_restriction_results_X_threshold.png}
+    \end{minipage}\hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_6/s4_restriction_results_X_time.png}
+    \end{minipage}
+    \caption[Simulation 4: Restriction decoder thresholds.]{Threshold evaluation for the topological Restriction Decoder. (Left) Performance under a pure X-only noise model showing a high threshold of $p_{th} \approx \text{9.23}\%$. (Right) Decoding execution time as a function of the distance.}
+    \label{fig:restriction_threshold}
+\end{figure}
+
+
 
 \section{Möbius Decoder + MWPM}
 
