@@ -413,7 +413,7 @@ Once the MWPM instances process their respective syndromes, they output independ
 
 \notatfm{In his 2014 paper, Delfosse formulates this proof using the dual graph ($G^*$) of the color code lattice. In the dual graph, detectors are vertices and physical qubits are triangular faces. The MWPM corrections correspond to the edges of these triangles. Mathematically, the union of the edges is treated as a homological chain sum (modulo 2), $C = C_{RG} \oplus C_{GB} \oplus C_{BR}$. This sum forms a set of closed loops (homological cycles) in the dual graph, and the "lifting" step finds the set of triangular faces (qubits) filling the interior of these cycles.} To resolve this ambiguity and merge the three corrections, the Projection decoder utilizes the topological properties of the dual graph of the lattice (a transformed graph where physical qubits are represented as faces, and detectors as vertices), as illustrated in Figure \ref{fig:dual_projection_graphs}. 
 
-\begin{figure}[htbp]
+\begin{figure}[hbpt]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
@@ -448,7 +448,7 @@ The merging process, illustrated in Figure \ref{fig:dual_merge_step}, overlays t
 
 With these polygons defined, the algorithm performs a final \textit{lifting} step. Because the physical qubits are represented as triangular faces in this geometry, the lifting operation identifies the set of triangles that geometrically fill the interior of polygons. This mapping guarantees that the final selected set of qubits will satisfy the parity checks of all three colors, resolving the 1-to-2 ambiguity.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
@@ -514,7 +514,7 @@ By solving a final MWPM instance over this bipartite Lifting Graph, the algorith
 \end{itemize}
 Because the maximum number of physical qubits touching a single vertex is small (e.g., 4 or 8 on the 4.8.8 lattice), this local constraint-satisfaction can be trivially solved independently for each Red vertex.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
@@ -546,7 +546,7 @@ Because the maximum number of physical qubits touching a single vertex is small 
 \end{figure}
 
 
-\notatfm{Neutralizing the syndrome means finding a set of qubits that, if flipped, deactivate all the active detectors. That does not mean finding the original set of errors that activated these detectors.} The final global correction is simply the union of all these subsets of qubits ($\tau_v$). The output correction is mathematically guaranteed to neutralize the full original syndrome. If there are multiple sets of physical qubits that locally resolve the constraints (i.e. that touch the red vertex and contain all and only the active edges incident to it), their difference will inevitably form a closed loop (a stabilizer) around the vertex. Therefore, both sets will similarly correct the logical observable.
+\notatfm{Neutralizing the syndrome means finding a set of qubits that, if flipped, deactivate all the active detectors. It does not necessarily mean finding the original set of errors that activated these detectors.} The final global correction is simply the union of all these subsets of qubits ($\tau_v$). The output correction is mathematically guaranteed to neutralize the full original syndrome. If there are multiple sets of physical qubits that locally resolve the constraints (i.e. that touch the red vertex and contain all and only the active edges incident to it), their difference will inevitably form a closed loop (a stabilizer) around the vertex. Therefore, both sets will similarly correct the logical observable.
 
 
 \section{Möbius decoder (Sahay \& Brown, PRX Quantum, 2022)}
