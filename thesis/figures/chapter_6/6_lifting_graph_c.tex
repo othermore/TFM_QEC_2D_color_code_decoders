@@ -1,34 +1,33 @@
-\begin{tikzpicture}[scale=1.5,
-    detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
-    active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
-    red/.style={fill=red!60},
-    green/.style={fill=green!60},
-    blue/.style={fill=blue!60}]
+\begin{tikzpicture}[scale=1.2,
+    nodeRG/.style={rectangle, rounded corners, draw=black, thick, fill=blue!30, inner sep=4pt, minimum width=24pt, minimum height=16pt},
+    nodeRB/.style={rectangle, rounded corners, draw=black, thick, fill=green!40, inner sep=4pt, minimum width=24pt, minimum height=16pt},
+    active/.style={draw=yellow!50!orange, line width=3pt}]
 
-    % Physical Qubits (Triangles)
-    \foreach \i in {0,...,7} {
-        \pgfmathsetmacro{\angA}{45*\i}
-        \pgfmathsetmacro{\angB}{45*(\i-1)}
-        \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (\angA:2) -- (\angB:2) -- cycle;
-    }
+    % Left column (RG edges)
+    \node[nodeRG, active] (RG1) at (-2, 2.25) {$E_{RG}^1$};
+    \node[nodeRG] (RG2) at (-2, 0.75) {$E_{RG}^2$};
+    \node[nodeRG] (RG3) at (-2, -0.75) {$E_{RG}^3$};
+    \node[nodeRG, active] (RG4) at (-2, -2.25) {$E_{RG}^4$};
 
-    % Edge Labels
-    \node[above, blue!80, font=\scriptsize, rotate=0] at (0:1.3) {$E_{RG}^1$};
-    \node[left, blue!80, font=\scriptsize, rotate=90] at (270:1.3) {$E_{RG}^4$};
+    % Right column (RB edges)
+    \node[nodeRB] (RB1) at (2, 2.25) {$E_{RB}^1$};
+    \node[nodeRB] (RB2) at (2, 0.75) {$E_{RB}^2$};
+    \node[nodeRB] (RB3) at (2, -0.75) {$E_{RB}^3$};
+    \node[nodeRB] (RB4) at (2, -2.25) {$E_{RB}^4$};
 
-    % Active Restricted Edges (Syndromes of restricted lattices)
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (0:2); % RG1
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (270:2); % RG4
+    % Physical qubits connecting them
+    \draw[black!20, thick] (RG1) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_8$};
+    \draw[black!20, thick] (RG2) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_7$};
+    \draw[black!20, thick] (RG2) -- (RB3) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_6$};
+    \draw[black!20, thick] (RG3) -- (RB3) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_5$};
+    \draw[black!20, thick] (RG3) -- (RB4) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_4$};
+    \draw[black!20, thick] (RG4) -- (RB4) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_3$};
 
-    % Central Red Node
-    \node[detector, red] at (0,0) {};
-
-    % Green and Blue Nodes
-    \foreach \i in {0,2,4,6} {
-        \node[detector, green] at (\i*45:2) {};
-    }
-    \foreach \i in {1,3,5,7} {
-        \node[detector, blue] at (\i*45:2) {};
-    }
-
+    % Selected path by MWPM connecting RG1 to RG4 via RB1
+    \draw[orange, line width=4pt, opacity=0.7] (RG1) -- (RB1);
+    \draw[orange, line width=4pt, opacity=0.7] (RG4.south) to[out=-60, in=-120] (RB1.south);
+    
+    \draw[black, thick] (RG1) -- (RB1) node[midway, above, sloped, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_1$}};
+    \draw[black, thick] (RG4.south) to[out=-60, in=-120] node[midway, below, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_2$}} (RB1.south);
+    
 \end{tikzpicture}

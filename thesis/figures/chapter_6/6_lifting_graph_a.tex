@@ -1,52 +1,73 @@
-\begin{tikzpicture}[scale=1.5,
-    detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
-    active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
-    red/.style={fill=red!60},
-    green/.style={fill=green!60},
-    blue/.style={fill=blue!60}]
-
-    % Physical Qubits (Triangles)
-    \foreach \i in {0,...,7} {
-        \pgfmathsetmacro{\angA}{45*\i}
-        \pgfmathsetmacro{\angB}{45*(\i-1)}
-        \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (\angA:2) -- (\angB:2) -- cycle;
-    }
-
-    % Original Errors in Gray
-    \fill[black!30, draw=black!50, thick] (0,0) -- (0:2) -- (315:2) -- cycle; % Q1
-    \fill[black!30, draw=black!50, thick] (0,0) -- (270:2) -- (315:2) -- cycle; % Q2
-
-    % Qubit Labels
-    \node[font=\footnotesize\bfseries, text=black] at (-22.5:1.4) {$Q_1$};
-    \node[font=\footnotesize\bfseries, text=black] at (292.5:1.4) {$Q_2$};
-    \node[font=\footnotesize, text=black!60] at (22.5:1.4) {$Q_8$};
-    \node[font=\footnotesize, text=black!60] at (67.5:1.4) {$Q_7$};
-    \node[font=\footnotesize, text=black!60] at (112.5:1.4) {$Q_6$};
-    \node[font=\footnotesize, text=black!60] at (157.5:1.4) {$Q_5$};
-    \node[font=\footnotesize, text=black!60] at (202.5:1.4) {$Q_4$};
-    \node[font=\footnotesize, text=black!60] at (247.5:1.4) {$Q_3$};
-    
-    % Edge Labels
-    \node[above, blue!80, font=\scriptsize, rotate=0] at (0:1.3) {$E_{RG}^1$};
-    \node[left, blue!80, font=\scriptsize, rotate=90] at (270:1.3) {$E_{RG}^4$};
-    
-    % Active Restricted Edges (Syndromes of restricted lattices)
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (0:2); % RG1
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (270:2); % RG4
-
-    % Outer rings for active detectors (Only Green 1 and Green 4)
-    \node[active] at (0:2) {};
-    \node[active] at (270:2) {};
-
-    % Central Red Node
-    \node[detector, red] at (0,0) {};
-
-    % Green and Blue Nodes
-    \foreach \i in {0,2,4,6} {
-        \node[detector, green] at (\i*45:2) {};
-    }
-    \foreach \i in {1,3,5,7} {
-        \node[detector, blue] at (\i*45:2) {};
-    }
-
+\begin{tikzpicture}[scale=0.45]
+    \fill[black!30, draw=black!50, thick] (5,3) -- (5,1) -- (1,3) -- cycle;
+    \fill[black!30, draw=black!50, thick] (5,3) -- (5,1) -- (9,3) -- cycle;
+    \fill[black!5, draw=black!10] (13,3) -- (13,1) -- (9,3) -- cycle;
+    \fill[black!5, draw=black!10] (13,3) -- (13,1) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (21,3) -- (21,1) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (13,3) -- (13,7) -- (9,3) -- cycle;
+    \fill[black!5, draw=black!10] (13,3) -- (13,7) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (21,3) -- (21,7) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (9,7) -- (13,7) -- (9,3) -- cycle;
+    \fill[black!5, draw=black!10] (17,7) -- (13,7) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (17,7) -- (21,7) -- (17,3) -- cycle;
+    \fill[black!5, draw=black!10] (9,7) -- (13,7) -- (9,11) -- cycle;
+    \fill[black!5, draw=black!10] (13,11) -- (13,7) -- (9,11) -- cycle;
+    \draw[black!30, thick] (5,3) -- (5,1);
+    \draw[black!30, thick] (5,1) -- (1,3);
+    \draw[black!30, thick] (1,3) -- (5,3);
+    \draw[black!30, thick] (5,3) -- (5,1);
+    \draw[black!30, thick] (5,1) -- (9,3);
+    \draw[black!30, thick] (9,3) -- (5,3);
+    \draw[black!30, thick] (13,3) -- (13,1);
+    \draw[black!30, thick] (13,1) -- (9,3);
+    \draw[black!30, thick] (9,3) -- (13,3);
+    \draw[black!30, thick] (13,3) -- (13,1);
+    \draw[black!30, thick] (13,1) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (13,3);
+    \draw[black!30, thick] (21,3) -- (21,1);
+    \draw[black!30, thick] (21,1) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (21,3);
+    \draw[black!30, thick] (13,3) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (9,3);
+    \draw[black!30, thick] (9,3) -- (13,3);
+    \draw[black!30, thick] (13,3) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (13,3);
+    \draw[black!30, thick] (21,3) -- (21,7);
+    \draw[black!30, thick] (21,7) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (21,3);
+    \draw[black!30, thick] (9,7) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (9,3);
+    \draw[black!30, thick] (9,3) -- (9,7);
+    \draw[black!30, thick] (17,7) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (17,7);
+    \draw[black!30, thick] (17,7) -- (21,7);
+    \draw[black!30, thick] (21,7) -- (17,3);
+    \draw[black!30, thick] (17,3) -- (17,7);
+    \draw[black!30, thick] (9,7) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (9,11);
+    \draw[black!30, thick] (9,11) -- (9,7);
+    \draw[black!30, thick] (13,11) -- (13,7);
+    \draw[black!30, thick] (13,7) -- (9,11);
+    \draw[black!30, thick] (9,11) -- (13,11);
+    \draw[blue, line width=3pt, opacity=0.8] (5,3) -- (5,1);
+    \draw[blue, line width=3pt, opacity=0.8] (5,3) -- (5,1);
+    \filldraw[fill=red!60, draw=black, thick] (5, 3) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (13, 3) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (21, 3) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (9, 7) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (17, 7) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (13, 11) circle (6pt);
+    \filldraw[fill=blue!60, draw=black, thick] (9, 3) circle (6pt);
+    \filldraw[fill=blue!60, draw=black, thick] (17, 3) circle (6pt);
+    \filldraw[fill=green!60, draw=black, thick] (13, 7) circle (6pt);
+    \filldraw[fill=blue!60, draw=black, thick] (1, 3) circle (6pt);
+    \filldraw[fill=blue!60, draw=black, thick] (9, 11) circle (6pt);
+    \filldraw[fill=green!60, draw=black, thick] (21, 7) circle (6pt);
+    \filldraw[fill=yellow!50!orange, draw=none] (5, 1) circle (10pt);
+    \filldraw[fill=green!60, draw=black, thick] (5, 1) circle (6pt);
+    \filldraw[fill=green!60, draw=black, thick] (13, 1) circle (6pt);
+    \filldraw[fill=green!60, draw=black, thick] (21, 1) circle (6pt);
+    \filldraw[fill=red!60, draw=black, thick] (5, 3) circle (6pt);
 \end{tikzpicture}
