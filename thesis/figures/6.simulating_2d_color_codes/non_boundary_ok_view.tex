@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_a.tex}}
+        \caption{Full Lattice (Errors in gray)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_b.tex}}
+        \caption{$\mathcal{L}_{RG}$ (MWPM matches correctly)}
+    \end{subfigure}
+    
+    \vspace{1cm}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_c.tex}}
+        \caption{$\mathcal{L}_{RB}$ (MWPM matches correctly)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_d.tex}}
+        \caption{$\mathcal{L}_{GB}$ (MWPM matches correctly)}
+    \end{subfigure}
+    \vspace{1cm}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_e.tex}}
+        \caption{Projection Decoder (Successful Correction)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_f.tex}}
+        \caption{Restriction Lift $\mathcal{L}_{RG} \cup \mathcal{L}_{RB}$ (Successful Correction)}
+    \end{subfigure}
+    \caption{Visual example of successful decoding in the bulk of the lattice. Because the error chain is far from any boundaries, MWPM correctly pairs the generated syndrome in all projections, resulting in a localized correction string that successfully forms a trivial closed loop with the original error.}
+\end{figure}
+
+\end{document}

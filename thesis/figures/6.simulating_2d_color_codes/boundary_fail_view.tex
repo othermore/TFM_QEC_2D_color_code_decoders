@@ -11,13 +11,13 @@
     \begin{subfigure}{0.45\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{boundary_fail_a.tex}}
-        \caption{Full Lattice (Error en gris)}
+        \caption{Full Lattice (Errors in gray)}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{boundary_fail_b.tex}}
-        \caption{$\mathcal{L}_{RG}$ (MWPM empareja con la frontera)}
+        \caption{$\mathcal{L}_{RG}$ (MWPM matches to boundary)}
     \end{subfigure}
     
     \vspace{1cm}
@@ -25,15 +25,28 @@
     \begin{subfigure}{0.45\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{boundary_fail_c.tex}}
-        \caption{$\mathcal{L}_{RB}$ (MWPM empareja con la frontera)}
+        \caption{$\mathcal{L}_{RB}$ (MWPM matches to boundary)}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.45\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{boundary_fail_d.tex}}
-        \caption{$\mathcal{L}_{GB}$ (MWPM empareja correctamente)}
+        \caption{$\mathcal{L}_{GB}$ (MWPM matches correctly)}
     \end{subfigure}
-    \caption{Ejemplo visual de cómo el Projection Decoder falla cerca de las fronteras al emparejar los defectos de forma inconsistente.}
+    \vspace{1cm}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_e.tex}}
+        \caption{Projection Decoder (Logical Failure)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_f.tex}}
+        \caption{Restriction Lift $\mathcal{L}_{RG} \cup \mathcal{L}_{RB}$}
+    \end{subfigure}
+    \caption{Visual example of boundary failure in the Projection Decoder. An error chain parallel to the boundary produces a syndrome that MWPM matches to the boundary in two projections, but pairs together in the third, resulting in a logical failure upon recombination.}
 \end{figure}
 
 \end{document}
