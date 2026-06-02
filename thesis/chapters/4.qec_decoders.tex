@@ -639,7 +639,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
 
 \begin{figure}[hbtp]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_a.tex}
@@ -647,35 +647,33 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{Full Lattice}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_b.tex}
         }
         \caption{$\mathcal{L}_{RG}$ projection}
     \end{subfigure}
-
-    \vspace{0.5cm}
-
-    \begin{subfigure}[b]{0.45\textwidth}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_c.tex}
         }
         \caption{$\mathcal{L}_{RB}$ projection}
     \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_d.tex}
         }
         \caption{$\mathcal{L}_{GB}$ projection}
     \end{subfigure}
-
-    \vspace{0.5cm}
-
-    \begin{subfigure}[b]{0.45\textwidth}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_e.tex}
@@ -683,7 +681,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{Projection Merge (Failure)}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/6.simulating_2d_color_codes/boundary_fail_f.tex}
@@ -696,13 +694,11 @@ As described in previous sections, algorithms like the Projection Decoder divide
 \end{figure}
 
 
-\notatfm{The name comes from the resulting topology: by joining these three two-dimensional lattices with a color permutation at their boundaries, the resulting mathematical object has only one surface and one continuous boundary, equivalent to a Möbius strip.}
-The Möbius decoder resolves this limitation through a topological gluing process. Instead of executing MWPM on the three restricted graphs separately, the decoder physically joins them along their shared boundaries. For example, the red boundary of the $\mathcal{L}_{RG}$ graph is glued directly to the red boundary of the $\mathcal{L}_{RB}$ graph. This process is repeated for the green and blue boundaries, merging the three subgraphs into a single, continuous lattice.
+\notatfm{The name comes from the resulting topology: by joining these three two-dimensional lattices with a color permutation at their boundaries, the resulting mathematical object has only one surface and one continuous boundary, equivalent to a Möbius strip.} The Möbius decoder resolves this limitation through a topological gluing process. Instead of executing MWPM on the three restricted graphs separately, the decoder physically joins them along their shared boundaries. For example, the red boundary of the $\mathcal{L}_{RG}$ graph is glued directly to the red boundary of the $\mathcal{L}_{RB}$ graph. This process is repeated for the green and blue boundaries, merging the three subgraphs into a single, continuous lattice.
 
-By performing this union, the original planar geometry is transformed into a topological manifold shaped like a Möbius strip. In this new unified space, a physical error in the bulk of the color code is simply represented as three distinct edges located in the three corresponding regions of the Möbius strip.
+In this new unified space, a physical error in the bulk of the color code is simply represented as three distinct edges located in the three corresponding regions of the Möbius strip.
 
-\notatfm{For errors deep in the bulk, the Möbius decoder behaves identically to the Projection Decoder. Its superiority stems entirely from how it handles errors near the boundaries, allowing correction paths to flow optimally across different color projections.}
-The main advantage of this transformation is that the entire decoding problem is reduced to a single execution of MWPM over this unified graph. Since the boundaries are connected, MWPM evaluates the global cost of paths that begin in $\mathcal{L}_{RG}$, cross the unified boundary, and seamlessly continue into $\mathcal{L}_{RB}$. Consequently, MWPM is mathematically constrained to find a set of 1D strings that are globally minimal and mutually consistent across all boundaries.
+\notatfm{For errors deep in the bulk, the Möbius decoder behaves identically to the Projection Decoder. Its superiority stems from how it handles errors near the boundaries, allowing correction paths to flow optimally across different color projections.} In this new unified space, a physical error in the bulk of the color code is represented as three distinct edges located in the three corresponding regions of the Möbius strip. The main advantage of this transformation is that the entire decoding problem is reduced to a single execution of MWPM. Since the boundaries are connected, MWPM evaluates the global cost of paths that cross a border. Consequently, MWPM is mathematically constrained to find a set of 1D strings that are globally minimal and consistent across boundaries.
 
 Furthermore, the disambiguation step (mapping the 1D strings back to physical qubits) becomes remarkably simple compared to previous methods. Because every edge in the Möbius strip corresponds directly to a physical qubit in the color code, the decoder simply applies a Pauli correction to the physical qubit associated with each selected edge. If multiple edges corresponding to the same physical qubit are selected across different restricted graphs, their corrections naturally cancel out modulo 2. This direct mapping eliminates the need for complex lifting graphs while achieving a significantly higher threshold performance.
 
