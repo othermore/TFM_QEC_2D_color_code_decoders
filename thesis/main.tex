@@ -1,5 +1,6 @@
 \RequirePackage{silence}
 \WarningFilter{latex}{Command \showhyphens has changed.}
+\pdfminorversion=7
 \documentclass[twoside]{book}
 \WarningFilter{ExtSizes}{It is better to use}
 \WarningFilter{extsizes}{It is better to use}
@@ -53,7 +54,9 @@
 \frontmatter
 \setfrontgeometry
 
+\hypersetup{pageanchor=false}
 \input{frontmatter/titlepage}
+\hypersetup{pageanchor=true}
 
 \cleardoublepage
 

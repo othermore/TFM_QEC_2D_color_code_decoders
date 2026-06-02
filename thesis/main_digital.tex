@@ -1,5 +1,6 @@
 \RequirePackage{silence}
 \WarningFilter{latex}{Command \showhyphens has changed.}
+\pdfminorversion=7
 \documentclass[oneside, openany]{book}
 \WarningFilter{ExtSizes}{It is better to use}
 \WarningFilter{extsizes}{It is better to use}
@@ -57,12 +58,17 @@
 \pagestyle{fancy}
 \setfrontgeometry
 
+\hypersetup{pageanchor=false}
 \input{frontmatter/titlepage_digital}
+\hypersetup{pageanchor=true}
+
 \clearpage
 \thispagestyle{empty}
 \begin{tikzpicture}[remember picture, overlay]
     \node[text width=11cm, align=justify] at (current page.center) {
+    \hypersetup{pageanchor=false}
         \input{cover_back}
+    \hypersetup{pageanchor=true}
     };
 \end{tikzpicture}
 \clearpage
