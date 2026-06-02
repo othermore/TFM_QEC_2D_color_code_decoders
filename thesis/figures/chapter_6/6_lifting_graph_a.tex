@@ -1,23 +1,9 @@
 \begin{tikzpicture}[scale=0.7]
-    % Background triangles (light gray)
-    \fill[black!5] (0.0,2.7314) -- (-1.3657,2.7314) -- (0.0,1.3657) -- cycle;
-    \fill[black!5] (-2.7314,2.7314) -- (-1.3657,2.7314) -- (-2.7314,1.3657) -- cycle;
-    \fill[black!5] (0.0,2.7314) -- (0.0,1.3657) -- (1.3657,2.7314) -- cycle;
-    \fill[black!5] (0.0,2.7314) -- (0.0,4.0971) -- (-1.3657,2.7314) -- cycle;
-    \fill[black!5] (-2.7314,2.7314) -- (-2.7314,1.3657) -- (-4.0971,1.3657) -- cycle;
-    \fill[black!5] (0.0,5.4628) -- (0.0,4.0971) -- (-1.3657,4.0971) -- cycle;
-    \fill[black!5] (2.7314,2.7314) -- (1.3657,2.7314) -- (1.3657,4.0971) -- cycle;
-    \fill[black!5] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
-    \fill[black!5] (0.0,2.7314) -- (1.3657,2.7314) -- (0.0,4.0971) -- cycle;
-    \fill[black!5] (0.0,0.0) -- (0.0,1.3657) -- (-1.3657,1.3657) -- cycle;
-    \fill[black!5] (2.7314,2.7314) -- (2.7314,1.3657) -- (4.0971,1.3657) -- cycle;
-    \fill[black!5] (2.7314,0.0) -- (2.7314,1.3657) -- (1.3657,1.3657) -- cycle;
-    \fill[black!5] (-4.0971,1.3657) -- (-2.7314,0.0) -- (-2.7314,1.3657) -- cycle;
-    \fill[black!5] (1.3657,1.3657) -- (0.0,0.0) -- (0.0,1.3657) -- cycle;
+    % No shaded background triangles to keep it clean like original chapter 4 figure.
     
-    % Error triangles (gray) Q1 and Q2
-    \fill[black!30, draw=black!50, thick] (-4.0971,1.3657) -- (-2.7314,0.0) -- (-2.7314,1.3657) -- cycle;
-    \fill[black!30, draw=black!50, thick] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
+    % The two error triangles (QA and QB)
+    \fill[black!30, draw=black!50, thick] (0.0,1.3657) -- (-1.3657,1.3657) -- (0.0,2.7314) -- cycle; % QA
+    \fill[black!30, draw=black!50, thick] (-1.3657,2.7314) -- (-1.3657,1.3657) -- (0.0,2.7314) -- cycle; % QB
 
     % All edges in gray
     \draw[black!20, thick] (2.7314,1.3657) -- (4.0971,1.3657);
@@ -62,35 +48,39 @@
     \draw[black!20, thick] (0.0,0.0) -- (0.0,1.3657);
     \draw[black!20, thick] (2.7314,2.7314) -- (2.7314,1.3657);
     \draw[black!20, thick] (2.7314,0.0) -- (2.7314,1.3657);
-    
-    % Active edges (RG path)
-    \draw[blue, line width=3pt, opacity=0.8] (-2.7314,1.3657) -- (-1.3657,1.3657);
-    \draw[blue, line width=3pt, opacity=0.8] (-2.7314,1.3657) -- (-4.0971,1.3657);
 
-    % Nodes (with generic colors based on the original file)
+    % Active restricted edges
+    % RG edges (Blue)
+    \draw[blue, line width=3pt, opacity=0.8] (0.0,1.3657) -- (-1.3657,1.3657); % R1 to G
+    \draw[blue, line width=3pt, opacity=0.8] (-1.3657,2.7314) -- (-1.3657,1.3657); % R2 to G
+    % RB edges (Green)
+    \draw[green!60!black, line width=3pt, opacity=0.8] (0.0,1.3657) -- (0.0,2.7314); % R1 to B
+    \draw[green!60!black, line width=3pt, opacity=0.8] (-1.3657,2.7314) -- (0.0,2.7314); % R2 to B
+
+    % Nodes
     \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0.0) circle (6pt);
     \filldraw[fill=blue!40, draw=black, thick] (0.0, 0.0) circle (6pt);
     \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0.0) circle (6pt);
     \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
-    \filldraw[fill=blue!40, draw=black, thick] (0.0, 2.7314) circle (6pt);
     \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
     \filldraw[fill=blue!40, draw=black, thick] (0.0, 5.4628) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (0.0, 2.7314) circle (6pt); % Active B (not detector, just node)
     
-    \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt); % Active Red
-    \filldraw[fill=red!40, draw=black, thick] (0.0, 1.3657) circle (6pt);
+    \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt);
     \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
-    \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
     \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
     \filldraw[fill=red!40, draw=black, thick] (0.0, 4.0971) circle (6pt);
     
-    % Green Nodes (Active)
-    \filldraw[fill=yellow!50!orange, draw=none] (-4.0971, 1.3657) circle (9pt);
-    \filldraw[fill=green!60, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+    % Active Red Detectors
+    \filldraw[fill=yellow!50!orange, draw=none] (0.0, 1.3657) circle (9pt);
+    \filldraw[fill=red!60, draw=black, thick] (0.0, 1.3657) circle (6pt); % R1
     
-    \filldraw[fill=yellow!50!orange, draw=none] (-1.3657, 1.3657) circle (9pt);
-    \filldraw[fill=green!60, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+    \filldraw[fill=yellow!50!orange, draw=none] (-1.3657, 2.7314) circle (9pt);
+    \filldraw[fill=red!60, draw=black, thick] (-1.3657, 2.7314) circle (6pt); % R2
     
-    % Green Nodes (Inactive)
+    % Green Nodes
+    \filldraw[fill=green!40, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+    \filldraw[fill=green!40, draw=black, thick] (-1.3657, 1.3657) circle (6pt); % Active G (not detector, just node)
     \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
     \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
     \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);

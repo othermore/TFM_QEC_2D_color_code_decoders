@@ -1,47 +1,44 @@
-\begin{tikzpicture}[scale=2.0,
+\begin{tikzpicture}[scale=1.5,
     detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
     active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
     red/.style={fill=red!40},
-    green/.style={fill=green!60},
+    green/.style={fill=green!40},
     blue/.style={fill=blue!40}]
 
-    % 4 Physical Qubits (Triangles) around Red node (0,0)
-    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (-1.5,0) -- (0,-1.5) -- cycle; % Q1
-    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (1.5,0) -- (0,-1.5) -- cycle; % Q2
-    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (1.5,0) -- (0,1.5) -- cycle; % Q3
-    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (-1.5,0) -- (0,1.5) -- cycle; % Q4
+    % Physical Qubits (Triangles)
+    \fill[black!5, draw=black!20, thick, dashed] (1,-1) -- (-1,-1) -- (1,1) -- cycle; % QA
+    \fill[black!5, draw=black!20, thick, dashed] (-1,1) -- (-1,-1) -- (1,1) -- cycle; % QB
 
-    % Selected Physical Qubits Q1 and Q2
-    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (-1.5,0) -- (0,-1.5) -- cycle;
-    \fill[yellow, fill opacity=0.4] (0,0) -- (-1.5,0) -- (0,-1.5) -- cycle;
-    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (1.5,0) -- (0,-1.5) -- cycle;
-    \fill[yellow, fill opacity=0.4] (0,0) -- (1.5,0) -- (0,-1.5) -- cycle;
+    % Selected Physical Qubits QA and QB
+    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (1,-1) -- (-1,-1) -- (1,1) -- cycle;
+    \fill[yellow, fill opacity=0.4] (1,-1) -- (-1,-1) -- (1,1) -- cycle;
+    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (-1,1) -- (-1,-1) -- (1,1) -- cycle;
+    \fill[yellow, fill opacity=0.4] (-1,1) -- (-1,-1) -- (1,1) -- cycle;
 
     % Qubit Labels
-    \node[font=\footnotesize\bfseries, text=black] at (-0.5,-0.5) {$Q_1$};
-    \node[font=\footnotesize\bfseries, text=black] at (0.5,-0.5) {$Q_2$};
-    \node[font=\footnotesize\bfseries, text=black!60] at (0.5,0.5) {$Q_3$};
-    \node[font=\footnotesize\bfseries, text=black!60] at (-0.5,0.5) {$Q_4$};
+    \node[font=\footnotesize\bfseries, text=black] at (0.3,-0.3) {$Q_A$};
+    \node[font=\footnotesize\bfseries, text=black] at (-0.3,0.3) {$Q_B$};
     
     % Edge Labels
-    \node[above, blue!80, font=\scriptsize] at (-0.75, 0) {$E_{RG}^1$};
-    \node[above, blue!80, font=\scriptsize] at (0.75, 0) {$E_{RG}^2$};
-    \node[right, green!60!black, font=\scriptsize] at (0, -0.75) {$E_{RB}^1$};
-    \node[right, green!60!black, font=\scriptsize] at (0, 0.75) {$E_{RB}^2$};
+    \node[below, blue!80, font=\scriptsize] at (0, -1) {$E_{RG}^1$};
+    \node[left, blue!80, font=\scriptsize] at (-1, 0) {$E_{RG}^2$};
+    \node[right, green!60!black, font=\scriptsize] at (1, 0) {$E_{RB}^1$};
+    \node[above, green!60!black, font=\scriptsize] at (0, 1) {$E_{RB}^2$};
 
     % Active Restricted Edges (Faded)
-    \draw[blue, line width=3pt, opacity=0.3] (0,0) -- (-1.5,0); % RG1
-    \draw[blue, line width=3pt, opacity=0.3] (0,0) -- (1.5,0);  % RG2
+    \draw[blue, line width=3pt, opacity=0.3] (1,-1) -- (-1,-1); % RG1
+    \draw[blue, line width=3pt, opacity=0.3] (-1,1) -- (-1,-1); % RG2
+    \draw[green!60!black, line width=3pt, opacity=0.3] (1,-1) -- (1,1); % RB1
+    \draw[green!60!black, line width=3pt, opacity=0.3] (-1,1) -- (1,1); % RB2
 
-    % Active Detectors (Green nodes)
-    \node[active] at (-1.5,0) {};
-    \node[active] at (1.5,0) {};
+    % Active Detectors (Red nodes)
+    \node[active] at (1,-1) {};
+    \node[active] at (-1,1) {};
 
     % Nodes
-    \node[detector, red] at (0,0) {};
-    \node[detector, green] at (-1.5,0) {};
-    \node[detector, green] at (1.5,0) {};
-    \node[detector, blue] at (0,-1.5) {};
-    \node[detector, blue] at (0,1.5) {};
+    \node[detector, red] at (1,-1) {$R_1$};
+    \node[detector, red] at (-1,1) {$R_2$};
+    \node[detector, green] at (-1,-1) {};
+    \node[detector, blue] at (1,1) {};
 
 \end{tikzpicture}
