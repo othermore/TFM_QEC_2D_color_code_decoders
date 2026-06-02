@@ -12,41 +12,24 @@
         \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (\angA:2) -- (\angB:2) -- cycle;
     }
 
-    % Selected Physical Qubits Q1 and Q4
+    % Selected Physical Qubits Q1 and Q2
     \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (0:2) -- (315:2) -- cycle;
     \fill[yellow, fill opacity=0.4] (0,0) -- (0:2) -- (315:2) -- cycle;
     
-    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (180:2) -- (225:2) -- cycle;
-    \fill[yellow, fill opacity=0.4] (0,0) -- (180:2) -- (225:2) -- cycle;
+    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (270:2) -- (315:2) -- cycle;
+    \fill[yellow, fill opacity=0.4] (0,0) -- (270:2) -- (315:2) -- cycle;
 
     % Qubit Labels
     \node[font=\footnotesize\bfseries, text=black] at (-22.5:1.4) {$Q_1$};
-    \node[font=\footnotesize, text=black!60] at (22.5:1.4) {$Q_8$};
-    \node[font=\footnotesize, text=black!60] at (67.5:1.4) {$Q_7$};
-    \node[font=\footnotesize, text=black!60] at (112.5:1.4) {$Q_6$};
-    \node[font=\footnotesize, text=black!60] at (157.5:1.4) {$Q_5$};
-    \node[font=\footnotesize\bfseries, text=black] at (202.5:1.4) {$Q_4$};
-    \node[font=\footnotesize, text=black!60] at (247.5:1.4) {$Q_3$};
-    \node[font=\footnotesize, text=black!60] at (292.5:1.4) {$Q_2$};
+    \node[font=\footnotesize\bfseries, text=black] at (292.5:1.4) {$Q_2$};
     
     % Edge Labels
     \node[above, blue!80, font=\scriptsize, rotate=0] at (0:1.3) {$E_{RG}^1$};
-    \node[below, blue!80, font=\scriptsize, rotate=0] at (180:1.3) {$E_{RG}^3$};
-    \node[above right, green!60!black, font=\scriptsize, rotate=-45] at (315:1.3) {$E_{RB}^1$};
-    \node[below right, green!60!black, font=\scriptsize, rotate=45] at (225:1.3) {$E_{RB}^4$};
+    \node[left, blue!80, font=\scriptsize, rotate=90] at (270:1.3) {$E_{RG}^4$};
 
     % Active Restricted Edges (Syndromes of restricted lattices) - Faded out
     \draw[blue, line width=3pt, opacity=0.3] (0,0) -- (0:2); % RG1
-    \draw[green!60!black, line width=3pt, opacity=0.3] (0,0) -- (315:2); % RB1
-    \draw[blue, line width=3pt, opacity=0.3] (0,0) -- (180:2); % RG3
-    \draw[green!60!black, line width=3pt, opacity=0.3] (0,0) -- (225:2); % RB4
-
-    % Outer rings for active detectors
-    \node[active] at (0,0) {};
-    \node[active] at (0:2) {};
-    \node[active] at (315:2) {};
-    \node[active] at (180:2) {};
-    \node[active] at (225:2) {};
+    \draw[blue, line width=3pt, opacity=0.3] (0,0) -- (270:2); % RG4
 
     % Central Red Node
     \node[detector, red] at (0,0) {};
