@@ -403,7 +403,7 @@ Because each pair of adjacent detectors is separated by exactly two physical qub
         \input{figures/4.qec_decoders/projection_graphs_d.tex}
         \caption{Blue-Red Projection}
     \end{subfigure}
-    \caption[Syndrome hypergraph for a $d=5$ color code and its three projections.]{The syndrome hypergraph for a distance 5 color code (a) and its decomposition into three independent bipartite surface code graphs (b, c, d) using the projection method. Black circles correspond to possible errors in data qubits, and color circles correspond to the detectors for these errors. The deleted nodes and hyperedges in each projection are shown in faint dotted gray to illustrate the mapping. Before running MWPM on this graph, the parallel edges between nodes are combined into a single, logical edge.}
+    \caption[Syndrome hypergraph for local patch of a color code and its three projections.]{The syndrome hypergraph for a local patch of a color code (a) and its decomposition into three independent bipartite surface code graphs (b, c, d) using the projection method. Black circles correspond to possible errors in data qubits, and color circles correspond to the detectors for these errors. The deleted nodes and hyperedges in each projection are shown in faint dotted gray to illustrate the mapping. Before running MWPM on this graph, the parallel edges between nodes are combined into a single, logical edge.}
     \label{fig:projection_graphs}
 \end{figure}
 
@@ -440,7 +440,7 @@ Once the MWPM instances process their respective syndromes, they output independ
         \input{figures/4.qec_decoders/dual_projection_graphs_d.tex}
         \caption{Blue-Red Projection}
     \end{subfigure}
-    \caption[Projection method on the dual graph]{The dual graph $G^*$ for the distance 5 color code displayed in Figure \ref{fig:projection_graphs} (a) and its three projected bipartite graphs (b, c, d). In this representation, the detectors are vertices and physical qubits are triangular faces. Removing one color of vertices leaves exactly one type of edge, creating independent surface codes. Note how the two parallel edges in the syndrome graph become a single edge in this representation.}
+    \caption[Projection method on the dual graph]{The dual graph $G^*$ for the local color code patch displayed in Figure \ref{fig:projection_graphs} (a) and its three projected bipartite graphs (b, c, d). In this representation, the detectors are vertices and physical qubits are triangular faces. Removing one color of vertices leaves exactly one type of edge, creating independent surface codes. Note how the two parallel edges in the syndrome graph become a single edge in this representation.}
     \label{fig:dual_projection_graphs}
 \end{figure}
 
@@ -552,6 +552,33 @@ Because the maximum number of physical qubits touching a single vertex is small 
 \label{sec:mobius_decoder}
 
 The Möbius decoder was proposed by Sahay and Brown in 2022 \cite{Sahay_2022} as a topological approach to decode the triangular color code. This decoder solves the fundamental limitations of projection-based algorithms at the boundaries of the lattice, by unifying the restricted graphs into a single global structure rather than treating them in isolation.
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{%
+            \input{../figures/6.simulating_2d_color_codes/lattice_488_colored.tex}}
+        \caption{Physical Lattice (4.8.8)}
+    \end{subfigure}
+    \hfill
+
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{%
+            \input{../figures/6.simulating_2d_color_codes/lattice_488_primal.tex}}
+        \caption{Primal Graph}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{%
+            \input{../figures/6.simulating_2d_color_codes/lattice_488_dual.tex}}
+        \caption{Dual Graph}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \caption[Color code representations for a $d=7$ 4.8.8 lattice]{Color code representations for a $d=7$ 4.8.8 lattice. (a) The lattice, where physical qubits are nodes and detectors are faces (octagons/squares). (b) The Primal Graph, where detectors become nodes and physical qubits are represented as the hyperedges connecting them. (c) The Dual Graph, where the detectors are nodes but the physical qubits become triangular faces. In prior sections, we've illustrated Projection and Restriction decoders with simplified representations showing only a local patch of the Color Code. When the complete code is represented, we see the discontinuities in the border, where qubits are connected to less than 3 detectors.}
+\end{figure}
 
 As described in previous sections, algorithms like the Projection Decoder divide the color code into three independent restricted graphs ($\mathcal{L}_{RG}$, $\mathcal{L}_{RB}$, and $\mathcal{L}_{GB}$). While this successfully reduces hyperedges to simple edges compatible with Minimum Weight Perfect Matching (MWPM), running MWPM independently on each subgraph causes a critical loss of global information near the boundaries. For instance, for a given error string, MWPM might correctly pair the two end-defects together in $\mathcal{L}{RB}$. However, in $\mathcal{L}{RG}$, one of the defects might happen to be locally closer to the Green boundary. Since boundaries act as virtual nodes in MWPM to absorb errors that exit the lattice, the algorithm might incorrectly pair the defect to the boundary instead. When the decoder attempts to merge these 1D strings back into 2D physical qubits, these boundary inconsistencies often lead to suboptimal high-weight physical errors and logical failures.
 
