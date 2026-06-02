@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{lattice_488_colored.tex}}
+        \caption{Lattice Físico (4.8.8)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{lattice_488_primal.tex}}
+        \caption{Grafo Primal}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{lattice_488_dual.tex}}
+        \caption{Grafo Dual}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{Representaciones del Código de Color Topológico (Distance 7, Lattice 4.8.8). 
+    En el Grafo Primal, los qubits físicos son nodos y los detectores son caras (octógonos/cuadrados).
+    En el Grafo Dual, la geometría se invierte: los detectores son nodos y los qubits físicos son las conexiones entre ellos (triángulos en el interior, segmentos en la frontera).}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_a.tex}}
+        \caption{Full Lattice (Error en gris)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_b.tex}}
+        \caption{$\mathcal{L}_{RG}$ (MWPM empareja con la frontera)}
+    \end{subfigure}
+    
+    \vspace{1cm}
+    
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_c.tex}}
+        \caption{$\mathcal{L}_{RB}$ (MWPM empareja con la frontera)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{boundary_fail_d.tex}}
+        \caption{$\mathcal{L}_{GB}$ (MWPM empareja correctamente)}
+    \end{subfigure}
+    \caption{Ejemplo visual de cómo el Projection Decoder falla cerca de las fronteras al emparejar los defectos de forma inconsistente.}
+\end{figure}
+
+\end{document}
