@@ -1,0 +1,42 @@
+\begin{tikzpicture}[scale=1.2,
+    detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
+    active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
+    red/.style={fill=red!60},
+    green/.style={fill=green!60},
+    blue/.style={fill=blue!60}]
+
+    % Physical Qubits (Triangles)
+    \foreach \i in {0,...,7} {
+        \pgfmathsetmacro{\angA}{45*\i}
+        \pgfmathsetmacro{\angB}{45*(\i+1)}
+        \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (\angA:2) -- (\angB:2) -- cycle;
+    }
+
+    % Selected Physical Qubit Q1
+    \fill[pattern=north east lines, pattern color=black, draw=black, thick] (0,0) -- (0:2) -- (45:2) -- cycle;
+    \fill[yellow, fill opacity=0.3] (0,0) -- (0:2) -- (45:2) -- cycle;
+    \node[font=\bfseries] at (22.5:1.2) {$Q_1$};
+
+    % Active Restricted Edges (Syndromes of restricted lattices)
+    % RG edge (Blue color)
+    \draw[blue, line width=3pt, opacity=0.5] (0,0) -- (0:2);
+    % RB edge (Green color)
+    \draw[green!60!black, line width=3pt, opacity=0.5] (0,0) -- (45:2);
+
+    % Outer rings for active detectors
+    \node[active] at (0,0) {};
+    \node[active] at (0:2) {};
+    \node[active] at (45:2) {};
+
+    % Central Red Node
+    \node[detector, red] at (0,0) {};
+
+    % Green and Blue Nodes
+    \foreach \i in {0,2,4,6} {
+        \node[detector, green] at (\i*45:2) {};
+    }
+    \foreach \i in {1,3,5,7} {
+        \node[detector, blue] at (\i*45:2) {};
+    }
+
+\end{tikzpicture}
