@@ -329,18 +329,12 @@ The Local Lifting step reconciles the 1D paths found in $\mathcal{L}_{RG}$ and $
 
 While iterating vertex by vertex is possible, it can be slow in a Python-based simulation environment. To optimize this, we leverage \texttt{PyMatching}, natively implemented in C++, to solve the local constraints simultaneously across the entire lattice.
 
-To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) with the following  structure:
-\begin{itemize}
-    \item \textbf{Nodes:} The nodes (DEM detectors) of the Lifting Graph are the virtual edges defined in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
-    \item \textbf{Edges:} The edges (DEM physical errors) of the Lifting Graph represent the actual physical qubits (the triangles in the Dual Graph).
-\end{itemize}
-
-\begin{figure}[H]
+\begin{figure}[hbpt]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_a.tex}}
-        \caption{Original Lattice Patch ($G^*$) with Errors}
+        \caption{Dual graph ($G^*$)}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
@@ -354,7 +348,7 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_c.tex}}
-        \caption{Lifting Graph DEM \& MWPM Resolution}
+        \caption{Lifting Graph \& MWPM Resolution}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
@@ -362,14 +356,19 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_d.tex}}
         \caption{Resolved Physical Qubits}
     \end{subfigure}
-    \caption[Lifting Graph abstraction in the Restriction Decoder]{Visual representation of the algebraic Lifting Graph trick resolving a complex 2-qubit error. (a) In the dual graph patch, two physical errors $Q_A$ and $Q_B$ share a Green and a Blue vertex, causing them to cancel out. Only two Red detectors ($R_1$ and $R_2$) activate. Both restricted lattices find matching paths (thick blue for $\mathcal{L}_{RG}$ and green for $\mathcal{L}_{RB}$). (b) Zooming into the local neighborhood containing the active Red vertices. (c) The spatial graph is abstracted into the bipartite Lifting DEM. Crucially, because physical qubits only connect restricted edges incident to the same Red vertex, the Lifting Graph naturally decomposes into disjoint local subgraphs. MWPM simultaneously solves the independent local constraints at $R_1$ (selecting $Q_A$) and $R_2$ (selecting $Q_B$). (d) The selected edges map directly back to the spatial lattice, fully correcting the syndrome.}
+    \caption[Lifting as a MWPM problem]{Lifting as a MWPM problem: Visual representation of the lifting procedure for a 2 qubit error. (a) In the dual graph, two failing physical errors $Q_a$ and $Q_b$ cause the activation of two red detectors ($R_1$ and $R_2$). The MWPM over the two restricted lattices finds the two blue and green paths. (b) Zooming into the local neighborhood containing the active Red vertices. (c) The dual graph is abstracted into the bipartite Lifting Graph. Because physical qubits only connect restricted edges incident to the same Red vertex, the Lifting Graph naturally decomposes into disjoint local subgraphs. MWPM simultaneously solves the matching path for active edges. (d) The selected edges map directly back to the spatial lattice, fully correcting the syndrome.}
     \label{fig:restriction_lifting_graph_trick}
 \end{figure}
 
+To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) with the following  structure:
+\begin{itemize}
+    \item \textbf{Nodes:} The nodes (DEM detectors) of the Lifting Graph are the virtual edges defined in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
+    \item \textbf{Edges:} The edges (DEM physical errors) of the Lifting Graph represent the actual physical qubits (the triangles in the Dual Graph).
+\end{itemize}
+
+By running a final MWPM instance on this Lifting Graph, the decoder automatically selects the minimal set of physical qubits that connect all the active restricted edges. This is illustrated in Figure \ref{fig:restriction_lifting_graph_trick}. While this is a global process, because of how we define it, it's equivalent to the local solution defined by the theoretical algorithm. If multiple sets of physical qubits can be selected, MWPM selects the minimum-weight combination.
 
 
-
-By running a final MWPM instance on this Lifting Graph, the decoder automatically selects the minimal set of physical qubits that connect all the active restricted edges. While this is a global process, because of how we define it, it's equivalent to the local solution defined by the theoretical algorithm. If multiple sets of physical qubits can be selected, MWPM selects the minimum-weight combination.
 
 \subsection{Threshold Evaluation}
 \label{subsec:restriction_threshold}
