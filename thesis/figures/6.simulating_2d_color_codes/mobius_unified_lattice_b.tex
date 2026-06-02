@@ -1,0 +1,260 @@
+\begin{tikzpicture}
+\def\L{1.3657}
+
+\newcommand{\simplsq}[2]{
+                \filldraw[colR] ({#1-0.4},{#2-0.4}) rectangle ({#1+0.4},{#2+0.4});
+            }
+            \newcommand{\simploct}[3]{
+                \filldraw[#3]
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- ({#1+0.9657},{#2-0.4}) --
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.4},{#2+0.9657}) -- ({#1-0.4},{#2+0.9657}) --
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- cycle;
+            }
+            \newcommand{\simpltrapBtop}[2]{
+                \filldraw[colB]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.4},{#2+0.9657}) -- 
+                    ({#1+0.4},{#2+0.9657}) -- ({#1+0.9657},{#2+0.4}) -- cycle;
+            }
+            \newcommand{\simpltrapBright}[2]{
+                \filldraw[colB]
+                    ({#1+0.9657},{#2+0.4}) -- ({#1+0.9657},{#2-0.4}) -- 
+                    ({#1+0.4},{#2-0.9657}) -- ({#1-0.4},{#2-0.9657}) -- cycle;
+            }
+            \newcommand{\simpltrapGleft}[2]{
+                \filldraw[colG]
+                    ({#1-0.9657},{#2+0.4}) -- ({#1-0.9657},{#2-0.4}) -- 
+                    ({#1-0.4},{#2-0.9657}) -- ({#1+0.4},{#2-0.9657}) -- cycle;
+            }
+            
+            \newcommand{\fullsqqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.4}) circle (2.5pt);
+            }
+            \newcommand{\fulloctqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+            }
+            \newcommand{\trapBtopqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2+0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+            }
+            \newcommand{\trapBrightqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+            }
+            \newcommand{\trapGleftqubits}[2]{
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2+0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.9657},{#2-0.4}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1-0.4},{#2-0.9657}) circle (2.5pt);
+                \filldraw[fill=white, draw=black, thick] ({#1+0.4},{#2-0.9657}) circle (2.5pt);
+            }
+
+            
+
+\newcommand{\drawLattice}[1]{
+    \begin{scope}[#1]
+        \simpltrapBtop{-3*\L}{0}
+            \simpltrapBtop{-\L}{0}
+            \simpltrapBtop{\L}{0}
+            \simpltrapBtop{3*\L}{0}
+
+            \simplsq{-3*\L}{\L}
+            \simploct{-2*\L}{\L}{colG}
+            \simplsq{-\L}{\L}
+            \simploct{0}{\L}{colG}
+            \simplsq{\L}{\L}
+            \simploct{2*\L}{\L}{colG}
+            \simplsq{3*\L}{\L}
+            \simpltrapGleft{4*\L}{\L}
+
+            \simpltrapBright{-3*\L}{2*\L}
+            \simplsq{-2*\L}{2*\L}
+            \simploct{-\L}{2*\L}{colB}
+            \simplsq{0}{2*\L}
+            \simploct{\L}{2*\L}{colB}
+            \simplsq{2*\L}{2*\L}
+
+            \simplsq{-\L}{3*\L}
+            \simploct{0}{3*\L}{colG}
+            \simplsq{\L}{3*\L}
+            \simpltrapGleft{2*\L}{3*\L}
+
+            \simpltrapBright{-\L}{4*\L}
+            \simplsq{0}{4*\L}
+
+            
+    \end{scope}
+}
+
+\newcommand{\drawQubits}[1]{
+    \begin{scope}[#1]
+        \trapBtopqubits{-3*\L}{0}
+            \trapBtopqubits{-\L}{0}
+            \trapBtopqubits{\L}{0}
+            \trapBtopqubits{3*\L}{0}
+
+            \fullsqqubits{-3*\L}{\L}
+            \fulloctqubits{-2*\L}{\L}
+            \fullsqqubits{-\L}{\L}
+            \fulloctqubits{0}{\L}
+            \fullsqqubits{\L}{\L}
+            \fulloctqubits{2*\L}{\L}
+            \fullsqqubits{3*\L}{\L}
+            \trapGleftqubits{4*\L}{\L}
+
+            \trapBrightqubits{-3*\L}{2*\L}
+            \fullsqqubits{-2*\L}{2*\L}
+            \fulloctqubits{-\L}{2*\L}
+            \fullsqqubits{0}{2*\L}
+            \fulloctqubits{\L}{2*\L}
+            \fullsqqubits{2*\L}{2*\L}
+
+            \fullsqqubits{-\L}{3*\L}
+            \fulloctqubits{0}{3*\L}
+            \fullsqqubits{\L}{3*\L}
+            \trapGleftqubits{2*\L}{3*\L}
+
+            \trapBrightqubits{-\L}{4*\L}
+            \fullsqqubits{0}{4*\L}
+
+            
+    \end{scope}
+}
+
+\colorlet{cR}{red!20}
+\colorlet{cG}{green!20}
+\colorlet{cB}{blue!20}
+
+\colorlet{hideC}{gray!15}
+
+\def\hideOp{1.0}
+\def\showOp{1.0}
+
+% T3: RB (Hide G) -> Points UP
+\tikzset{
+    colR/.style={fill=cR, draw=black, thick, solid, fill opacity=\showOp},
+    colG/.style={fill=hideC, draw=black, thick, solid, fill opacity=\hideOp},
+    colB/.style={fill=cB, draw=black, thick, solid, fill opacity=\showOp}
+}
+\drawLattice{shift={(0, 4.5*\L)}}
+
+% T1: RG (Hide B) -> Points UP
+\tikzset{
+    colR/.style={fill=cR, draw=black, thick, solid, fill opacity=\showOp},
+    colG/.style={fill=cG, draw=black, thick, solid, fill opacity=\showOp},
+    colB/.style={fill=hideC, draw=black, thick, solid, fill opacity=\hideOp}
+}
+\drawLattice{shift={(0, 0)}}
+
+% T2: GB (Hide R) -> Points UP
+\tikzset{
+    colR/.style={fill=hideC, draw=black, thick, solid, fill opacity=\hideOp},
+    colG/.style={fill=cG, draw=black, thick, solid, fill opacity=\showOp},
+    colB/.style={fill=cB, draw=black, thick, solid, fill opacity=\showOp}
+}
+\drawLattice{shift={(0, -4.5*\L)}}
+
+% Draw boundaries on top
+\begin{scope}[shift={(0, 4.5*\L)}]
+
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
+
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            
+\end{scope}
+\begin{scope}[shift={(0, 0)}]
+
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
+
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            
+\end{scope}
+\begin{scope}[shift={(0, -4.5*\L)}]
+
+                \draw[red, line width=4pt, line cap=round] 
+                    ({-3*\L-0.9657}, 0.4) -- ({4*\L+0.4}, 0.4);
+
+                \draw[green!60!black, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({-3*\L-0.9657}, 0.4) 
+                    -- ({-3*\L-0.4}, 0.9657)
+                    -- ({-3*\L-0.4}, {\L+0.4})
+                    -- ({-2*\L-0.4}, {2*\L+0.4})
+                    -- ({-2*\L+0.4}, {2*\L+0.4})
+                    -- ({-\L-0.4}, {3*\L-0.4})
+                    -- ({-\L-0.4}, {3*\L+0.4})
+                    -- ({-0.4}, {4*\L+0.4})
+                    -- ({0.4}, {4*\L+0.4});
+
+                \draw[blue, line width=4pt, rounded corners=1pt, line cap=round]
+                    ({4*\L+0.4}, 0.4)
+                    -- ({3*\L+0.4}, {\L+0.4})
+                    -- ({3*\L-0.4}, {\L+0.4})
+                    -- ({2*\L+0.4}, {2*\L-0.4})
+                    -- ({2*\L+0.4}, {2*\L+0.4})
+                    -- ({\L+0.4}, {3*\L+0.4})
+                    -- ({\L-0.4}, {3*\L+0.4})
+                    -- ({0.4}, {4*\L-0.4})
+                    -- ({0.4}, {4*\L+0.4});
+            
+\end{scope}
+
+% Draw Qubits on top of boundaries
+\drawQubits{shift={(0, 4.5*\L)}}
+\drawQubits{shift={(0, 0)}}
+\drawQubits{shift={(0, -4.5*\L)}}
+
+\end{tikzpicture}
