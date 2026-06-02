@@ -558,29 +558,146 @@ The Möbius decoder was proposed by Sahay and Brown in 2022 \cite{Sahay_2022} as
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{%
-            \input{../figures/6.simulating_2d_color_codes/lattice_488_colored.tex}}
+            \input{figures/6.simulating_2d_color_codes/lattice_488_colored.tex}}
         \caption{Physical Lattice (4.8.8)}
     \end{subfigure}
     \hfill
-
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{%
-            \input{../figures/6.simulating_2d_color_codes/lattice_488_primal.tex}}
+            \input{figures/6.simulating_2d_color_codes/lattice_488_primal.tex}}
         \caption{Primal Graph}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{%
-            \input{../figures/6.simulating_2d_color_codes/lattice_488_dual.tex}}
+            \input{figures/6.simulating_2d_color_codes/lattice_488_dual.tex}}
         \caption{Dual Graph}
     \end{subfigure}
-    \vspace{0.5cm}
-    \caption[Color code representations for a $d=7$ 4.8.8 lattice]{Color code representations for a $d=7$ 4.8.8 lattice. (a) The lattice, where physical qubits are nodes and detectors are faces (octagons/squares). (b) The Primal Graph, where detectors become nodes and physical qubits are represented as the hyperedges connecting them. (c) The Dual Graph, where the detectors are nodes but the physical qubits become triangular faces. In prior sections, we've illustrated Projection and Restriction decoders with simplified representations showing only a local patch of the Color Code. When the complete code is represented, we see the discontinuities in the border, where qubits are connected to less than 3 detectors.}
+    \caption[Color code representations for a $d=7$ 4.8.8 lattice]{Color code representations for a $d=7$ 4.8.8 lattice. In (a), physical qubits are nodes and detectors are faces (octagons/squares). In (b), detectors become nodes and physical qubits are represented as the hyperedges connecting them. Finally, in (c), the detectors are nodes and the physical qubits become triangular faces. As opposed to simplified representations of local patches (Figure \ref{fig:dual_projection_graphs}), when representing the complete code, irregularities show in the border (qubits connected to less than 3 detectors).}
+    \label{fig:color_code_representations}
 \end{figure}
 
-As described in previous sections, algorithms like the Projection Decoder divide the color code into three independent restricted graphs ($\mathcal{L}_{RG}$, $\mathcal{L}_{RB}$, and $\mathcal{L}_{GB}$). While this successfully reduces hyperedges to simple edges compatible with Minimum Weight Perfect Matching (MWPM), running MWPM independently on each subgraph causes a critical loss of global information near the boundaries. For instance, for a given error string, MWPM might correctly pair the two end-defects together in $\mathcal{L}{RB}$. However, in $\mathcal{L}{RG}$, one of the defects might happen to be locally closer to the Green boundary. Since boundaries act as virtual nodes in MWPM to absorb errors that exit the lattice, the algorithm might incorrectly pair the defect to the boundary instead. When the decoder attempts to merge these 1D strings back into 2D physical qubits, these boundary inconsistencies often lead to suboptimal high-weight physical errors and logical failures.
+As described in previous sections, algorithms like the Projection Decoder divide the color code into three independent restricted graphs ($\mathcal{L}_{RG}$, $\mathcal{L}_{RB}$, and $\mathcal{L}_{GB}$). While this successfully reduces hyperedges to simple edges compatible with Minimum Weight Perfect Matching (MWPM), running it independently on each subgraph causes a loss of information near the boundaries. Since boundaries act as virtual nodes in MWPM to absorb errors that exit the lattice, the algorithm might incorrectly pair the defect to the boundary instead. When the decoder attempts to merge these 1D strings back into 2D physical qubits, these boundary inconsistencies often lead to logical failures. Figures \ref{fig:non_boundary_ok} and \ref{fig:boundary_fail} illustrate how Projection and Restriction decoders succeed in errors in the bulk of the Color Code but fail near the borders.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_a.tex}
+        }
+        \caption{Full Lattice}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_b.tex}
+        }
+        \caption{$\mathcal{L}_{RG}$ projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_c.tex}
+        }
+        \caption{$\mathcal{L}_{RB}$ projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_d.tex}
+        }
+        \caption{$\mathcal{L}_{GB}$ projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_e.tex}
+        }
+        \caption{Projection Merge (Success)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_f.tex}
+        }
+        \caption{Restriction (Success)}
+    \end{subfigure}
+
+    \caption[Successful decoding of Projection and Restriction decoders in the bulk.]{Visual representation of the successful decoding of an error pattern when it occurs entirely within the bulk of the lattice. \textbf{(a)} The 3-qubit error chain (gray) creates exactly three active detectors. \textbf{(b, c, d)} The MWPM algorithm independently pairs the relevant defects in each of the three projected surface codes. \textbf{(e)} When merging the paths, they perfectly trace the exterior edges of the erroneous qubits, so the lifting step identifies the interior area that matches the failing qubits. \textbf{(f)} The Restriction decoder achieves the same successful result by operating on the combined restricted graph.}
+    \label{fig:non_boundary_ok}
+\end{figure}
+
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_a.tex}
+        }
+        \caption{Full Lattice}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_b.tex}
+        }
+        \caption{$\mathcal{L}_{RG}$ projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_c.tex}
+        }
+        \caption{$\mathcal{L}_{RB}$ projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_d.tex}
+        }
+        \caption{$\mathcal{L}_{GB}$ projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_e.tex}
+        }
+        \caption{Projection Merge (Failure)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/6.simulating_2d_color_codes/boundary_fail_f.tex}
+        }
+        \caption{Restriction (Failure)}
+    \end{subfigure}
+
+    \caption[Failure of the Projection and Restriction decoders at the lattice boundary.]{Visual representation of Projection and Restriction decoding failures at the boundary of a Color Code. \textbf{(a)} An error chain (gray) occurs adjacent to the lattice boundary, triggering three active detectors (orange). \textbf{(b, c, d)} The three independent projected surface codes ($\mathcal{L}_{RG}$, $\mathcal{L}_{RB}$, $\mathcal{L}_{GB}$). In each projection, the Minimum Weight Perfect Matching (MWPM) algorithm finds a path (colored lines) that pairs the active defects, sometimes routing the path to the virtual boundary. \textbf{(e)} When merging the three independent paths onto the global dual graph, the resulting edges, incident to the border (that acts as a massive virtual red detector), result in a closed path containing three qubits in the border, leading to a logical failure. \textbf{(f)} The combined matching in the restricted lattices also results in the two edges connecting in the border, resulting in a lifting that erroneously includes the three physical qubits along the boundary.}
+    \label{fig:boundary_fail}
+\end{figure}
+
 
 \notatfm{The name comes from the resulting topology: by joining these three two-dimensional lattices with a color permutation at their boundaries, the resulting mathematical object has only one surface and one continuous boundary, equivalent to a Möbius strip.}
 The Möbius decoder resolves this limitation through a topological gluing process. Instead of executing MWPM on the three restricted graphs separately, the decoder physically joins them along their shared boundaries. For example, the red boundary of the $\mathcal{L}_{RG}$ graph is glued directly to the red boundary of the $\mathcal{L}_{RB}$ graph. This process is repeated for the green and blue boundaries, merging the three subgraphs into a single, continuous lattice.
