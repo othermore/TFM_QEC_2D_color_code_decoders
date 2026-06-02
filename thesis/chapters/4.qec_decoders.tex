@@ -549,7 +549,26 @@ Because the maximum number of physical qubits touching a single vertex is small 
 \notatfm{Neutralizing the syndrome means finding a set of qubits that, if flipped, deactivate all the active detectors. It does not necessarily mean finding the original set of errors that activated these detectors.} The final global correction is simply the union of all these subsets of qubits ($\tau_v$). The output correction is mathematically guaranteed to neutralize the full original syndrome. If there are multiple sets of physical qubits that locally resolve the constraints (i.e. that touch the red vertex and contain all and only the active edges incident to it), their common boundary will inevitably form a closed loop (a stabilizer) around the vertex. Therefore, both sets will similarly correct the logical observable.
 
 
-\section{Möbius decoder (Sahay \& Brown, PRX Quantum, 2022)}
+\section{The Möbius Decoder}
+\label{sec:mobius_decoder}
+
+\notatfm{The Möbius decoder exploits the spatial symmetries of the triangular color code to simplify its decoding. Instead of projecting the code into multiple disjoint graphs, it unifies the syndrome information into a single geometric space.} The Möbius Decoder, introduced by Sahay and Brown in 2022 \cite{Sahay_2022}, offers an alternative topological approach to decode the triangular Color Code using Minimum-Weight Perfect Matching (MWPM). While the Projection and Restriction decoders rely on separating the code into multiple bipartite sub-lattices, the Möbius decoder achieves a direct mapping of the entire color code hypergraph onto a single, unified matching graph.
+
+This is achieved by applying a topological transformation to the boundaries of the lattice. The algorithm modifies the connectivity of the graph such that the three distinct boundaries (Red, Green, and Blue) of the triangular patch are glued together, forming a continuous structure with the topology of a Möbius strip. 
+
+\subsection{The Unfolding Step}
+
+The core mechanism of the Möbius decoder is the unfolding of the color code lattice. In a standard triangular color code, a physical error in the bulk activates two detectors, which naturally forms an edge in a matching graph. However, errors near the boundaries behave differently depending on their proximity to the specific Red, Green, or Blue borders, complicating the direct application of MWPM.
+
+To solve this, the decoder constructs a unified lattice where the boundaries of the triangular patch are logically connected to each other. By twisting and gluing the edges of the lattice, the three separate boundary segments are merged into a single boundary. Because of the specific parity permutations required to align the colors during this connection, the resulting manifold has a half-twist, which is the defining characteristic of a Möbius strip.
+
+\notatfm{In a Möbius strip, an object traveling along the boundary will traverse the entire edge of the shape before returning to its starting point. This demonstrates that, topologically, the shape possesses only a single continuous boundary.} This transformation reduces the color code decoding problem to a single instance of the surface code. On this unified lattice, every physical qubit error corresponds to exactly one edge, connecting either two bulk detectors or one bulk detector and the single unified boundary.
+
+\subsection{Matching and Correction}
+
+Once the triangular color code is mapped onto the unified Möbius graph, the active detectors from the syndrome are placed on its nodes. At this stage, standard MWPM can be executed directly over the entire graph in a single pass.
+
+The MWPM algorithm finds the set of edges with the minimum total weight that pairs all the active detectors. Because the graph accurately represents the physical topology and the unified boundary, matching paths can naturally cross the boundary connections to find the optimal global pairing. After MWPM returns the optimal matching on the Möbius graph, the selected edges are mapped directly back to their corresponding physical qubits in the original triangular color code lattice to apply the final correction.
 
 \section{Concatenated MWPM decoder}
 (Lee, Li \& Bartlett, Quantum, 2025)
