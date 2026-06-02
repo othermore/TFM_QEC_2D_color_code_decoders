@@ -11,25 +11,26 @@
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{lattice_488_colored.tex}}
-        \caption{Lattice Físico (4.8.8)}
+        \caption{Physical Lattice (4.8.8)}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{lattice_488_primal.tex}}
-        \caption{Grafo Primal}
+        \caption{Primal Graph}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.32\textwidth}
         \centering
         \resizebox{\textwidth}{!}{\input{lattice_488_dual.tex}}
-        \caption{Grafo Dual}
+        \caption{Dual Graph}
     \end{subfigure}
     
     \vspace{0.5cm}
-    \caption{Representaciones del Código de Color Topológico (Distance 7, Lattice 4.8.8). 
-    En el Grafo Primal, los qubits físicos son nodos y los detectores son caras (octógonos/cuadrados).
-    En el Grafo Dual, la geometría se invierte: los detectores son nodos y los qubits físicos son las conexiones entre ellos (triángulos en el interior, segmentos en la frontera).}
+    \caption{Topological Color Code representations (Distance 7, 4.8.8 lattice).
+    In the Primal Graph (b), physical qubits are nodes and detectors are faces (octagons/squares).
+    In the Dual Graph (c), the geometry is inverted: detectors become nodes and physical qubits are represented as the hyperedges connecting them. Bulk qubits connecting 3 detectors are shown as triangles. Boundary qubits connecting 2 detectors are depicted as lens-shaped digons, and corner qubits connecting to a single detector are shown as petal-shaped loops attached to their respective node.
+    This figure is a simplified illustration used to explain the Projection and Restriction decoders; it does not depict a full color‑code lattice. The Möbius decoder gains its advantage by handling these dangling boundary qubits and connecting them to additional detectors across the lattice.}
 \end{figure}
 
 \end{document}
