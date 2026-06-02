@@ -335,19 +335,18 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
     \item \textbf{Edges:} The edges (DEM physical errors) of the Lifting Graph represent the actual physical qubits (the triangles in the Dual Graph).
 \end{itemize}
 
-
 \begin{figure}[H]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_a.tex}}
-        \caption{Spatial Local Neighborhood}
+        \caption{Full Dual Lattice ($d=7$) with Errors}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_b.tex}}
-        \caption{Algebraic Lifting Graph DEM}
+        \caption{Spatial Local Neighborhood (Active Edges)}
     \end{subfigure}
 
     \vspace{0.5cm}
@@ -355,17 +354,18 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_c.tex}}
-        \caption{MWPM over Lifting Graph}
+        \caption{Lifting Graph DEM \& MWPM Resolution}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_d.tex}}
-        \caption{Resolved Physical Qubit}
+        \caption{Resolved Physical Qubits}
     \end{subfigure}
-    \caption[Lifting Graph abstraction in the Restriction Decoder]{Visual representation of the Lifting Graph trick around a single Red vertex. (a) In the spatial dual graph, two active restricted edges (blue and green thick lines) touch the Red vertex. (b) The spatial graph is abstracted into the Lifting Graph DEM: nodes are the restricted edges and links are the physical qubits $Q_i$. The active edges from (a) become the active detectors (orange rings) in this DEM. (c) MWPM runs on this algebraic graph and selects the minimal path (physical qubit $Q_1$) connecting the active detectors. (d) The selected edge $Q_1$ maps directly to the physical qubit in the spatial lattice, perfectly satisfying the local boundary constraints.}
+    \caption[Lifting Graph abstraction in the Restriction Decoder]{Visual representation of the algebraic Lifting Graph trick resolving a 2-qubit error. (a) In the full dual graph, two adjacent physical errors activate only two Green detectors. The $\mathcal{L}_{RG}$ restricted MWPM connects them via the central Red vertex (thick blue edges). (b) Zooming into the local neighborhood of the Red vertex, the active restricted edges passed as syndrome are identified. (c) The spatial graph is abstracted into the bipartite Lifting DEM. Nodes $E_{RG}^1$ and $E_{RG}^4$ are active. MWPM matches them by traversing through the inactive node $E_{RB}^1$, selecting the path representing physical qubits $Q_1$ and $Q_2$. (d) The selected edges from the Lifting Graph map directly back to the spatial physical qubits, neutralizing the local boundaries.}
     \label{fig:restriction_lifting_graph_trick}
 \end{figure}
+
 
 
 By running a final MWPM instance on this Lifting Graph, the decoder automatically selects the minimal set of physical qubits that connect all the active restricted edges. While this is a global process, because of how we define it, it's equivalent to the local solution defined by the theoretical algorithm. If multiple sets of physical qubits can be selected, MWPM selects the minimum-weight combination.
