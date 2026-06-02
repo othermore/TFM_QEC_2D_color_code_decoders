@@ -340,7 +340,7 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_a.tex}}
-        \caption{Full Dual Lattice ($d=7$) with Errors}
+        \caption{Original Lattice Patch ($G^*$) with Errors}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
@@ -362,9 +362,10 @@ To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) wi
         \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_d.tex}}
         \caption{Resolved Physical Qubits}
     \end{subfigure}
-    \caption[Lifting Graph abstraction in the Restriction Decoder]{Visual representation of the algebraic Lifting Graph trick resolving a 2-qubit error. (a) In the full dual graph, two adjacent physical errors activate only two Green detectors. The $\mathcal{L}_{RG}$ restricted MWPM connects them via the central Red vertex (thick blue edges). (b) Zooming into the local neighborhood of the Red vertex, the active restricted edges passed as syndrome are identified. (c) The spatial graph is abstracted into the bipartite Lifting DEM. Nodes $E_{RG}^1$ and $E_{RG}^4$ are active. MWPM matches them by traversing through the inactive node $E_{RB}^1$, selecting the path representing physical qubits $Q_1$ and $Q_2$. (d) The selected edges from the Lifting Graph map directly back to the spatial physical qubits, neutralizing the local boundaries.}
+    \caption[Lifting Graph abstraction in the Restriction Decoder]{Visual representation of the algebraic Lifting Graph trick resolving a complex 2-qubit error. (a) In the dual graph patch, two physical errors $Q_A$ and $Q_B$ share a Green and a Blue vertex, causing them to cancel out. Only two Red detectors ($R_1$ and $R_2$) activate. Both restricted lattices find matching paths (thick blue for $\mathcal{L}_{RG}$ and green for $\mathcal{L}_{RB}$). (b) Zooming into the local neighborhood containing the active Red vertices. (c) The spatial graph is abstracted into the bipartite Lifting DEM. Crucially, because physical qubits only connect restricted edges incident to the same Red vertex, the Lifting Graph naturally decomposes into disjoint local subgraphs. MWPM simultaneously solves the independent local constraints at $R_1$ (selecting $Q_A$) and $R_2$ (selecting $Q_B$). (d) The selected edges map directly back to the spatial lattice, fully correcting the syndrome.}
     \label{fig:restriction_lifting_graph_trick}
 \end{figure}
+
 
 
 
