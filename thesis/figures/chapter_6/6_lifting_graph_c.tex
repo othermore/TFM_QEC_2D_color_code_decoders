@@ -1,33 +1,25 @@
-\begin{tikzpicture}[scale=1.2,
+\begin{tikzpicture}[scale=1.5,
     nodeRG/.style={rectangle, rounded corners, draw=black, thick, fill=blue!30, inner sep=4pt, minimum width=24pt, minimum height=16pt},
     nodeRB/.style={rectangle, rounded corners, draw=black, thick, fill=green!40, inner sep=4pt, minimum width=24pt, minimum height=16pt},
     active/.style={draw=yellow!50!orange, line width=3pt}]
 
-    % Left column (RG edges)
-    \node[nodeRG, active] (RG1) at (-2, 2.25) {$E_{RG}^1$};
-    \node[nodeRG] (RG2) at (-2, 0.75) {$E_{RG}^2$};
-    \node[nodeRG] (RG3) at (-2, -0.75) {$E_{RG}^3$};
-    \node[nodeRG, active] (RG4) at (-2, -2.25) {$E_{RG}^4$};
+    % RG edges
+    \node[nodeRG, active] (RG1) at (-2, 1) {$E_{RG}^1$};
+    \node[nodeRG, active] (RG2) at (-2, -1) {$E_{RG}^2$};
 
-    % Right column (RB edges)
-    \node[nodeRB] (RB1) at (2, 2.25) {$E_{RB}^1$};
-    \node[nodeRB] (RB2) at (2, 0.75) {$E_{RB}^2$};
-    \node[nodeRB] (RB3) at (2, -0.75) {$E_{RB}^3$};
-    \node[nodeRB] (RB4) at (2, -2.25) {$E_{RB}^4$};
+    % RB edges
+    \node[nodeRB] (RB1) at (2, 1) {$E_{RB}^1$};
+    \node[nodeRB] (RB2) at (2, -1) {$E_{RB}^2$};
 
     % Physical qubits connecting them
-    \draw[black!20, thick] (RG1) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_8$};
-    \draw[black!20, thick] (RG2) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_7$};
-    \draw[black!20, thick] (RG2) -- (RB3) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_6$};
-    \draw[black!20, thick] (RG3) -- (RB3) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_5$};
-    \draw[black!20, thick] (RG3) -- (RB4) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_4$};
-    \draw[black!20, thick] (RG4) -- (RB4) node[midway, above, sloped, font=\scriptsize, text=black!70] {$Q_3$};
+    \draw[black!20, thick] (RG1) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70, inner sep=2pt, pos=0.7] {$Q_4$};
+    \draw[black!20, thick] (RG2) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black!70, inner sep=2pt, pos=0.3] {$Q_3$};
 
-    % Selected path by MWPM connecting RG1 to RG4 via RB1
+    % Selected path by MWPM connecting RG1 and RG2 via RB1
     \draw[orange, line width=4pt, opacity=0.7] (RG1) -- (RB1);
-    \draw[orange, line width=4pt, opacity=0.7] (RG4.south) to[out=-60, in=-120] (RB1.south);
+    \draw[orange, line width=4pt, opacity=0.7] (RG2) -- (RB1);
     
     \draw[black, thick] (RG1) -- (RB1) node[midway, above, sloped, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_1$}};
-    \draw[black, thick] (RG4.south) to[out=-60, in=-120] node[midway, below, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_2$}} (RB1.south);
+    \draw[black, thick] (RG2) -- (RB1) node[midway, above, sloped, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_2$}};
     
 \end{tikzpicture}

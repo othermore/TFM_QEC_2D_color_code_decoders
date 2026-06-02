@@ -1,73 +1,98 @@
-\begin{tikzpicture}[scale=0.45]
-    \fill[black!30, draw=black!50, thick] (5,3) -- (5,1) -- (1,3) -- cycle;
-    \fill[black!30, draw=black!50, thick] (5,3) -- (5,1) -- (9,3) -- cycle;
-    \fill[black!5, draw=black!10] (13,3) -- (13,1) -- (9,3) -- cycle;
-    \fill[black!5, draw=black!10] (13,3) -- (13,1) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (21,3) -- (21,1) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (13,3) -- (13,7) -- (9,3) -- cycle;
-    \fill[black!5, draw=black!10] (13,3) -- (13,7) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (21,3) -- (21,7) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (9,7) -- (13,7) -- (9,3) -- cycle;
-    \fill[black!5, draw=black!10] (17,7) -- (13,7) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (17,7) -- (21,7) -- (17,3) -- cycle;
-    \fill[black!5, draw=black!10] (9,7) -- (13,7) -- (9,11) -- cycle;
-    \fill[black!5, draw=black!10] (13,11) -- (13,7) -- (9,11) -- cycle;
-    \draw[black!30, thick] (5,3) -- (5,1);
-    \draw[black!30, thick] (5,1) -- (1,3);
-    \draw[black!30, thick] (1,3) -- (5,3);
-    \draw[black!30, thick] (5,3) -- (5,1);
-    \draw[black!30, thick] (5,1) -- (9,3);
-    \draw[black!30, thick] (9,3) -- (5,3);
-    \draw[black!30, thick] (13,3) -- (13,1);
-    \draw[black!30, thick] (13,1) -- (9,3);
-    \draw[black!30, thick] (9,3) -- (13,3);
-    \draw[black!30, thick] (13,3) -- (13,1);
-    \draw[black!30, thick] (13,1) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (13,3);
-    \draw[black!30, thick] (21,3) -- (21,1);
-    \draw[black!30, thick] (21,1) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (21,3);
-    \draw[black!30, thick] (13,3) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (9,3);
-    \draw[black!30, thick] (9,3) -- (13,3);
-    \draw[black!30, thick] (13,3) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (13,3);
-    \draw[black!30, thick] (21,3) -- (21,7);
-    \draw[black!30, thick] (21,7) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (21,3);
-    \draw[black!30, thick] (9,7) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (9,3);
-    \draw[black!30, thick] (9,3) -- (9,7);
-    \draw[black!30, thick] (17,7) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (17,7);
-    \draw[black!30, thick] (17,7) -- (21,7);
-    \draw[black!30, thick] (21,7) -- (17,3);
-    \draw[black!30, thick] (17,3) -- (17,7);
-    \draw[black!30, thick] (9,7) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (9,11);
-    \draw[black!30, thick] (9,11) -- (9,7);
-    \draw[black!30, thick] (13,11) -- (13,7);
-    \draw[black!30, thick] (13,7) -- (9,11);
-    \draw[black!30, thick] (9,11) -- (13,11);
-    \draw[blue, line width=3pt, opacity=0.8] (5,3) -- (5,1);
-    \draw[blue, line width=3pt, opacity=0.8] (5,3) -- (5,1);
-    \filldraw[fill=red!60, draw=black, thick] (5, 3) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (13, 3) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (21, 3) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (9, 7) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (17, 7) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (13, 11) circle (6pt);
-    \filldraw[fill=blue!60, draw=black, thick] (9, 3) circle (6pt);
-    \filldraw[fill=blue!60, draw=black, thick] (17, 3) circle (6pt);
-    \filldraw[fill=green!60, draw=black, thick] (13, 7) circle (6pt);
-    \filldraw[fill=blue!60, draw=black, thick] (1, 3) circle (6pt);
-    \filldraw[fill=blue!60, draw=black, thick] (9, 11) circle (6pt);
-    \filldraw[fill=green!60, draw=black, thick] (21, 7) circle (6pt);
-    \filldraw[fill=yellow!50!orange, draw=none] (5, 1) circle (10pt);
-    \filldraw[fill=green!60, draw=black, thick] (5, 1) circle (6pt);
-    \filldraw[fill=green!60, draw=black, thick] (13, 1) circle (6pt);
-    \filldraw[fill=green!60, draw=black, thick] (21, 1) circle (6pt);
-    \filldraw[fill=red!60, draw=black, thick] (5, 3) circle (6pt);
+\begin{tikzpicture}[scale=0.7]
+    % Background triangles (light gray)
+    \fill[black!5] (0.0,2.7314) -- (-1.3657,2.7314) -- (0.0,1.3657) -- cycle;
+    \fill[black!5] (-2.7314,2.7314) -- (-1.3657,2.7314) -- (-2.7314,1.3657) -- cycle;
+    \fill[black!5] (0.0,2.7314) -- (0.0,1.3657) -- (1.3657,2.7314) -- cycle;
+    \fill[black!5] (0.0,2.7314) -- (0.0,4.0971) -- (-1.3657,2.7314) -- cycle;
+    \fill[black!5] (-2.7314,2.7314) -- (-2.7314,1.3657) -- (-4.0971,1.3657) -- cycle;
+    \fill[black!5] (0.0,5.4628) -- (0.0,4.0971) -- (-1.3657,4.0971) -- cycle;
+    \fill[black!5] (2.7314,2.7314) -- (1.3657,2.7314) -- (1.3657,4.0971) -- cycle;
+    \fill[black!5] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
+    \fill[black!5] (0.0,2.7314) -- (1.3657,2.7314) -- (0.0,4.0971) -- cycle;
+    \fill[black!5] (0.0,0.0) -- (0.0,1.3657) -- (-1.3657,1.3657) -- cycle;
+    \fill[black!5] (2.7314,2.7314) -- (2.7314,1.3657) -- (4.0971,1.3657) -- cycle;
+    \fill[black!5] (2.7314,0.0) -- (2.7314,1.3657) -- (1.3657,1.3657) -- cycle;
+    \fill[black!5] (-4.0971,1.3657) -- (-2.7314,0.0) -- (-2.7314,1.3657) -- cycle;
+    \fill[black!5] (1.3657,1.3657) -- (0.0,0.0) -- (0.0,1.3657) -- cycle;
+    
+    % Error triangles (gray) Q1 and Q2
+    \fill[black!30, draw=black!50, thick] (-4.0971,1.3657) -- (-2.7314,0.0) -- (-2.7314,1.3657) -- cycle;
+    \fill[black!30, draw=black!50, thick] (-2.7314,0.0) -- (-2.7314,1.3657) -- (-1.3657,1.3657) -- cycle;
+
+    % All edges in gray
+    \draw[black!20, thick] (2.7314,1.3657) -- (4.0971,1.3657);
+    \draw[black!20, thick] (1.3657,2.7314) -- (1.3657,1.3657);
+    \draw[black!20, thick] (-1.3657,2.7314) -- (-1.3657,4.0971);
+    \draw[black!20, thick] (0.0,1.3657) -- (-1.3657,1.3657);
+    \draw[black!20, thick] (0.0,4.0971) -- (-1.3657,4.0971);
+    \draw[black!20, thick] (2.7314,1.3657) -- (1.3657,1.3657);
+    \draw[black!20, thick] (0.0,1.3657) -- (1.3657,1.3657);
+    \draw[black!20, thick] (-1.3657,2.7314) -- (-1.3657,1.3657);
+    \draw[black!20, thick] (-2.7314,1.3657) -- (-1.3657,1.3657);
+    \draw[black!20, thick] (0.0,4.0971) -- (1.3657,4.0971);
+    \draw[black!20, thick] (-2.7314,1.3657) -- (-4.0971,1.3657);
+    \draw[black!20, thick] (1.3657,2.7314) -- (1.3657,4.0971);
+    \draw[black!20, thick] (-1.3657,4.0971) -- (0.0,5.4628);
+    \draw[black!20, thick] (1.3657,4.0971) -- (0.0,2.7314);
+    \draw[black!20, thick] (4.0971,1.3657) -- (2.7314,2.7314);
+    \draw[black!20, thick] (-1.3657,4.0971) -- (0.0,2.7314);
+    \draw[black!20, thick] (1.3657,1.3657) -- (2.7314,0.0);
+    \draw[black!20, thick] (-1.3657,1.3657) -- (-2.7314,0.0);
+    \draw[black!20, thick] (1.3657,4.0971) -- (2.7314,2.7314);
+    \draw[black!20, thick] (-1.3657,1.3657) -- (0.0,0.0);
+    \draw[black!20, thick] (1.3657,1.3657) -- (0.0,0.0);
+    \draw[black!20, thick] (4.0971,1.3657) -- (2.7314,0.0);
+    \draw[black!20, thick] (1.3657,1.3657) -- (0.0,2.7314);
+    \draw[black!20, thick] (-4.0971,1.3657) -- (-2.7314,2.7314);
+    \draw[black!20, thick] (-1.3657,1.3657) -- (0.0,2.7314);
+    \draw[black!20, thick] (1.3657,4.0971) -- (0.0,5.4628);
+    \draw[black!20, thick] (-1.3657,1.3657) -- (-2.7314,2.7314);
+    \draw[black!20, thick] (1.3657,1.3657) -- (2.7314,2.7314);
+    \draw[black!20, thick] (-4.0971,1.3657) -- (-2.7314,0.0);
+    \draw[black!20, thick] (-1.3657,4.0971) -- (-2.7314,2.7314);
+    \draw[black!20, thick] (0.0,2.7314) -- (-1.3657,2.7314);
+    \draw[black!20, thick] (-2.7314,2.7314) -- (-1.3657,2.7314);
+    \draw[black!20, thick] (0.0,2.7314) -- (0.0,1.3657);
+    \draw[black!20, thick] (0.0,2.7314) -- (0.0,4.0971);
+    \draw[black!20, thick] (-2.7314,2.7314) -- (-2.7314,1.3657);
+    \draw[black!20, thick] (0.0,5.4628) -- (0.0,4.0971);
+    \draw[black!20, thick] (2.7314,2.7314) -- (1.3657,2.7314);
+    \draw[black!20, thick] (-2.7314,0.0) -- (-2.7314,1.3657);
+    \draw[black!20, thick] (0.0,2.7314) -- (1.3657,2.7314);
+    \draw[black!20, thick] (0.0,0.0) -- (0.0,1.3657);
+    \draw[black!20, thick] (2.7314,2.7314) -- (2.7314,1.3657);
+    \draw[black!20, thick] (2.7314,0.0) -- (2.7314,1.3657);
+    
+    % Active edges (RG path)
+    \draw[blue, line width=3pt, opacity=0.8] (-2.7314,1.3657) -- (-1.3657,1.3657);
+    \draw[blue, line width=3pt, opacity=0.8] (-2.7314,1.3657) -- (-4.0971,1.3657);
+
+    % Nodes (with generic colors based on the original file)
+    \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 0.0) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (0.0, 0.0) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (2.7314, 0.0) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (-2.7314, 2.7314) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (0.0, 2.7314) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (2.7314, 2.7314) circle (6pt);
+    \filldraw[fill=blue!40, draw=black, thick] (0.0, 5.4628) circle (6pt);
+    
+    \filldraw[fill=red!40, draw=black, thick] (-2.7314, 1.3657) circle (6pt); % Active Red
+    \filldraw[fill=red!40, draw=black, thick] (0.0, 1.3657) circle (6pt);
+    \filldraw[fill=red!40, draw=black, thick] (2.7314, 1.3657) circle (6pt);
+    \filldraw[fill=red!40, draw=black, thick] (-1.3657, 2.7314) circle (6pt);
+    \filldraw[fill=red!40, draw=black, thick] (1.3657, 2.7314) circle (6pt);
+    \filldraw[fill=red!40, draw=black, thick] (0.0, 4.0971) circle (6pt);
+    
+    % Green Nodes (Active)
+    \filldraw[fill=yellow!50!orange, draw=none] (-4.0971, 1.3657) circle (9pt);
+    \filldraw[fill=green!60, draw=black, thick] (-4.0971, 1.3657) circle (6pt);
+    
+    \filldraw[fill=yellow!50!orange, draw=none] (-1.3657, 1.3657) circle (9pt);
+    \filldraw[fill=green!60, draw=black, thick] (-1.3657, 1.3657) circle (6pt);
+    
+    % Green Nodes (Inactive)
+    \filldraw[fill=green!40, draw=black, thick] (1.3657, 1.3657) circle (6pt);
+    \filldraw[fill=green!40, draw=black, thick] (4.0971, 1.3657) circle (6pt);
+    \filldraw[fill=green!40, draw=black, thick] (-1.3657, 4.0971) circle (6pt);
+    \filldraw[fill=green!40, draw=black, thick] (1.3657, 4.0971) circle (6pt);
 \end{tikzpicture}

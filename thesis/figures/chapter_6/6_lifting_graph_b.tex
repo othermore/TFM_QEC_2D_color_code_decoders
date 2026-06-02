@@ -1,41 +1,43 @@
-\begin{tikzpicture}[scale=1.5,
+\begin{tikzpicture}[scale=2.0,
     detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
     active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
-    red/.style={fill=red!60},
+    red/.style={fill=red!40},
     green/.style={fill=green!60},
-    blue/.style={fill=blue!60}]
+    blue/.style={fill=blue!40}]
 
-    % Physical Qubits (Triangles)
-    \foreach \i in {0,...,7} {
-        \pgfmathsetmacro{\angA}{45*\i}
-        \pgfmathsetmacro{\angB}{45*(\i-1)}
-        \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (\angA:2) -- (\angB:2) -- cycle;
-    }
+    % 4 Physical Qubits (Triangles) around Red node (0,0)
+    % R=(0,0), G_L=(-1.5,0), G_R=(1.5,0), B_D=(0,-1.5), B_U=(0,1.5)
     
-    % Edge Labels for all restricted edges
-    \node[above, blue!80, font=\scriptsize, rotate=0] at (0:1.3) {$E_{RG}^1$};
-    \node[right, blue!80, font=\scriptsize, rotate=90] at (90:1.3) {$E_{RG}^2$};
-    \node[below, blue!80, font=\scriptsize, rotate=0] at (180:1.3) {$E_{RG}^3$};
-    \node[left, blue!80, font=\scriptsize, rotate=90] at (270:1.3) {$E_{RG}^4$};
+    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (-1.5,0) -- (0,-1.5) -- cycle; % Q1
+    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (1.5,0) -- (0,-1.5) -- cycle; % Q2
+    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (1.5,0) -- (0,1.5) -- cycle; % Q3
+    \fill[black!5, draw=black!20, thick, dashed] (0,0) -- (-1.5,0) -- (0,1.5) -- cycle; % Q4
+
+    % Qubit Labels
+    \node[font=\footnotesize\bfseries, text=black!60] at (-0.5,-0.5) {$Q_1$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (0.5,-0.5) {$Q_2$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (0.5,0.5) {$Q_3$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (-0.5,0.5) {$Q_4$};
     
-    \node[above left, green!60!black, font=\scriptsize, rotate=45] at (45:1.3) {$E_{RB}^2$};
-    \node[below left, green!60!black, font=\scriptsize, rotate=-45] at (135:1.3) {$E_{RB}^3$};
-    \node[below right, green!60!black, font=\scriptsize, rotate=45] at (225:1.3) {$E_{RB}^4$};
-    \node[above right, green!60!black, font=\scriptsize, rotate=-45] at (315:1.3) {$E_{RB}^1$};
+    % Edge Labels
+    \node[above, blue!80, font=\scriptsize] at (-0.75, 0) {$E_{RG}^1$};
+    \node[above, blue!80, font=\scriptsize] at (0.75, 0) {$E_{RG}^2$};
+    \node[right, green!60!black, font=\scriptsize] at (0, -0.75) {$E_{RB}^1$};
+    \node[right, green!60!black, font=\scriptsize] at (0, 0.75) {$E_{RB}^2$};
 
-    % Active Restricted Edges (Syndromes of restricted lattices)
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (0:2); % RG1
-    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (270:2); % RG4
+    % Active Restricted Edges
+    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (-1.5,0); % RG1
+    \draw[blue, line width=3pt, opacity=0.8] (0,0) -- (1.5,0);  % RG2
 
-    % Central Red Node
+    % Active Detectors (Green nodes)
+    \node[active] at (-1.5,0) {};
+    \node[active] at (1.5,0) {};
+
+    % Nodes
     \node[detector, red] at (0,0) {};
-
-    % Green and Blue Nodes
-    \foreach \i in {0,2,4,6} {
-        \node[detector, green] at (\i*45:2) {};
-    }
-    \foreach \i in {1,3,5,7} {
-        \node[detector, blue] at (\i*45:2) {};
-    }
+    \node[detector, green] at (-1.5,0) {};
+    \node[detector, green] at (1.5,0) {};
+    \node[detector, blue] at (0,-1.5) {};
+    \node[detector, blue] at (0,1.5) {};
 
 \end{tikzpicture}
