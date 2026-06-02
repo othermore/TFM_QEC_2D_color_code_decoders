@@ -47,8 +47,8 @@ jobs:
           ls -l thesis/figures/
       - name: Debug file structure
         run: |
-          echo "Checking directory figures/1.introduction/:"
-          ls -la thesis/figures/1.introduction/
+          echo "Mostrando el árbol completo de directorios dentro de thesis:"
+          find thesis/ -type d
       - name: Compile cover.tex
         if: steps.check.outputs.run_build == 'true'
         uses: xu-cheng/latex-action@v3
