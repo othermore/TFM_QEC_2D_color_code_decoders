@@ -36,11 +36,6 @@ jobs:
       - name: Prepare Figures (Bulletproof)
         if: steps.check.outputs.run_build == 'true'
         run: |
-          # 1. Borramos cualquier rastro de intentos anteriores para evitar carpetas anidadas
-          rm -rf thesis/figures
-          # 2. Creamos la carpeta limpia desde cero
-          mkdir -p thesis/figures
-          # 3. Copiamos solo los archivos de dentro hacia el destino
           cp -r figures/* thesis/figures/
           # 4. Listamos el contenido para confirmar que están ahí
           echo "=== Archivos listos para el compilador ==="
