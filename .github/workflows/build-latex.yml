@@ -45,7 +45,10 @@ jobs:
           # 4. Listamos el contenido para confirmar que están ahí
           echo "=== Archivos listos para el compilador ==="
           ls -l thesis/figures/
-
+      - name: Debug file structure
+        run: |
+          echo "Checking directory figures/1.introduction/:"
+          ls -la figures/1.introduction/
       - name: Compile cover.tex
         if: steps.check.outputs.run_build == 'true'
         uses: xu-cheng/latex-action@v3
