@@ -1,28 +1,38 @@
 \begin{tikzpicture}[scale=1.5,
-    nodeRG/.style={rectangle, rounded corners, draw=black, thick, fill=blue!30, inner sep=4pt, minimum width=24pt, minimum height=16pt},
-    nodeRB/.style={rectangle, rounded corners, draw=black, thick, fill=green!40, inner sep=4pt, minimum width=24pt, minimum height=16pt},
+    nodeRG/.style={rectangle, rounded corners, draw=black, thick, fill=blue!30, inner sep=2pt, minimum width=20pt, minimum height=14pt, font=\scriptsize},
+    nodeRB/.style={rectangle, rounded corners, draw=black, thick, fill=green!40, inner sep=2pt, minimum width=20pt, minimum height=14pt, font=\scriptsize},
     active/.style={draw=yellow!50!orange, line width=3pt}]
 
-    % Group for R1
-    \node[nodeRG, active] (RG1) at (-2, 1) {$E_{RG}^1$};
-    \node[nodeRB, active] (RB1) at (2, 1) {$E_{RB}^1$};
+    % R2 Subgraph (Top)
+    \node[nodeRG, active] (RG2D) at (-1.5, 1.2) {$E_{RG}^{2D}$};
+    \node[nodeRG] (RG2U) at (-1.5, 0.4) {$E_{RG}^{2U}$};
     
-    % Group for R2
-    \node[nodeRG, active] (RG2) at (-2, -1) {$E_{RG}^2$};
-    \node[nodeRB, active] (RB2) at (2, -1) {$E_{RB}^2$};
+    \node[nodeRB, active] (RB2R) at (1.5, 1.2) {$E_{RB}^{2R}$};
+    \node[nodeRB] (RB2L) at (1.5, 0.4) {$E_{RB}^{2L}$};
 
-    % Physical qubits (Only ones sharing the same Red vertex)
-    \draw[black!20, thick] (RG1) -- (RB1);
-    \draw[black!20, thick] (RG2) -- (RB2);
+    % R1 Subgraph (Bottom)
+    \node[nodeRG, active] (RG1L) at (-1.5, -0.4) {$E_{RG}^{1L}$};
+    \node[nodeRG] (RG1R) at (-1.5, -1.2) {$E_{RG}^{1R}$};
+    
+    \node[nodeRB, active] (RB1U) at (1.5, -0.4) {$E_{RB}^{1U}$};
+    \node[nodeRB] (RB1D) at (1.5, -1.2) {$E_{RB}^{1D}$};
 
-    % Selected paths by MWPM (disjoint!)
-    \draw[orange, line width=4pt, opacity=0.7] (RG1) -- (RB1);
-    \draw[orange, line width=4pt, opacity=0.7] (RG2) -- (RB2);
+    % Edges for R2
+    \draw[black!20, thick] (RG2D) -- (RB2L) node[midway, sloped, above, font=\tiny, text=black!70] {$Q_4$};
+    \draw[black!20, thick] (RG2U) -- (RB2L) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_5$};
+    \draw[black!20, thick] (RG2U) -- (RB2R) node[midway, sloped, above, font=\tiny, text=black!70] {$Q_6$};
     
-    \draw[black, thick] (RG1) -- (RB1) node[midway, above, sloped, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_A$}};
-    \draw[black, thick] (RG2) -- (RB2) node[midway, above, sloped, font=\scriptsize, text=black, inner sep=2pt] {\textbf{$Q_B$}};
+    % Selected path for R2
+    \draw[orange, line width=3.5pt, opacity=0.7] (RG2D) -- (RB2R);
+    \draw[black, thick] (RG2D) -- (RB2R) node[midway, sloped, below, font=\scriptsize, text=black] {\textbf{$Q_B$}};
+
+    % Edges for R1
+    \draw[black!20, thick] (RG1L) -- (RB1D) node[midway, sloped, above, font=\tiny, text=black!70] {$Q_1$};
+    \draw[black!20, thick] (RG1R) -- (RB1D) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_2$};
+    \draw[black!20, thick] (RG1R) -- (RB1U) node[midway, sloped, above, font=\tiny, text=black!70] {$Q_3$};
     
-    \node at (0, 1.8) {\textbf{Local Problem $R_1$}};
-    \node at (0, -0.2) {\textbf{Local Problem $R_2$}};
+    % Selected path for R1
+    \draw[orange, line width=3.5pt, opacity=0.7] (RG1L) -- (RB1U);
+    \draw[black, thick] (RG1L) -- (RB1U) node[midway, sloped, below, font=\scriptsize, text=black] {\textbf{$Q_A$}};
     
 \end{tikzpicture}

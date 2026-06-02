@@ -5,28 +5,63 @@
     green/.style={fill=green!40},
     blue/.style={fill=blue!40}]
 
-    % Shifted coordinates for local neighborhood
-    % R1 = (1, -1), R2 = (-1, 1)
-    % G = (-1, -1), B = (1, 1)
+    % Triangles background
+    \fill[black!5] (1,-1) -- (-1,-1) -- (1,1) -- cycle; % QA
+    \fill[black!5] (-1,1) -- (-1,-1) -- (1,1) -- cycle; % QB
+    
+    \fill[black!5] (1,-1) -- (-1,-1) -- (1,-3) -- cycle; % Q1
+    \fill[black!5] (1,-1) -- (3,-1) -- (1,-3) -- cycle; % Q2
+    \fill[black!5] (1,-1) -- (3,-1) -- (1,1) -- cycle; % Q3
+    
+    \fill[black!5] (-1,1) -- (-1,-1) -- (-3,1) -- cycle; % Q4
+    \fill[black!5] (-1,1) -- (-1,3) -- (-3,1) -- cycle; % Q5
+    \fill[black!5] (-1,1) -- (-1,3) -- (1,1) -- cycle; % Q6
 
-    \fill[black!5, draw=black!20, thick, dashed] (1,-1) -- (-1,-1) -- (1,1) -- cycle; % QA
-    \fill[black!5, draw=black!20, thick, dashed] (-1,1) -- (-1,-1) -- (1,1) -- cycle; % QB
+    % Inactive edges
+    % R1
+    \draw[blue!40, thick] (1,-1) -- (3,-1); % ERG1R
+    \draw[green!40!black, thick, opacity=0.4] (1,-1) -- (1,-3); % ERB1D
+    % R2
+    \draw[blue!40, thick] (-1,1) -- (-1,3); % ERG2U
+    \draw[green!40!black, thick, opacity=0.4] (-1,1) -- (-3,1); % ERB2L
+
+    % Active Restricted Edges (thick)
+    \draw[blue, line width=3pt, opacity=0.8] (1,-1) -- (-1,-1); % ERG1L
+    \draw[blue, line width=3pt, opacity=0.8] (-1,1) -- (-1,-1); % ERG2D
+    \draw[green!60!black, line width=3pt, opacity=0.8] (1,-1) -- (1,1); % ERB1U
+    \draw[green!60!black, line width=3pt, opacity=0.8] (-1,1) -- (1,1); % ERB2R
+
+    % G-B edges (diagonal dashed lines)
+    \draw[black!40, thick, dashed] (-1,-1) -- (1,1); % Shared
+    \draw[black!40, thick, dashed] (-1,-1) -- (1,-3); % Q1
+    \draw[black!40, thick, dashed] (3,-1) -- (1,-3); % Q2
+    \draw[black!40, thick, dashed] (3,-1) -- (1,1); % Q3
+    \draw[black!40, thick, dashed] (-1,-1) -- (-3,1); % Q4
+    \draw[black!40, thick, dashed] (-1,3) -- (-3,1); % Q5
+    \draw[black!40, thick, dashed] (-1,3) -- (1,1); % Q6
 
     % Qubit Labels
-    \node[font=\footnotesize\bfseries, text=black!60] at (0.3,-0.3) {$Q_A$};
-    \node[font=\footnotesize\bfseries, text=black!60] at (-0.3,0.3) {$Q_B$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (0.2, -0.2) {$Q_A$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (-0.2, 0.2) {$Q_B$};
+    
+    \node[font=\footnotesize\bfseries, text=black!60] at (0.2, -1.8) {$Q_1$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (1.8, -1.8) {$Q_2$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (1.8, -0.2) {$Q_3$};
+    
+    \node[font=\footnotesize\bfseries, text=black!60] at (-1.8, 0.2) {$Q_4$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (-1.8, 1.8) {$Q_5$};
+    \node[font=\footnotesize\bfseries, text=black!60] at (-0.2, 1.8) {$Q_6$};
     
     % Edge Labels
-    \node[below, blue!80, font=\scriptsize] at (0, -1) {$E_{RG}^1$};
-    \node[left, blue!80, font=\scriptsize] at (-1, 0) {$E_{RG}^2$};
-    \node[right, green!60!black, font=\scriptsize] at (1, 0) {$E_{RB}^1$};
-    \node[above, green!60!black, font=\scriptsize] at (0, 1) {$E_{RB}^2$};
-
-    % Active Restricted Edges
-    \draw[blue, line width=3pt, opacity=0.8] (1,-1) -- (-1,-1); % RG1
-    \draw[blue, line width=3pt, opacity=0.8] (-1,1) -- (-1,-1); % RG2
-    \draw[green!60!black, line width=3pt, opacity=0.8] (1,-1) -- (1,1); % RB1
-    \draw[green!60!black, line width=3pt, opacity=0.8] (-1,1) -- (1,1); % RB2
+    \node[below, blue!80, font=\scriptsize] at (0, -1) {$E_{RG}^{1L}$};
+    \node[below, blue!80, font=\scriptsize] at (2, -1) {$E_{RG}^{1R}$};
+    \node[left, blue!80, font=\scriptsize] at (-1, 0) {$E_{RG}^{2D}$};
+    \node[left, blue!80, font=\scriptsize] at (-1, 2) {$E_{RG}^{2U}$};
+    
+    \node[right, green!60!black, font=\scriptsize] at (1, 0) {$E_{RB}^{1U}$};
+    \node[right, green!60!black, font=\scriptsize] at (1, -2) {$E_{RB}^{1D}$};
+    \node[above, green!60!black, font=\scriptsize] at (0, 1) {$E_{RB}^{2R}$};
+    \node[above, green!60!black, font=\scriptsize] at (-2, 1) {$E_{RB}^{2L}$};
 
     % Active Detectors (Red nodes)
     \node[active] at (1,-1) {};
@@ -35,7 +70,13 @@
     % Nodes
     \node[detector, red] at (1,-1) {$R_1$};
     \node[detector, red] at (-1,1) {$R_2$};
-    \node[detector, green] at (-1,-1) {};
-    \node[detector, blue] at (1,1) {};
+    
+    \node[detector, green] at (-1,-1) {}; % Shared G
+    \node[detector, green] at (3,-1) {};
+    \node[detector, green] at (-1,3) {};
+    
+    \node[detector, blue] at (1,1) {}; % Shared B
+    \node[detector, blue] at (1,-3) {};
+    \node[detector, blue] at (-3,1) {};
 
 \end{tikzpicture}
