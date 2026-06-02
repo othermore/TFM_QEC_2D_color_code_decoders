@@ -18,21 +18,21 @@
     \node[nodeRB] (RB1D) at (1.5, -1.2) {$E_{RB}^{1D}$};
 
     % Edges for R2
-    \draw[black!20, thick] (RG2D) -- (RB2L) node[pos=0.25, sloped, above, font=\tiny, text=black!70] {$Q_4$};
-    \draw[black!20, thick] (RG2U) -- (RB2L) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_5$};
-    \draw[black!20, thick] (RG2U) -- (RB2R) node[pos=0.75, sloped, above, font=\tiny, text=black!70] {$Q_6$};
+    \draw[black!20, thick] (RG2D) -- (RB2L) node[pos=0.25, sloped, below, font=\tiny, text=black!70] {$Q_f$};
+    \draw[black!20, thick] (RG2U) -- (RB2L) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_g$};
+    \draw[black!20, thick] (RG2U) -- (RB2R) node[pos=0.75, sloped, below, font=\tiny, text=black!70] {$Q_h$};
     
     % Selected path for R2
     \draw[orange, line width=3.5pt, opacity=0.7] (RG2D) -- (RB2R);
-    \draw[black, thick] (RG2D) -- (RB2R) node[midway, sloped, above, font=\scriptsize, text=black, inner sep=3pt] {\textbf{$Q_B$}};
+    \draw[black, thick] (RG2D) -- (RB2R) node[midway, sloped, above, font=\scriptsize, text=black, inner sep=3pt] {\textbf{$Q_b$}};
 
     % Edges for R1
-    \draw[black!20, thick] (RG1L) -- (RB1D) node[pos=0.25, sloped, above, font=\tiny, text=black!70] {$Q_1$};
-    \draw[black!20, thick] (RG1R) -- (RB1D) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_2$};
-    \draw[black!20, thick] (RG1R) -- (RB1U) node[pos=0.75, sloped, above, font=\tiny, text=black!70] {$Q_3$};
+    \draw[black!20, thick] (RG1L) -- (RB1D) node[pos=0.25, sloped, below, font=\tiny, text=black!70] {$Q_c$};
+    \draw[black!20, thick] (RG1R) -- (RB1D) node[midway, sloped, below, font=\tiny, text=black!70] {$Q_d$};
+    \draw[black!20, thick] (RG1R) -- (RB1U) node[pos=0.75, sloped, below, font=\tiny, text=black!70] {$Q_e$};
     
     % Selected path for R1
     \draw[orange, line width=3.5pt, opacity=0.7] (RG1L) -- (RB1U);
-    \draw[black, thick] (RG1L) -- (RB1U) node[midway, sloped, above, font=\scriptsize, text=black, inner sep=3pt] {\textbf{$Q_A$}};
+    \draw[black, thick] (RG1L) -- (RB1U) node[midway, sloped, above, font=\scriptsize, text=black, inner sep=3pt] {\textbf{$Q_a$}};
     
 \end{tikzpicture}
