@@ -1,9 +1,9 @@
 \begin{tikzpicture}[scale=1.5,
     detector/.style={circle, draw=black, thick, fill=white, inner sep=0pt, minimum size=12pt},
     active/.style={circle, draw=yellow!50!orange, line width=3pt, minimum size=17pt},
-    red/.style={fill=red!40},
-    green/.style={fill=green!40},
-    blue/.style={fill=blue!40}]
+    rednode/.style={fill=red!40},
+    greennode/.style={fill=green!40},
+    bluenode/.style={fill=blue!40}]
 
     % Triangles background
     \fill[black!5] (1,-1) -- (-1,-1) -- (1,1) -- cycle; % QA
@@ -26,10 +26,10 @@
     \draw[green!40!black, thick, opacity=0.4] (-1,1) -- (-3,1); % ERB2L
 
     % Active Restricted Edges (thick)
-    \draw[blue, line width=3pt, opacity=0.8] (1,-1) -- (-1,-1); % ERG1L
-    \draw[blue, line width=3pt, opacity=0.8] (-1,1) -- (-1,-1); % ERG2D
-    \draw[green!60!black, line width=3pt, opacity=0.8] (1,-1) -- (1,1); % ERB1U
-    \draw[green!60!black, line width=3pt, opacity=0.8] (-1,1) -- (1,1); % ERB2R
+    \draw[blue, line width=3.5pt] (1,-1) -- (-1,-1); % ERG1L
+    \draw[blue, line width=3.5pt] (-1,1) -- (-1,-1); % ERG2D
+    \draw[green!60!black, line width=3.5pt] (1,-1) -- (1,1); % ERB1U
+    \draw[green!60!black, line width=3.5pt] (-1,1) -- (1,1); % ERB2R
 
     % G-B edges (diagonal dashed lines)
     \draw[black!40, thick, dashed] (-1,-1) -- (1,1); % Shared
@@ -68,15 +68,15 @@
     \node[active] at (-1,1) {};
 
     % Nodes
-    \node[detector, red] at (1,-1) {$R_1$};
-    \node[detector, red] at (-1,1) {$R_2$};
+    \node[detector, rednode] at (1,-1) {$R_1$};
+    \node[detector, rednode] at (-1,1) {$R_2$};
     
-    \node[detector, green] at (-1,-1) {}; % Shared G
-    \node[detector, green] at (3,-1) {};
-    \node[detector, green] at (-1,3) {};
+    \node[detector, greennode] at (-1,-1) {}; % Shared G
+    \node[detector, greennode] at (3,-1) {};
+    \node[detector, greennode] at (-1,3) {};
     
-    \node[detector, blue] at (1,1) {}; % Shared B
-    \node[detector, blue] at (1,-3) {};
-    \node[detector, blue] at (-3,1) {};
+    \node[detector, bluenode] at (1,1) {}; % Shared B
+    \node[detector, bluenode] at (1,-3) {};
+    \node[detector, bluenode] at (-3,1) {};
 
 \end{tikzpicture}
