@@ -333,13 +333,13 @@ While iterating vertex by vertex is possible, it can be slow in a Python-based s
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_a.tex}}
+        \resizebox{\linewidth}{!}{\input{figures/6.simulating_2d_color_codes/6_lifting_graph_a.tex}}
         \caption{Dual graph ($G^*$)}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_b.tex}}
+        \resizebox{\linewidth}{!}{\input{figures/6.simulating_2d_color_codes/6_lifting_graph_b.tex}}
         \caption{Spatial Local Neighborhood (Active Edges)}
     \end{subfigure}
 
@@ -347,13 +347,13 @@ While iterating vertex by vertex is possible, it can be slow in a Python-based s
 
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_c.tex}}
+        \resizebox{\linewidth}{!}{\input{figures/6.simulating_2d_color_codes/6_lifting_graph_c.tex}}
         \caption{Lifting Graph \& MWPM Resolution}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
-        \resizebox{\linewidth}{!}{\input{figures/chapter_6/6_lifting_graph_d.tex}}
+        \resizebox{\linewidth}{!}{\input{figures/6.simulating_2d_color_codes/6_lifting_graph_d.tex}}
         \caption{Resolved Physical Qubits}
     \end{subfigure}
     \caption[Lifting as a MWPM problem]{Lifting as a MWPM problem: Visual representation of the lifting procedure for a 2 qubit error. (a) In the dual graph, two failing physical errors $Q_a$ and $Q_b$ cause the activation of two red detectors ($R_1$ and $R_2$). The MWPM over the two restricted lattices finds the two blue and green paths. (b) Zooming into the local neighborhood containing the active Red vertices. (c) The dual graph is abstracted into the bipartite Lifting Graph. Because physical qubits only connect restricted edges incident to the same Red vertex, the Lifting Graph naturally decomposes into disjoint local subgraphs. MWPM simultaneously solves the matching path for active edges. (d) The selected edges map directly back to the spatial lattice, fully correcting the syndrome.}
