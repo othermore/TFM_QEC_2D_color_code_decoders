@@ -390,7 +390,7 @@ class ColorCode:
         meas_d = [cirq.measure(q, key=f'd_{q.row}_{q.col}') for q in self.data_qubits]
         circuit.append(cirq.Moment(meas_d))
         
-        # S5_SNIPPET BEGIN
+        #BEGIN S5_SNIPPET
         final_dets = []
         for face in self.faces:
             ax, ay = self.plot_coords[face['ancilla']]
@@ -405,7 +405,7 @@ class ColorCode:
                 coordinate_metadata=metadata
             ))
         circuit.append(cirq.Moment(final_dets))
-        # S5_SNIPPET END
+        #END S5_SNIPPET
                 
         obs_keys = [f'd_{q.row}_{q.col}' for q in self.data_qubits]
         circuit.append(cirq.Moment([stimcirq.CumulativeObservableAnnotation(
