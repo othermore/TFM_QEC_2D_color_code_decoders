@@ -17,7 +17,7 @@ def run_color_code_simulations(
     max_shots: int = 1_000_000,
     max_errors: int = 500,
     num_workers: Optional[int] = None,
-    append: bool = False,
+    execution_mode: str = 'default',
     noise_type: str = 'depolarizing'
 ) -> str:
     """
@@ -32,6 +32,8 @@ def run_color_code_simulations(
         max_shots: Maximum number of shots per task.
         max_errors: Number of logical errors to observe before stopping a task early.
         num_workers: Number of CPU workers for multiprocessing. Defaults to all available cores.
+        execution_mode: 'default' (append/resume), 'force-rerun' (overwrite params), or 'clean-all' (delete csv first).
+        noise_type: 'depolarizing' or 'X'.
         
     Returns:
         The path to the generated CSV file.
@@ -45,6 +47,11 @@ def run_color_code_simulations(
     os.makedirs(results_dir, exist_ok=True)
     csv_path = os.path.join(results_dir, output_file)
     
+    if execution_mode == 'clean-all':
+        if os.path.exists(csv_path):
+            print(f"Clean-all mode: Deleting existing file {output_file}...")
+            os.remove(csv_path)
+    
     tasks = []
     print(f"Generating circuits for {len(distances)} distances and {len(p_rates)} physical error rates...")
     
@@ -52,22 +59,46 @@ def run_color_code_simulations(
     os.makedirs(cache_dir, exist_ok=True)
     
     is_first = True
-    
+    add_chromobius_tags = (decoder_name == 'chromobius')
     color_codes = {}
     
+    # Load existing stats to skip already completed tasks (only in default mode)
+    import pandas as pd
+    existing_stats = {}
+    if execution_mode == 'default' and os.path.exists(csv_path):
+        try:
+            df = pd.read_csv(csv_path)
+            if not df.empty:
+                for _, row in df.iterrows():
+                    if row['decoder'] == decoder_name:
+                        key = (int(row['distance']), int(row['rounds']), float(round(row['p_physical'], 7)))
+                        existing_stats[key] = (int(row['shots']), int(row['errors']))
+        except Exception as e:
+            print(f"Warning: Could not read existing CSV to skip tasks: {e}")
+            
     for d in distances:
         rounds = rounds_func(d)
         cc = ColorCode(distance=d)
         color_codes[d] = cc
         print(f"--> Generating circuits and Detector Error Models (DEM) for distance d={d}...", flush=True)
         for p in p_rates:
+            key = (d, rounds, float(round(p, 7)))
+            
+            # Skip if already reached max stats in default mode
+            if execution_mode == 'default' and key in existing_stats:
+                shots, errors = existing_stats[key]
+                if shots >= max_shots or errors >= max_errors:
+                    print(f"      Skipping d={d}, p={p:.5f} (Already reached {shots} shots / {errors} errors)", flush=True)
+                    continue
+
             # Caching filenames
-            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.stim")
-            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.dem")
+            tag_suffix = "_chromobius" if add_chromobius_tags else ""
+            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}{tag_suffix}.stim")
+            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}{tag_suffix}.dem")
             
             import stim
             if is_first:
-                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0, noise_type=noise_type)
+                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0, noise_type=noise_type, add_chromobius_tags=add_chromobius_tags)
                 dem_new = stim_circ_new.detector_error_model(decompose_errors=False)
                 
                 if os.path.exists(circ_path) and os.path.exists(dem_path):
@@ -107,7 +138,7 @@ def run_color_code_simulations(
                     dem = stim.DetectorErrorModel.from_file(dem_path)
                 else:
                     p_meas_val = p if rounds > 1 else 0.0
-                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0, noise_type=noise_type)
+                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0, noise_type=noise_type, add_chromobius_tags=add_chromobius_tags)
                     dem = stim_circ.detector_error_model(decompose_errors=False)
                     stim_circ.to_file(circ_path)
                     dem.to_file(dem_path)
@@ -125,7 +156,6 @@ def run_color_code_simulations(
     if decoder_name in ['projection', 'restriction'] and decoder_name in custom_decoders:
         decoder = custom_decoders[decoder_name]
 
-        
         # Build coord to color maps for each distance used
         coord_to_color_by_d = {}
         for d in distances:
@@ -153,6 +183,10 @@ def run_color_code_simulations(
                     det_id += 1
                     
             decoder.register_colors(task.circuit.num_detectors, detector_colors)
+            
+    if not tasks:
+        print("No tasks left to run (all requested parameters are already completed).")
+        return csv_path
     
     print(f"Starting Sinter parallel sampling across {num_workers} workers...")
     print(f"Decoder: {decoder_name} | Max shots: {max_shots} | Max errors: {max_errors}")
@@ -167,11 +201,13 @@ def run_color_code_simulations(
         print_progress=True
     )
     
-    print(f"{'Appending' if append else 'Saving'} results to {csv_path}...")
-    mode = 'a' if append else 'w'
+    append_mode = execution_mode in ['default', 'force-rerun'] and os.path.exists(csv_path)
+    
+    print(f"{'Appending/Overwriting' if append_mode else 'Saving'} results to {csv_path}...")
+    mode = 'a' if append_mode else 'w'
     with open(csv_path, mode, newline='') as f:
         writer = csv.writer(f)
-        if not append:
+        if not append_mode:
             writer.writerow(["decoder", "distance", "rounds", "p_physical", "p_logical", "p_logical_err", "shots", "errors", "avg_time_sec"])
         
         for s in stats:
@@ -182,14 +218,9 @@ def run_color_code_simulations(
             errors = s.errors
             
             # Calculate the error percentage and the standard error to display it in the charts
-            # We use the standard error formula: sqrt( p * (1 - p) / N )
-            # where p is the average and N the sample size.
             if shots > 0:
                 p_L = errors / shots
                 p_L_err = np.sqrt(p_L * (1 - p_L) / shots)
-                
-                # Sinter provides the execution time for all shots
-                # which is the sum of the time reported by each thread
                 avg_time = s.seconds / shots if (s.seconds and shots > 0) else 0.0
             else:
                 p_L = 0.0
@@ -198,9 +229,12 @@ def run_color_code_simulations(
                 
             writer.writerow([decoder_name, d, r, p, p_L, p_L_err, shots, errors, avg_time])
             
-    if append:
-        import pandas as pd
+    if append_mode:
         df = pd.read_csv(csv_path)
+        # Drop duplicates by taking the LAST one (the newly appended one)
+        df['p_rounded'] = df['p_physical'].round(7)
+        df = df.drop_duplicates(subset=['decoder', 'distance', 'rounds', 'p_rounded'], keep='last')
+        df = df.drop(columns=['p_rounded'])
         df = df.sort_values(by=['distance', 'p_physical']).reset_index(drop=True)
         df.to_csv(csv_path, index=False)
             
@@ -209,4 +243,3 @@ def run_color_code_simulations(
 
 if __name__ == "__main__":
     pass
-

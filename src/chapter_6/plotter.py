@@ -114,12 +114,15 @@ def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: li
     return threshold
 
 
-def plot_threshold(csv_path: str, title: str = None) -> None:
+def plot_threshold(csv_path: str, title: str = None, distances_filter: list = None) -> None:
     """
     Reads the standardized CSV and plots Logical Error Rate (p_L) vs Physical Error Rate (p).
     """
     df = pd.read_csv(csv_path)
     
+    if distances_filter is not None:
+        df = df[df['distance'].isin(distances_filter)]
+        
     decoder_name = df['decoder'].iloc[0].upper()
     if title is None:
         title = f'Threshold Theorem - Color Code 4.8.8 - {decoder_name}'
@@ -215,13 +218,25 @@ def plot_threshold(csv_path: str, title: str = None) -> None:
     except Exception as e:
         print(f"Could not open image: {e}")
 
-def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None) -> None:
+def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, distances_filter: list = None) -> None:
     """
     Plots the Logical Error Rate (p_L) vs Physical Error Rate (p) in a linear scale,
     zoomed in around the given threshold [0.75 * threshold, 1.25 * threshold].
     """
     df = pd.read_csv(csv_path)
     
+    zoom_csv_path = csv_path.replace('.csv', '_zoom.csv')
+    if os.path.exists(zoom_csv_path):
+        df_zoom = pd.read_csv(zoom_csv_path)
+        df = pd.concat([df, df_zoom], ignore_index=True)
+        
+    if distances_filter is not None:
+        df = df[df['distance'].isin(distances_filter)]
+    
+    if df.empty:
+        print("No data available to plot zoom after filtering.")
+        return
+        
     decoder_name = df['decoder'].iloc[0].upper()
     if title is None:
         title = f'Threshold Zoom - Color Code 4.8.8 - {decoder_name}'
@@ -293,12 +308,18 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None) -> N
     except Exception as e:
         print(f"Could not open image: {e}")
 
-def plot_execution_time(csv_path: str, title: str = None) -> None:
+def plot_execution_time(csv_path: str, title: str = None, distances_filter: list = None) -> None:
     """
     Reads the standardized CSV and plots Average Execution Time vs Code Distance.
     """
     df = pd.read_csv(csv_path)
     
+    if distances_filter is not None:
+        df = df[df['distance'].isin(distances_filter)]
+        
+    if df.empty:
+        return
+        
     decoder_name = df['decoder'].iloc[0].upper()
     if title is None:
         title = f'Decoding Complexity - {decoder_name}'

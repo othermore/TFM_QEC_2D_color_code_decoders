@@ -17,6 +17,11 @@ try:
 except ImportError:
     RestrictionDecoder = None
 
+try:
+    import chromobius
+except ImportError:
+    chromobius = None
+
 
 def get_projection_decoder() -> sinter.Decoder:
     """
@@ -61,5 +66,7 @@ def get_custom_decoders() -> Dict[str, sinter.Decoder]:
         decoders['projection'] = get_projection_decoder()
     if RestrictionDecoder is not None:
         decoders['restriction'] = get_restriction_decoder()
+    if chromobius is not None:
+        decoders.update(chromobius.sinter_decoders())
     return decoders
 

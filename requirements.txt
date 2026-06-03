@@ -52,3 +52,4 @@ tqdm==4.67.3
 typedunits==0.0.2
 tzdata==2026.2
 urllib3==2.6.3
+chromobius

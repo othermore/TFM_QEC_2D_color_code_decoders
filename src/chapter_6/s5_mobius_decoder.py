@@ -6,7 +6,7 @@ from simulator import run_color_code_simulations
 from plotter import plot_threshold, plot_execution_time, calculate_and_save_threshold, plot_threshold_zoom
 import config
 
-DECODER_NAME = 'bposd'
+DECODER_NAME = 'chromobius'
 
 def run_simulate(distances, execution_mode):
     p_rates = config.get_config(DECODER_NAME, 'p_rates')
@@ -16,7 +16,7 @@ def run_simulate(distances, execution_mode):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
     for noise_type in ['depolarizing', 'X']:
-        output_file = f"s2_bposd_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s2_bposd_results.csv"
+        output_file = f"s5_mobius_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s5_mobius_results.csv"
         
         print(f"\n--- Running SIMULATE for noise type: {noise_type.upper()} ---")
         run_color_code_simulations(
@@ -35,7 +35,7 @@ def run_plot(distances_filter):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
     for noise_type in ['depolarizing', 'X']:
-        output_file = f"s2_bposd_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s2_bposd_results.csv"
+        output_file = f"s5_mobius_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s5_mobius_results.csv"
         csv_path = os.path.join(project_root, "data", "chapter_6", output_file)
         
         if not os.path.exists(csv_path):
@@ -45,10 +45,10 @@ def run_plot(distances_filter):
         title_suffix = "" if noise_type == 'depolarizing' else " - Pure X Noise"
         
         print(f"\nGenerating Threshold Plot for {noise_type}...")
-        plot_threshold(csv_path, title=f"Logical noise vs physical noise - 4.8.8 Color Code (BP+OSD{title_suffix})", distances_filter=distances_filter)
+        plot_threshold(csv_path, title=f"Logical noise vs physical noise - 4.8.8 Color Code (Möbius Decoder{title_suffix})", distances_filter=distances_filter)
         
         print(f"Generating Execution Time Plot for {noise_type}...")
-        plot_execution_time(csv_path, title=f"Decoding Complexity - BP+OSD{title_suffix}", distances_filter=distances_filter)
+        plot_execution_time(csv_path, title=f"Decoding Complexity - Möbius Decoder{title_suffix}", distances_filter=distances_filter)
         
 def run_zoom(distances, execution_mode):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -59,7 +59,7 @@ def run_zoom(distances, execution_mode):
     zoom_points = config.get_config(DECODER_NAME, 'zoom_points')
     
     for noise_type in ['depolarizing', 'X']:
-        base_output_file = f"s2_bposd_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s2_bposd_results.csv"
+        base_output_file = f"s5_mobius_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s5_mobius_results.csv"
         zoom_output_file = base_output_file.replace('.csv', '_zoom.csv')
         
         base_csv_path = os.path.join(project_root, "data", "chapter_6", base_output_file)
@@ -78,7 +78,7 @@ def run_zoom(distances, execution_mode):
              print(f"Not enough distances found in {base_csv_path} to calculate threshold for zoom.")
              continue
              
-        est_threshold = calculate_and_save_threshold(base_csv_path, f'BPOSD_{noise_type.upper()}', filtered_distances_list, df_filtered)
+        est_threshold = calculate_and_save_threshold(base_csv_path, f'MOBIUS_{noise_type.upper()}', filtered_distances_list, df_filtered)
         
         if np.isnan(est_threshold):
             print(f"Could not estimate threshold for {noise_type}. Skipping zoom.")
@@ -100,10 +100,10 @@ def run_zoom(distances, execution_mode):
         )
         
         title_suffix = "" if noise_type == 'depolarizing' else " - Pure X Noise"
-        plot_threshold_zoom(base_csv_path, est_threshold, title=f"Logical noise vs physical noise - 4.8.8 Color Code (BP+OSD - Zoom{title_suffix})", distances_filter=distances)
+        plot_threshold_zoom(base_csv_path, est_threshold, title=f"Logical noise vs physical noise - 4.8.8 Color Code (Möbius Decoder - Zoom{title_suffix})", distances_filter=distances)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="BP+OSD simulation pipeline.")
+    parser = argparse.ArgumentParser(description="Möbius Decoder simulation pipeline.")
     subparsers = parser.add_subparsers(dest="command", required=True)
     
     # Common arguments
@@ -134,7 +134,7 @@ if __name__ == "__main__":
         execution_mode = 'clean-all'
         
     print("=====================================================")
-    print("      BP+OSD Simulation - 4.8.8 Color Code   ")
+    print("      Möbius Decoder Simulation - 4.8.8 Color Code   ")
     print("=====================================================")
     
     if args.command == 'simulate':
