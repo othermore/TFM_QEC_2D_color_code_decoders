@@ -225,7 +225,7 @@ Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ fro
 
 With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=5$ to $d=23$. 
 
-\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision. Finally, we determine the continuous mode of all the crossing points.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 8.71\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
+\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision. Finally, we determine the continuous mode of all the crossing points.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. The logical error rate curves cross at a threshold of $p_{th} \approx 8.81\%$. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
 
 \begin{figure}[htbp]
     \centering
@@ -238,17 +238,16 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s2_bposd_results_time.png}
     \end{subfigure}
-    \caption[Simulation 2: BP+OSD decoder.]{Main simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 8.71\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
+    \caption[Simulation 2: BP+OSD decoder.]{Main simulation results for the configured BP+OSD decoder on the 4.8.8 Color Code lattice. The logical error threshold (left) is observed at $p_{th} \approx 8.81\%$. The corresponding average execution times per shot (right) confirm the expected behavior and polynomial scaling of the algorithm.}
     \label{fig:bposd_threshold}
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-While we haven't found any direct reference of BP+OSD used against a 4.6.6 color code on code-capacity and bit-flip errors, Kung, Kuo and Lai achieved a $p = 15.43\%$ threshold applying BP+OSD to 6.6.6 color codes under a depolarizing noise model (\cite{Kung_2023}), which is higher than our results under depolarizing noise ($p=13.44\%$). 
+While we haven't found any direct reference of BP+OSD used against a 4.6.6 color code on code-capacity and bit-flip errors, Kung, Kuo and Lai achieved a $p_{th} = 15.43\%$ threshold applying BP+OSD to 6.6.6 color codes under a depolarizing noise model (\cite{Kung_2023}), which is higher than our results under depolarizing noise ($p_{th}=13.43\%$). We can similarly estimate the equivalent threshold of Kung's simulation for bit-flip noise as $p_{th}^{bit-flip}=\frac{2}{3} * p_{th}^{depolarizing}$, resulting in an estimated bit-flip noise threshold for their implementation on a 6.6.6. lattice of $p_{th} = 10.28\%$, above our observed threshold.
 
-Our implementation of BP+OSD will serve as a baseline for the remaining simulations.
 
 \section{Projection decoder}
-In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. We need to also implement the decoder itself, for which we have not found any library or existing implementation. Delfosse (\cite{Delfosse_2014}) details the lifting process in an Appendix. Stephens (\cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a reference to validate our implementation. 
+In order to evaluate the topological Projection Decoder within our simulation pipeline, we implemented a custom decoder interface compatible with the \texttt{sinter} framework. We need to also implement the decoder itself, for which we have not found any library or existing implementation. Delfosse \cite{Delfosse_2014} details the lifting process in an Appendix. Stephens \cite{stephens2014efficientfaulttolerantdecodingtopological} proposes an improvement to the algorithm. While we have not implemented such improvement, the results in their article served as a reference to validate our implementation. 
 
 Our implementation is divided into three stages: the Projection step (where the lattice is decomposed), the Minimum Weight Perfect Matching (MWPM) step, and the Lifting step. To improve performance, the projections and graph transformations are pre-compiled and cached for each specific code distance.
 
@@ -285,7 +284,7 @@ Finally, the algorithm checks the logical observables of the Color Code (from it
 
 \notatfm{With Color Codes of small distances, the removal of detectors during the projection results in small surface codes for which the results are inconsistent. This is why only simulate distances $d\geq9$.} We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=9$ up to $d=23$ and the same ranges and number of shots used in prior simulations. Once again, while we've run simulations for both depolarizing and X-type noise, we present here the results of the latter. 
 
-The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. We observe an empirical threshold of $p_{th} \approx \text{7.3}\%$. 
+The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. We observe an empirical threshold of $p_{th} \approx \text{7.37}\%$. 
 
 Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances.
 
@@ -299,12 +298,12 @@ Below this crossover point, the logical error curves exhibit a robust exponentia
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s3_projection_results_time.png}
     \end{minipage}
-    \caption[Simulation 3: Projection decoder thresholds.]{Threshold evaluation for the topological Projection Decoder. (Left) Performance under a pure X-only noise model showing a threshold of $p_{th} \approx \text{7.3}\%$. (Right) Decoding execution time as a function of the distance.}
+    \caption[Simulation 3: Projection decoder thresholds.]{Threshold evaluation for the topological Projection Decoder. (Left) Performance under a pure X-only noise model showing a threshold of $p_{th} \approx \text{7.37}\%$. (Right) Decoding execution time as a function of the distance.}
     \label{fig:projection_threshold}
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Delfosse (\cite{Delfosse_2014}) reports a $p=8.7\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is slightly better than our results. Our implementation of the projection decoder performs below the BP+OSD decoder presented before. 
+Delfosse (\cite{Delfosse_2014}) reports a $p_{th}=8.7\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is slightly better than our results. Our implementation of the projection decoder performs below the BP+OSD decoder presented before. 
 
 \section{Restriction Decoder}
 \label{sec:restriction_decoder_simulation}
@@ -380,7 +379,7 @@ By running a final MWPM instance on this Lifting Graph, the decoder automaticall
 
 We evaluated the performance of our Restriction Decoder implementation using the same full Monte Carlo methodology, examining lattice distances from $d=9$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced). 
 
-The results of this simulation are shown in Figure \ref{fig:restriction_threshold}. The Restriction Decoder achieves a threshold of $p_{th} \approx 9.23\%$.). 
+The results of this simulation are shown in Figure \ref{fig:restriction_threshold}. The Restriction Decoder achieves a threshold of $p_{th} \approx 9.33\%$.). 
 
 \begin{figure}[htpb]
     \centering
@@ -392,12 +391,12 @@ The results of this simulation are shown in Figure \ref{fig:restriction_threshol
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s4_restriction_results_X_time.png}
     \end{minipage}
-    \caption[Simulation 4: Restriction decoder thresholds.]{Threshold evaluation for the topological Restriction Decoder. (Left) Performance under a pure X-only noise model showing a high threshold of $p_{th} \approx \text{9.23}\%$. (Right) Decoding execution time as a function of the distance.}
+    \caption[Simulation 4: Restriction decoder thresholds.]{Threshold evaluation for the topological Restriction Decoder. (Left) Performance under a pure X-only noise model showing a high threshold of $p_{th} \approx \text{9.33}\%$. (Right) Decoding execution time as a function of the distance.}
     \label{fig:restriction_threshold}
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Kubica and Delfosse (\cite{Kubica_2023}) report a $p=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder performs below that. However, the restriction decoder performs better than the BP+OSD and the projection decoders. 
+Kubica and Delfosse (\cite{Kubica_2023}) report a $p_{th}=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder has a lower threshold. However, our simulation of the restriction decoder yields better threshold estimations than the BP+OSD and the projection decoders. 
 
 
 
@@ -416,7 +415,7 @@ We incorporated this into our \texttt{ColorCode} circuit generation as an option
 Since \texttt{Chromobius} is designed to act directly as a Sinter decoder, its execution within our framework requires no additional post-processing layers.
 
 \subsection{Threshold Evaluation}
-We evaluated the Möbius Decoder with distances from $d=9$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow the general methodology described in Section \ref{sec:simulation_architecture}. The Möbius decoder achieves a threshold of $p_{th} \approx 9.23\%$, as seen in Figure \ref{fig:mobius_threshold_x}. 
+We evaluated the Möbius Decoder with distances from $d=9$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow the general methodology described in Section \ref{sec:simulation_architecture}. The Möbius decoder achieves a threshold of $p_{th} \approx 9.22\%$, as seen in Figure \ref{fig:mobius_threshold_x}. 
 
 \begin{figure}[htpb]
     \centering
@@ -433,7 +432,7 @@ We evaluated the Möbius Decoder with distances from $d=9$ to $d=23$ under an X-
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Kubica and Delfosse (\cite{Kubica_2023}) report a $p=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
+Kubica and Delfosse (\cite{Kubica_2023}) report a $p_{th}=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
 
 
 \section{Concatenated MWPM decoder}
