@@ -396,12 +396,12 @@ The results of this simulation are shown in Figure \ref{fig:restriction_threshol
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Kubica and Delfosse (\cite{Kubica_2023}) report a $p_{th}=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder has a lower threshold. However, our simulation of the restriction decoder yields better threshold estimations than the BP+OSD and the projection decoders. 
+Kubica and Delfosse \cite{Kubica_2023} report a $p_{th}=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder has a lower threshold. However, our simulation of the restriction decoder yields better threshold estimations than the BP+OSD and the projection decoders. 
 
 
 
 \section{Möbius Decoder}
-\label{sec:mobius_decoder}
+\label{sec:mobius_decoder_simulation}
 
 The Möbius Decoder provides an efficient approach to decoding 2D color codes by gluing the three projections of the lattice so they can directly be processed by MWPM. In our architecture, we employ the \texttt{Chromobius} library \cite{chromobius}, an optimized implementation of the Möbius decoder developed by Craig Gidney. 
 
@@ -432,7 +432,7 @@ We evaluated the Möbius Decoder with distances from $d=9$ to $d=23$ under an X-
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Kubica and Delfosse (\cite{Kubica_2023}) report a $p_{th}=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
+Sahay1 and Brown \cite{Sahay_2022} report a $p_{th}=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
 
 
 \section{Concatenated MWPM decoder}
