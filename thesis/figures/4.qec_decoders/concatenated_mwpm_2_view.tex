@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_2_a.tex}
+        }
+        \caption{Active detectors}
+        \label{fig:concat_exec_syndrome}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_2_b.tex}
+        }
+        \caption{First-round MWPM}
+        \label{fig:concat_exec_mwpm1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_2_c.tex}
+        }
+        \caption{Second-round MWPM}
+        \label{fig:concat_exec_mwpm2}
+    \end{subfigure}
+    
+    \caption[Decoding flow of the Concatenated MWPM Red sub-routine.]{Decoding flow of the Concatenated MWPM Red sub-routine. \textbf{(a)} An error string of two physical qubits (red dots) triggers two Green, two Blue, and no Red detectors (highlighted in glowing orange). \textbf{(b)} First-round MWPM: The active Green and Blue detectors are perfectly matched in the Red-restricted lattice, successfully identifying the faulty Red edge (thick purple line). \textbf{(c)} Second-round MWPM: The previously identified Red edge is mapped as an active defect (purple node with orange glow) in the Red-only lattice, along with any active Red detectors (none in this example). The final matching correctly identifies the exact physical qubits (thick orange lines) that caused the syndrome.}
+    \label{fig:4:concatenated_execution}
+\end{figure}
+
+\end{document}

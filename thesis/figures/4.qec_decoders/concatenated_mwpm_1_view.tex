@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_1_a.tex}
+        }
+        \caption{Color code lattice}
+        \label{fig:concat_primal}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_1_b.tex}
+        }
+        \caption{Restricted lattice (dual graph)}
+        \label{fig:concat_restricted}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{concatenated_mwpm_1_c.tex}
+        }
+        \caption{Monochromatic lattice}
+        \label{fig:concat_mono}
+    \end{subfigure}
+    
+    \caption[Graph structures used in the Concatenated MWPM decoder.]{Graph structures used in the Concatenated MWPM decoder (Red sub-routine). \textbf{(a)} The primal distance-5 color code lattice. \textbf{(b)} The Red-restricted lattice $\mathcal{L}_\text{rest}^{(r)}$ representing a bipartite dual graph where nodes are the Green and Blue faces, and edges are the primal Red edges. \textbf{(c)} The Red-only (monochromatic) lattice $\mathcal{L}_\text{mono}^{(r)}$ where nodes are the Red faces and the primal Red edges, and edges represent the physical data qubits.}
+    \label{fig:4:concatenated_graphs}
+\end{figure}
+
+\end{document}
+º
