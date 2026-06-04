@@ -750,7 +750,7 @@ The algorithm computes the parity of $C_0$ (by counting the flipped qubits modul
 \section{Concatenated MWPM}
 \label{sec:concatenated_mwpm}
 
-As we have seen, the core difficulty in decoding color codes is that a single physical error activates three stabilizers, creating a hypergraph problem. While the Projection Decoder tackles this by resolving three separated projections and geometrically combining the solutions to disambiguate, the Concatenated MWPM decoder \cite{Lee} takes a more graph-theoretic approcah. 
+As we have seen, the core difficulty in decoding color codes is that a single physical error activates three stabilizers, creating a hypergraph problem. While the Projection Decoder tackles this by resolving three separated projections and geometrically combining the solutions to disambiguate, the Concatenated MWPM decoder \cite{Lee_2025} takes a more graph-theoretic approcah. 
 
 \notatfm{Unlike decoders that rely on geometric lifting (projection) or local algebraic analysis (restriction) to resolve ambiguities, this approach keeps the problem strictly within the domain of graph theory by chaining two bipartite matchings.} Instead of performing a single matching followed by a lifting, this decoder circumvents the hypergraph problem entirely by performing two sequential MWPM executions per color. The decoding process is divided into three parallel sub-routines (one for each color), which operate independently to find a valid correction. Once the three sub-routines finish, the decoder compares their results to choose the most optimal one. 
 
