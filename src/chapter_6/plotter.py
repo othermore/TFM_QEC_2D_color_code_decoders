@@ -124,13 +124,18 @@ def plot_threshold(csv_path: str, title: str = None, distances_filter: list = No
         df = df[df['distance'].isin(distances_filter)]
         
     decoder_name = df['decoder'].iloc[0].upper()
+    if '_X.csv' in csv_path or '_X_zoom.csv' in csv_path:
+        save_decoder_name = decoder_name + '_X'
+    else:
+        save_decoder_name = decoder_name + '_DEPOLARIZING'
+        
     if title is None:
         title = f'Threshold Theorem - Color Code 4.8.8 - {decoder_name}'
         
     distances = sorted(df['distance'].unique())
     
     # Calculate threshold programmatically
-    est_threshold = calculate_and_save_threshold(csv_path, decoder_name, distances, df)
+    est_threshold = calculate_and_save_threshold(csv_path, save_decoder_name, distances, df)
     
     plt.figure(figsize=(9, 6))
     
