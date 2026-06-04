@@ -801,21 +801,21 @@ Let us examine these steps in detail by looking at the Red sub-routine as an exa
 
 
 \subsection{Step 1: First-round MWPM on the Restricted Lattice}
-The Red sub-routine is designed to find a valid correction by temporarily ignoring the Red stabilizers of the syndrome. To do this, the decoder first constructs a bipartite graph called the \textit{Red-restricted lattice}.
+\notatfm{The restricted lattice here is equivalent to the projected or restricted lattices on the Projection and Restriction decoders.} The Red sub-routine is designed to find a valid correction by ignoring the Red stabilizers of the syndrome. To do this, the decoder first constructs a bipartite graph called the \textit{Red-restricted lattice}.
 
-As illustrated in Figure \ref{fig:4:concatenated_graphs}, In this graph, the nodes are exclusively the Green and Blue stabilizers. The edges connecting these nodes correspond strictly to the \textit{Red edges} of the primal color code lattice. Because there is exactly one primal Red edge separating any adjacent Green and Blue face, this restricted graph has no parallel edges. 
+As illustrated in Figure \ref{fig:4:concatenated_graphs}, In this graph, the nodes are exclusively the Green and Blue stabilizers. The edges connecting these nodes correspond strictly to the \textit{Red edges} of the primal color code lattice (which are equivalent to the merged two qubits shared by these faces). 
 
-The algorithm inputs the activated Green and Blue stabilizers from the syndrome as defects and runs a standard MWPM. The output is a set of primal Red edges that are suspected to contain the error (see Figure \ref{fig:4:concatenated_execution}). However, since a Red edge simply connects two physical qubits, the algorithm still does not know which of the two specific qubits failed.
+The algorithm inputs the activated Green and Blue stabilizers from the syndrome as defects and runs a standard MWPM. The output is a set of primal Red edges that are suspected to contain the error (see Figure \ref{fig:4:concatenated_execution}). However, since a Red edge effectively connects two physical qubits, the algorithm still does not know which of the two qubits failed.
 
 \subsection{Step 2: Second-round MWPM on the Monochromatic Lattice}
 To resolve the physical qubit ambiguity left by the first step, the decoder builds a completely new graph called the \textit{Red-only lattice} (or monochromatic lattice).
 
-As illustrated in Figure \ref{fig:4:concatenated_graphs}, in this new graph, the nodes are the Red stabilizers (which were completely ignored in the first step) and the Red edges of the primal lattice. The edges of this new graph are the actual physical qubits. Geometrically, this perfectly matches the color code structure, as every physical qubit exclusively connects one Red stabilizer and one Red edge.
+As illustrated in Figure \ref{fig:4:concatenated_graphs}, in this new graph, twice as much nodes are added: the Red stabilizers (which were completely ignored in the first step) and the Red edges of the primal lattice. The edges of this new graph are the actual physical qubits. Geometrically, this perfectly matches the color code structure, as every physical qubit connects one Red stabilizer and one Red edge.
     
 The algorithm marks two types of defects in this graph: the activated Red stabilizers from the original syndrome, and the suspected Red edges returned by the first MWPM. Running a second MWPM on this graph directly yields a set of edges. Since the edges in this graph are the physical qubits themselves, the output is a concrete, unambiguous prediction of the physical errors (see Figure \ref{fig:4:concatenated_execution}). By concatenating these two matchings, the Red sub-routine returns a valid set of physical errors that perfectly explains the syndrome.
 
 \subsection{Step 3: Repetition and Final Selection}
-The Red sub-routine alone guarantees a mathematically valid set of physical errors. However, to maximize the accuracy of the decoder, the algorithm repeats the exact same two-step process for the Green and Blue colors. This is done by ignoring the Green stabilizers to run the Green sub-routine, and ignoring the Blue stabilizers to run the Blue sub-routine.
+The Red sub-routine alone guarantees a mathematically valid set of physical errors. However, to maximize the accuracy of the decoder, the algorithm repeats the exact same two-step process for the Green and Blue colors.
 
 \begin{figure}[hbt!]
     \centering
@@ -849,11 +849,11 @@ The Red sub-routine alone guarantees a mathematically valid set of physical erro
         \label{fig:concat_exec_mwpm2}
     \end{subfigure}
     
-    \caption[Decoding flow of the Concatenated MWPM Red sub-routine.]{Decoding flow of the Concatenated MWPM Red sub-routine. \textbf{(a)} An error string of two physical qubits (red dots) triggers two Green, two Blue, and no Red detectors (highlighted in glowing orange). \textbf{(b)} First-round MWPM: The active Green and Blue detectors are perfectly matched in the Red-restricted lattice, successfully identifying the faulty Red edge (thick purple line). \textbf{(c)} Second-round MWPM: The previously identified Red edge is mapped as an active defect (purple node with orange glow) in the Red-only lattice, along with any active Red detectors (none in this example). The final matching correctly identifies the exact physical qubits (thick orange lines) that caused the syndrome.}
+    \caption[Decoding flow of the Concatenated MWPM Red sub-routine.]{Decoding flow of the Concatenated MWPM Red sub-routine. \textbf{(a)} An error string of two physical qubits (red dots) triggers two Blue detectors (highlighted in glowing orange). \textbf{(b)} First-round MWPM: The active Blue detectors are perfectly matched in the Red-restricted lattice, successfully identifying the faulty Red edges (thick red lines). \textbf{(c)} Second-round MWPM: The previously identified Red edges are mapped as an active defect (red node with orange glow) in the Red-only lattice, along with any active Red detectors (none in this example). The final matching correctly identifies the exact physical qubits (thick red lines with a dot) that caused the syndrome.}
     \label{fig:4:concatenated_execution}
 \end{figure}
 
-As illustrated in Figure \ref{fig:4:concatenated_execution}, the decoder ultimately produces three valid physical correction candidates (one from each color). To make the final decision, the algorithm evaluates the total weight of each predicted error chain. In a basic code-capacity noise model where all errors are equally likely, this is equivalent to simply counting the number of physical qubits in each prediction. However, for circuit-level noise models where errors have different probabilities, the total weight is calculated based on these specific probabilities. 
+As illustrated in Figure \ref{fig:4:concatenated_execution}, the decoder ultimately produces three valid physical correction candidates (one from each color). To make the final decision, the algorithm evaluates the total weight of each predicted error chain. In a basic code-capacity noise model where all errors are equally likely, this is equivalent to simply counting the number of physical qubits in each prediction. However, for noise models where errors have different probabilities, the total weight is calculated based on these specific probabilities. 
 
 The decoder compares the three candidates and selects the one with the lowest total weight. This ensures that the algorithm always outputs the most probable physical error configuration to successfully correct the quantum state.
 
