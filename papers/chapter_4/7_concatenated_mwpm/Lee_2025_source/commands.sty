@@ -1,0 +1,183 @@
+\ProvidesPackage{commands}
+
+% Allow \eqref inside section title
+\pdfstringdefDisableCommands{\def\eqref#1{(\ref{#1})}}
+
+% Colors
+\newcommand{\red}[1]{{\color{red} #1}}
+% \newcommand{\green}[1]{{\color{Green} #1}}
+\newcommand{\blue}[1]{{\color{blue} #1}}
+
+% Frequently used terms
+\newcommand{\cnot}{\textsc{cnot}\xspace}
+\newcommand{\subfig}[1]{\textbf{(#1)}\xspace}
+\newcommand{\stim}{\textit{Stim}\xspace}
+\newcommand{\pymatching}{\textit{PyMatching}\xspace}
+
+% Anyons
+\newcommand{\ttt}[1]{\texttt{#1}}
+\newcommand{\rbs}{\ttt{r}\xspace}
+\newcommand{\gbs}{\ttt{g}\xspace}
+\newcommand{\bbs}{\ttt{b}\xspace}
+\newcommand{\cbs}{\ttt{c}\xspace}
+\newcommand{\xbs}{\ttt{x}\xspace}
+\newcommand{\ybs}{\ttt{y}\xspace}
+\newcommand{\zbs}{\ttt{z}\xspace}
+\newcommand{\wbs}{\ttt{w}\xspace}
+\newcommand{\pbs}{\ttt{p}\xspace}
+\newcommand{\qbs}{\ttt{q}\xspace}
+\newcommand{\rx}{\ttt{rx}\xspace}
+\newcommand{\ry}{\ttt{ry}\xspace}
+\newcommand{\rz}{\ttt{rz}\xspace}
+\newcommand{\gx}{\ttt{gx}\xspace}
+\newcommand{\gy}{\ttt{gy}\xspace}
+\newcommand{\gz}{\ttt{gz}\xspace}
+\newcommand{\gw}{\ttt{gw}\xspace}
+\newcommand{\bx}{\ttt{bx}\xspace}
+\newcommand{\by}{\ttt{by}\xspace}
+\newcommand{\bz}{\ttt{bz}\xspace}
+\newcommand{\idn}{\ttt{1}\xspace}
+
+% Font family for label names
+\newcommand{\labelname}[1]{\textsl{#1}}
+
+% For math environments
+\newcommand{\mr}[1]{\mathrm{#1}}
+\newcommand{\Xv}[1]{X_{#1}}
+\newcommand{\Yv}[1]{Y_{#1}}
+\newcommand{\Zv}[1]{Z_{#1}}
+\newcommand{\sgx}[1]{S_{#1}^X}
+\newcommand{\sgz}[1]{S_{#1}^Z}
+\newcommand{\rot}[2]{#1_{#2}}
+\newcommand{\rotS}[1]{\rot{#1}{\pi/4}}
+\newcommand{\rotT}[1]{\rot{#1}{\pi/8}}
+\newcommand{\ntri}[1]{n_\mr{tri}\qty(#1)}
+\newcommand{\nrec}[2]{n_\mr{rec}\qty(#1,#2)}
+\newcommand{\lgc}[1]{\overline{#1}}
+\newcommand{\lgx}{\lgc{X}}
+\newcommand{\lgy}{\lgc{Y}}
+\newcommand{\lgz}{\lgc{Z}}
+\newcommand{\lgi}{\lgc{I}}
+\newcommand{\lqdata}[1]{\labelname{LQ}_{#1}}
+\newcommand{\dwdata}[1]{\labelname{DW}_{#1}}
+\newcommand{\bigast}{\mathop{\scalebox{1.5}{\raisebox{-0.2ex}{$\ast$}}}}  % Big asterisk
+\newcommand{\identity}{\mathds{1}}
+\newcommand{\len}[1]{\abs{\operatorname{supp}\qty(#1)}}
+\newcommand{\stropset}[3]{\mathcal{R}_{#1}\qty(#2, #3)}
+\newcommand{\stropsetsim}[2]{\mathcal{R}_{#1,#2}}
+\newcommand{\strop}[3]{R_{#1}\qty(#2, #3)}
+\newcommand{\stropsim}[2]{R_{#1,#2}}
+\newcommand{\dist}[1]{\Delta\qty(#1)}
+\newcommand{\distprime}[1]{\Delta'\qty(#1)}
+\newcommand{\distpauli}[3]{\Delta_{#1}\qty(#2, #3)}
+\newcommand{\condset}[1]{\mathcal{C}\qty(#1)}
+\newcommand{\condsete}[1]{\mathcal{C}_{#1}}
+% \newcommand{\condsetecomp}[1]{\widetilde{\mathcal{C}}_{#1}}
+\newcommand{\ov}{\overline}
+\newcommand{\powerset}[1]{\mathcal{P}\qty(#1)}
+\newcommand{\indfunc}[2]{\mathbf{1}_{#1}\qty(#2)}
+\newcommand{\dout}{d_\mr{out}}
+\newcommand{\dm}{d_\mr{m}}
+\newcommand{\dx}{d_\mr{X}}
+\newcommand{\dz}{d_\mr{Z}}
+\newcommand{\indexbtn}[1]{I_\mr{b}\qty(#1)}
+\newcommand{\ep}[1]{\operatorname{Ep}\qty(#1)}
+\newcommand{\threestars}{\star{\star}\star}
+\newcommand{\depchannelone}[1]{\mathcal{E}_{#1}^{(1)}}
+\newcommand{\depchanneltwo}[1]{\mathcal{E}_{#1}^{(2)}}
+\newcommand{\paulichannel}[2]{\mathcal{E}_{#1}^{(#2)}}
+\newcommand{\lattice}[1]{\mathcal{L}_{#1}}
+\newcommand{\LatticeTwoD}{\lattice{\mr{2D}}}
+\newcommand{\LatticeRest}[1]{\lattice{\neg #1}^*}
+\newcommand{\LatticeMono}[1]{\lattice{#1}^*}
+\newcommand{\EdgeCorrRest}[1]{\epsilon_{\neg #1}}
+\newcommand{\EdgeCorrMono}[1]{\epsilon_{#1}}
+\newcommand{\latelm}[2]{\Delta_{#2}\qty(#1)}
+\newcommand{\latelmcolor}[3]{\Delta_{#2}^{(#3)}\qty(#1)}
+\newcommand{\MWPM}[3]{\operatorname{MWPM}\qty(#3;#1,#2)}
+\newcommand{\wtilde}{\widetilde}
+\newcommand{\CrossThrs}[1]{p^\times_\mr{#1}}
+\newcommand{\ScalingThrs}[1]{p^\star_\mr{#1}}
+\newcommand{\CrossThrsLT}[1]{p^{\times,\mr{LT}}_\mr{#1}}
+\newcommand{\CrossThrsVar}[1]{\wtilde{p}^\times_\mr{#1}}
+\newcommand{\AncMeasOutcome}[3]{m_{#1,#2}^{(#3)}}
+\newcommand{\DataMeasOutcome}[1]{\widetilde{m}_{#1}}
+\newcommand{\Detector}[3]{D_{#1,#2}^{(#3)}}
+\newcommand{\dem}[1]{\mathcal{M}_{#1}}
+\newcommand{\ResDEM}[1]{\dem{\neg #1}}
+\newcommand{\OnlyDEM}[1]{\dem{#1}}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newcommand{\BdryVert}[1]{v_\mr{bdry}^{#1}}
+\newcommand{\ceil}[1]{{\left\lceil #1 \right\rceil}}
+\newcommand{\floor}[1]{{\left\lfloor #1 \right\rfloor}}
+
+% Patches in a distillation block
+\newcommand{\talpha}{\textalpha\xspace}
+\newcommand{\tbeta}{\textbeta\xspace}
+\newcommand{\mralpha}{\text{\talpha}}
+\newcommand{\mrbeta}{\text{\tbeta}}
+\newcommand{\tripatch}{\labelname{TRI}}
+\newcommand{\recpatch}{\labelname{REC}}
+\newcommand{\patchout}{$\tripatch_\mr{out}$\xspace}
+\newcommand{\patchab}{$\recpatch_\mr{AB}$\xspace}
+\newcommand{\patchcd}{$\recpatch_\mr{CD}$\xspace}
+\newcommand{\patchalpha}{$\tripatch_\mralpha$\xspace}
+\newcommand{\patchbeta}{$\tripatch_\mrbeta$\xspace}
+\newcommand{\patch}[1]{$\labelname{PAT}_{#1}$\xspace}
+\newcommand{\dw}[1]{$\labelname{DW}_{#1}$\xspace}
+\newcommand{\lgzout}{\lgz_\mr{out}}
+\newcommand{\lgzA}{\lgz_\mr{A}}
+\newcommand{\lgzB}{\lgz_\mr{B}}
+\newcommand{\lgzC}{\lgz_\mr{C}}
+\newcommand{\lgzD}{\lgz_\mr{D}}
+\newcommand{\lgza}{\lgz_\mralpha}
+\newcommand{\lgzb}{\lgz_\mrbeta}
+\newcommand{\lgiout}{\lgi_\mr{out}}
+\newcommand{\lgiA}{\lgi_\mr{A}}
+\newcommand{\lgiB}{\lgi_\mr{B}}
+\newcommand{\lgiC}{\lgi_\mr{C}}
+\newcommand{\lgiD}{\lgi_\mr{D}}
+\newcommand{\lgia}{\lgi_\mralpha}
+\newcommand{\lgib}{\lgi_\mrbeta}
+\newcommand{\lgztp}[1]{\lgz_\qty{\text{#1}}}
+
+% Boson table
+\newcommand{\condensed}{\bullet}
+\newcommand{\confined}{\bm{\times}}
+\newcommand{\electric}{\blacksquare}
+\newcommand{\magnetic}{\blacktriangle}
+\newcommand{\colorone}[1]{{\color{orange} #1}}
+\newcommand{\colortwo}[1]{{\color{SkyBlue} #1}}
+\newcommand{\coloredelectric}[1]{%
+    \IfEqCase{#1}{%
+        {1}{\colorone{\electric}}%
+        {2}{\colortwo{\electric}}%
+    }[\electric]
+}
+\newcommand{\coloredmagnetic}[1]{%
+    \IfEqCase{#1}{%
+        {1}{\colortwo{\magnetic}}%
+        {2}{\colorone{\magnetic}}%
+    }[\magnetic]%
+}
+\newcommand{\selectsymbol}[5][]{%
+    \IfEq{#2}{#4}%
+    {\IfEq{#3}{#5}{\condensed}{\coloredelectric{#1}}}%
+    {\IfEq{#3}{#5}{\coloredmagnetic{#1}}{\confined}}%
+}
+\newcommand{\bosontabletemp}[9]{\begin{array}{c|c|c}#1&#2&#3 \\ \hline #4&#5&#6 \\ \hline #7&#8&#9\end{array}}
+\newcommand{\bosontable}{\bosontabletemp{\rx}{\gx}{\bx}{\ry}{\gy}{\by}{\rz}{\gz}{\bz}}
+\newcommand{\bosontablepartial}[3][]{\bosontabletemp%
+    {\selectsymbol[#1]{r}{x}{#2}{#3}}%
+    {\selectsymbol[#1]{g}{x}{#2}{#3}}%
+    {\selectsymbol[#1]{b}{x}{#2}{#3}}%
+    {\selectsymbol[#1]{r}{y}{#2}{#3}}%
+    {\selectsymbol[#1]{g}{y}{#2}{#3}}%
+    {\selectsymbol[#1]{b}{y}{#2}{#3}}%
+    {\selectsymbol[#1]{r}{z}{#2}{#3}}%
+    {\selectsymbol[#1]{g}{z}{#2}{#3}}%
+    {\selectsymbol[#1]{b}{z}{#2}{#3}}%
+}
+\newcommand{\bosontableST}[7][]{
+    \bosontablepartial[#6]{#2}{#3} \xleftrightarrow{#1} \bosontablepartial[#7]{#4}{#5}
+}

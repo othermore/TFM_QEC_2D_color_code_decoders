@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+\draw[black,thick,solid] (-2.5,-2.5) -- (2.5,2.5);
+\draw[black,thick,solid] (-2.5,2.5) -- (2.5,2.5);
+\draw[black,thick,solid] (2.5,-2.5) -- (2.5,2.5);
+\draw[black,thick,solid] (-2.5,2.5) -- (-2.5,-2.5);
+\draw[black,thick,solid] (2.5,-2.5) -- (-2.5,-2.5);
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=black] (0,0) circle (0.2) node [label=above right:{}](D90880){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=black] (-2.5,2.5) circle (0.2) node [label=above right:{}](D11163){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=black] (2.5,-2.5) circle (0.2) node [label=above right:{}](D15596){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (1.0,1.0) circle (0.2) node [label=above right:{}](D72579){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-1.0,-1.0) circle (0.2) node [label=above right:{}](D93169){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (2.0,2.0) circle (0.2) node [label=above right:{}](D27146){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-2.0,-2.0) circle (0.2) node [label=above right:{}](D30326){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (2.5,-0.5) circle (0.2) node [label=above right:{}](D19802){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-2.5,0.5) circle (0.2) node [label=above right:{}](D86524){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-0.5,2.5) circle (0.2) node [label=above right:{}](D82192){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (0.5,-2.5) circle (0.2) node [label=above right:{}](D76436){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (2.5,1.5) circle (0.2) node [label=above right:{}](D57017){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-2.5,-1.5) circle (0.2) node [label=above right:{}](D18){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (1.5,2.5) circle (0.2) node [label=above right:{}](D62760){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-1.5,-2.5) circle (0.2) node [label=above right:{}](D87947){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=black] (2.37,2.37) rectangle (2.63,2.63) node [label={[label distance=-0.3cm]30:{}}](A94874){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=black] (-2.63,-2.63) rectangle (-2.37,-2.37) node [label={[label distance=-0.3cm]30:{}}](A25357){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (0.37,0.37) rectangle (0.63,0.63) node [label={[label distance=-0.3cm]30:{}}](A81282){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-0.63,-0.63) rectangle (-0.37,-0.37) node [label={[label distance=-0.3cm]30:{}}](A96833){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (1.37,1.37) rectangle (1.63,1.63) node [label={[label distance=-0.3cm]30:{}}](A42780){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-1.63,-1.63) rectangle (-1.37,-1.37) node [label={[label distance=-0.3cm]30:{}}](A82009){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (2.37,-1.63) rectangle (2.63,-1.37) node [label={[label distance=-0.3cm]30:{}}](A78058){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-2.63,1.37) rectangle (-2.37,1.63) node [label={[label distance=-0.3cm]30:{}}](A2008){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-1.63,2.37) rectangle (-1.37,2.63) node [label={[label distance=-0.3cm]30:{}}](A87245){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (1.37,-2.63) rectangle (1.63,-2.37) node [label={[label distance=-0.3cm]30:{}}](A84576){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (2.37,0.37) rectangle (2.63,0.63) node [label={[label distance=-0.3cm]30:{}}](A486){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-2.63,-0.63) rectangle (-2.37,-0.37) node [label={[label distance=-0.3cm]30:{}}](A74666){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (0.37,2.37) rectangle (0.63,2.63) node [label={[label distance=-0.3cm]30:{}}](A94276){};\end{scope}
+\begin{scope}[rotate=-0]\filldraw[fill=white, draw=red] (-0.63,-2.63) rectangle (-0.37,-2.37) node [label={[label distance=-0.3cm]30:{}}](A63621){};\end{scope}
+\end{tikzpicture}

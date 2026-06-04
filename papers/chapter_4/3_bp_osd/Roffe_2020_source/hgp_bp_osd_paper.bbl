@@ -1,0 +1,415 @@
+\begin{thebibliography}{10}
+
+\bibitem{Shor1995}
+Peter~W. Shor.
+\newblock \href{https://doi.org/10.1103/physreva.52.r2493}{Scheme for reducing
+  decoherence in quantum computer memory}.
+\newblock {\em Physical Review A}, 52(4):R2493--R2496, 1995.
+
+\bibitem{Gottesman09}
+Daniel Gottesman.
+\newblock \href{http://arxiv.org/abs/arXiv:0904.2557}{An introduction to
+  quantum error correction and fault-tolerant quantum computation}.
+\newblock 2009, arXiv:0904.2557.
+
+\bibitem{Devitt13}
+Simon~J Devitt, William~J Munro, and Kae Nemoto.
+\newblock \href{http://dx.doi.org/10.1088/0034-4885/76/7/076001}{Quantum error
+  correction for beginners}.
+\newblock {\em Reports on Progress in Physics}, 76(7):076001, 2013.
+
+\bibitem{Terhal15}
+Barbara~M. Terhal.
+\newblock \href{http://dx.doi.org/10.1103/revmodphys.87.307}{Quantum error
+  correction for quantum memories}.
+\newblock {\em Reviews of Modern Physics}, 87(2):307--346, 2015.
+
+\bibitem{roffe2019quantum}
+Joschka Roffe.
+\newblock \href{http://dx.doi.org/10.1080/00107514.2019.1667078}{Quantum error
+  correction: an introductory guide}.
+\newblock {\em Contemporary Physics}, 60(3):226--245, 2019.
+
+\bibitem{delfosse2020}
+Nicolas Delfosse.
+\newblock \href{http://arxiv.org/abs/arXiv:2001.11427}{Hierarchical decoding to
+  reduce hardware requirements for quantum computing}.
+\newblock 2020, arXiv:2001.11427.
+
+\bibitem{babar2015fifteen}
+Zunaira Babar, Panagiotis Botsinis, Dimitrios Alanis, Soon~Xin Ng, and Lajos
+  Hanzo.
+\newblock \href{http://dx.doi.org/10.1109/ACCESS.2015.2503267}{Fifteen years of
+  quantum {LDPC} coding and improved decoding strategies}.
+\newblock {\em iEEE Access}, 3:2492--2519, 2015.
+
+\bibitem{gallager1962}
+Robert Gallager.
+\newblock \href{http://dx.doi.org/10.1109/TIT.1962.1057683}{Low-density
+  parity-check codes}.
+\newblock {\em IRE Transactions on information theory}, 8(1):21--28, 1962.
+
+\bibitem{Bae2019}
+Jung~Hyun Bae, Ahmed Abotabl, Hsien-Ping Lin, Kee-Bong Song, and Jungwon Lee.
+\newblock \href{https://doi.org/10.1017/atsip.2019.10}{An overview of channel
+  coding for 5g {NR} cellular communications}.
+\newblock {\em {APSIPA} Transactions on Signal and Information Processing}, 8,
+  2019.
+
+\bibitem{pearl1982reverend}
+Judea Pearl.
+\newblock \href{http://dx.doi.org/10.5555/2876686.2876719}{{\em Reverend Bayes
+  on inference engines: A distributed hierarchical approach}}.
+\newblock Cognitive Systems Laboratory, School of Engineering and Applied
+  Science, 1982.
+
+\bibitem{kschischang2001factor}
+Frank~R Kschischang, Brendan~J Frey, Hans-Andrea Loeliger, et~al.
+\newblock \href{http://dx.doi.org/10.1109/18.910572}{Factor graphs and the
+  sum-product algorithm}.
+\newblock {\em IEEE Transactions on information theory}, 47(2):498--519, 2001.
+
+\bibitem{shannon49}
+Claude~Elwood Shannon.
+\newblock \href{http://dx.doi.org/10.1002/j.1538-7305.1948.tb01338.x}{A
+  mathematical theory of communication}.
+\newblock {\em Bell system technical journal}, 27(3):379--423, 1948.
+
+\bibitem{mackay1997near}
+David~JC MacKay and Radford~M Neal.
+\newblock \href{http://dx.doi.org/10.1049/el:19970362}{Near shannon limit
+  performance of low density parity check codes}.
+\newblock {\em Electronics letters}, 33(6):457--458, 1997.
+
+\bibitem{tillich2013quantum}
+Jean-Pierre Tillich and Gilles Z{\'e}mor.
+\newblock \href{http://dx.doi.org/10.1109/TIT.2013.2292061}{Quantum ldpc codes
+  with positive rate and minimum distance proportional to the square root of
+  the blocklength}.
+\newblock {\em IEEE Transactions on Information Theory}, 60(2):1193--1202,
+  2013.
+
+\bibitem{Criger18}
+Ben Criger and Imran Ashraf.
+\newblock \href{http://dx.doi.org/10.22331/q-2018-10-19-102}{Multi-path
+  {S}ummation for {D}ecoding 2{D} {T}opological {C}odes}.
+\newblock {\em {Quantum}}, 2:102, 2018.
+
+\bibitem{Dennis02}
+Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+\newblock \href{http://dx.doi.org/10.1063/1.1499754}{Topological quantum
+  memory}.
+\newblock {\em Journal of Mathematical Physics}, 43(9):4452--4505, 2002.
+
+\bibitem{leverrier2015quantum}
+Anthony Leverrier, Jean-Pierre Tillich, and Gilles Z{\'e}mor.
+\newblock \href{http://dx.doi.org/10.1109/FOCS.2015.55}{Quantum expander
+  codes}.
+\newblock \href{http://dx.doi.org/10.1109/FOCS.2015.55}{In {\em 2015 IEEE 56th
+  Annual Symposium on Foundations of Computer Science}}, pages 810--824. IEEE,
+  2015.
+
+\bibitem{fawzi2018constant}
+Omar Fawzi, Antoine Grospellier, and Anthony Leverrier.
+\newblock \href{http://dx.doi.org/10.1109/FOCS.2018.00076}{Constant overhead
+  quantum fault-tolerance with quantum expander codes}.
+\newblock \href{http://dx.doi.org/10.1109/FOCS.2018.00076}{In {\em 2018 IEEE
+  59th Annual Symposium on Foundations of Computer Science (FOCS)}}, pages
+  743--754. IEEE, 2018.
+
+\bibitem{fawzi2018efficient}
+Omar Fawzi, Antoine Grospellier, and Anthony Leverrier.
+\newblock \href{http://dx.doi.org/10.1145/3188745.3188886}{Efficient decoding
+  of random errors for quantum expander codes}.
+\newblock \href{http://dx.doi.org/10.1145/3188745.3188886}{In {\em Proceedings
+  of the 50th Annual ACM SIGACT Symposium on Theory of Computing}}, pages
+  521--534, 2018.
+
+\bibitem{grospellier2018numerical}
+Antoine Grospellier and Anirudh Krishna.
+\newblock \href{http://arxiv.org/abs/arXiv:1810.03681}{Numerical study of
+  hypergraph product codes}.
+\newblock 2018, arXiv:1810.03681.
+
+\bibitem{grospellier2020combining}
+Antoine Grospellier, Lucien Grou{\`e}s, Anirudh Krishna, and Anthony Leverrier.
+\newblock \href{http://arxiv.org/abs/arXiv:2004.11199}{Combining hard and soft
+  decoders for hypergraph product codes}.
+\newblock 2020, arXiv:2004.11199.
+
+\bibitem{Panteleev_2019}
+Pavel Panteleev and Gleb Kalachev.
+\newblock \href{http://arxiv.org/abs/arXiv:1904.02703}{Degenerate quantum ldpc
+  codes with good finite length performance}, 2019, arXiv:1904.02703.
+
+\bibitem{Fossorier_1995}
+M.P.C. Fossorier and Shu Lin.
+\newblock \href{https://doi.org/10.1109%2F18.412683}{Soft-decision decoding of
+  linear block codes based on ordered statistics}.
+\newblock {\em {IEEE} Transactions on Information Theory}, 41(5):1379--1396,
+  1995.
+
+\bibitem{fossorier2001iterative}
+Marc~PC Fossorier.
+\newblock \href{http://dx.doi.org/10.1109/49.924874}{Iterative
+  reliability-based decoding of low-density parity check codes}.
+\newblock {\em IEEE Journal on selected Areas in Communications},
+  19(5):908--917, 2001.
+
+\bibitem{Kitaev03}
+A.Yu. Kitaev.
+\newblock \href{http://dx.doi.org/10.1016/s0003-4916(02)00018-0}{Fault-tolerant
+  quantum computation by anyons}.
+\newblock {\em Annals of Physics}, 303(1):2--30, 2003.
+
+\bibitem{Fowler12}
+Austin~G. Fowler, Matteo Mariantoni, John~M. Martinis, and Andrew~N. Cleland.
+\newblock \href{http://dx.doi.org/10.1103/physreva.86.032324}{Surface codes:
+  Towards practical large-scale quantum computation}.
+\newblock {\em Physical Review A}, 86(3):032324, 2012.
+
+\bibitem{Kelly16}
+J~Kelly, R~Barends, AG~Fowler, A~Megrant, E~Jeffrey, TC~White, D~Sank,
+  JY~Mutus, B~Campbell, Yu~Chen, et~al.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevA.94.032321}{Scalable in situ
+  qubit calibration during repetitive error detection}.
+\newblock {\em Physical Review A}, 94(3):032321, 2016.
+
+\bibitem{Rigetti16}
+Eyob~A Sete, William~J Zeng, and Chad~T Rigetti.
+\newblock \href{http://dx.doi.org/10.1109/ICRC.2016.7738703}{A functional
+  architecture for scalable quantum computing}.
+\newblock \href{http://dx.doi.org/10.1109/ICRC.2016.7738703}{In {\em 2016 IEEE
+  International Conference on Rebooting Computing (ICRC)}}, pages 1--6. IEEE,
+  2016.
+
+\bibitem{Takita17}
+Maika Takita, Andrew~W Cross, AD~C{\'o}rcoles, Jerry~M Chow, and Jay~M
+  Gambetta.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevLett.119.180501}{Experimental
+  demonstration of fault-tolerant state preparation with superconducting
+  qubits}.
+\newblock {\em Physical review letters}, 119(18):180501, 2017.
+
+\bibitem{Randall15}
+J.~Randall, S.~Weidt, E.~D. Standing, K.~Lake, S.~C. Webster, D.~F. Murgia,
+  T.~Navickas, K.~Roth, and W.~K. Hensinger.
+\newblock \href{http://dx.doi.org/10.1103/physreva.91.012322}{Efficient
+  preparation and detection of microwave dressed-state qubits and qutrits with
+  trapped ions}.
+\newblock {\em Physical Review A}, 91(1):012322, 2015.
+
+\bibitem{Debnath16}
+S.~Debnath, N.~M. Linke, C.~Figgatt, K.~A. Landsman, K.~Wright, and C.~Monroe.
+\newblock \href{http://dx.doi.org/10.1038/nature18648}{Demonstration of a small
+  programmable quantum computer with atomic qubits}.
+\newblock {\em Nature}, 536(7614):63, 2016.
+
+\bibitem{Brandl16}
+M.~F. Brandl, M.~W. van Mourik, L.~Postler, A.~Nolf, K.~Lakhmanskiy, R.~R.
+  Paiva, S.~M\"{o}ller, N.~Daniilidis, H.~H\"{a}ffner, V.~Kaushal, T.~Ruster,
+  C.~Warschburger, H.~Kaufmann, U.~G. Poschinger, F.~Schmidt-Kaler,
+  P.~Schindler, T.~Monz, and R.~Blatt.
+\newblock \href{http://dx.doi.org/10.1063/1.4966970}{Cryogenic setup for
+  trapped ion quantum computing}.
+\newblock {\em Review of Scientific Instruments}, 87(11):113103, 2016.
+
+\bibitem{Ballance16}
+C.{\hspace{0.167em}}J. Ballance, T.{\hspace{0.167em}}P. Harty,
+  N.{\hspace{0.167em}}M. Linke, M.{\hspace{0.167em}}A. Sepiol, and
+  D.{\hspace{0.167em}}M. Lucas.
+\newblock \href{http://dx.doi.org/10.1103/physrevlett.117.060504}{High-fidelity
+  quantum logic gates using trapped-ion hyperfine qubits}.
+\newblock {\em Physical Review Letters}, 117(6):060504, 2016.
+
+\bibitem{Qiang18}
+Xiaogang Qiang, Xiaoqi Zhou, Jianwei Wang, Callum~M. Wilkes, Thomas Loke, Sean
+  O'Gara, Laurent Kling, Graham~D. Marshall, Raffaele Santagati, Timothy~C.
+  Ralph, Jingbo~B. Wang, Jeremy~L. O'Brien, Mark~G. Thompson, and Jonathan
+  C.~F. Matthews.
+\newblock \href{http://dx.doi.org/10.1038/s41566-018-0236-y}{Large-scale
+  silicon quantum photonics implementing arbitrary two-qubit processing}.
+\newblock {\em Nature Photonics}, 12(9):534--539, 2018.
+
+\bibitem{Wang2016}
+Xi-Lin Wang, Luo-Kan Chen, W.~Li, H.-L. Huang, C.~Liu, C.~Chen, Y.-H. Luo,
+  Z.-E. Su, D.~Wu, Z.-D. Li, H.~Lu, Y.~Hu, X.~Jiang, C.-Z. Peng, L.~Li, N.-L.
+  Liu, Yu-Ao Chen, Chao-Yang Lu, and Jian-Wei Pan.
+\newblock \href{http://dx.doi.org/10.1103/physrevlett.117.210502}{Experimental
+  ten-photon entanglement}.
+\newblock {\em Physical Review Letters}, 117(21):210502, 2016.
+
+\bibitem{wu2019programmable}
+Yang Wu, Ya~Wang, Xi~Qin, Xing Rong, and Jiangfeng Du.
+\newblock \href{http://dx.doi.org/10.1038/s41534-019-0129-z}{A programmable
+  two-qubit solid-state quantum processor under ambient conditions}.
+\newblock {\em npj Quantum Information}, 5(1):1--5, 2019.
+
+\bibitem{kovalev2018numerical}
+Alexey~A Kovalev, Sanjay Prabhakar, Ilya Dumer, and Leonid~P Pryadko.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevA.97.062320}{Numerical and
+  analytical bounds on threshold error rates for hypergraph-product codes}.
+\newblock {\em Physical Review A}, 97(6):062320, 2018.
+
+\bibitem{liu2019neural}
+Ye-Hua Liu and David Poulin.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevLett.122.200501}{Neural
+  belief-propagation decoders for quantum error-correcting codes}.
+\newblock {\em Physical review letters}, 122(20):200501, 2019.
+
+\bibitem{Nickerson14}
+Naomi~H Nickerson, Joseph~F Fitzsimons, and Simon~C Benjamin.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevX.4.041041}{Freely scalable
+  quantum technologies using cells of 5-to-50 qubits with very lossy and noisy
+  photonic links}.
+\newblock {\em Physical Review X}, 4(4):041041, 2014.
+
+\bibitem{Edmonds65}
+Jack Edmonds.
+\newblock \href{http://dx.doi.org/10.4153/cjm-1965-045-4}{Paths, trees, and
+  flowers}.
+\newblock {\em Canadian Journal of Mathematics}, 17:449--467, 1965.
+
+\bibitem{Kolmogorov09}
+Vladimir Kolmogorov.
+\newblock \href{http://dx.doi.org/10.1007/s12532-009-0002-8}{Blossom v: a new
+  implementation of a minimum cost perfect matching algorithm}.
+\newblock {\em Mathematical Programming Computation}, 1(1):43--67, 2009.
+
+\bibitem{tanner1981recursive}
+R~Tanner.
+\newblock \href{http://dx.doi.org/10.1109/TIT.1981.1056404}{A recursive
+  approach to low complexity codes}.
+\newblock {\em IEEE Transactions on information theory}, 27(5):533--547, 1981.
+
+\bibitem{roffe2020quantum}
+Joschka Roffe, Stefan Zohren, Dominic Horsman, and Nicholas Chancellor.
+\newblock \href{http://dx.doi.org/10.1109/TIT.2019.2938751}{Quantum codes from
+  classical graphical models}.
+\newblock {\em IEEE Transactions on Information Theory}, 66(1):130--146, 2020.
+
+\bibitem{Knill97}
+Emanuel Knill and Raymond Laflamme.
+\newblock \href{http://dx.doi.org/10.1103/physreva.55.900}{Theory of quantum
+  error-correcting codes}.
+\newblock {\em Physical Review A}, 55(2):900--911, 1997.
+
+\bibitem{Gottesman97}
+Daniel Gottesman.
+\newblock \href{http://arxiv.org/abs/arXiv:quant-ph/9807006}{The {H}eisenberg
+  representation of quantum computers}.
+\newblock {\em Group22: Proceedings of the XXII International Colloquium on
+  Group Theoretical Methods in Physics, pp. 32-43, Cambridge, MA, International
+  Press}, 1999, arXiv:quant-ph/9807006.
+
+\bibitem{Calderbank95}
+A.~R. Calderbank and Peter~W. Shor.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevA.54.1098}{Good quantum
+  error-correcting codes exist}.
+\newblock {\em Phys. Rev. A}, 54:1098--1106, 1996.
+
+\bibitem{Steane96b}
+A.~Steane.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevLett.77.793}{Error correcting
+  codes in quantum theory}.
+\newblock {\em Phys.~Rev.~Lett.}, 77:793--797, 1996.
+
+\bibitem{Steane97}
+A.~M. Steane.
+\newblock \href{http://dx.doi.org/10.1103/physrevlett.78.2252}{Active
+  stabilization, quantum computation, and quantum state synthesis}.
+\newblock {\em Physical Review Letters}, 78(11):2252, 1997.
+
+\bibitem{mackay2004sparse}
+David~JC MacKay, Graeme Mitchison, and Paul~L McFadden.
+\newblock \href{http://dx.doi.org/10.1109/TIT.2004.834737}{Sparse-graph codes
+  for quantum error correction}.
+\newblock {\em IEEE Transactions on Information Theory}, 50(10):2315--2330,
+  2004.
+
+\bibitem{mackay1999good}
+David~JC MacKay.
+\newblock \href{http://dx.doi.org/10.1109/18.748992}{Good error-correcting
+  codes based on very sparse matrices}.
+\newblock {\em IEEE transactions on Information Theory}, 45(2):399--431, 1999.
+
+\bibitem{bp_osd}
+Joschka Roffe.
+\newblock \href{https://github.com/quantumgizmos/bp_osd}{{BP+OSD}: Belief
+  propagation with ordered statistics post-processing for decoding quantum ldpc
+  codes}.
+\newblock 2020.
+\newblock \url{https://github.com/quantumgizmos/bp_osd}.
+
+\bibitem{emran2014simplified}
+Ahmed~A Emran and Maha Elsabrouty.
+\newblock \href{http://dx.doi.org/10.1109/CCNC.2014.6940497}{Simplified
+  variable-scaled min sum ldpc decoder for irregular ldpc codes}.
+\newblock \href{http://dx.doi.org/10.1109/CCNC.2014.6940497}{In {\em 2014 IEEE
+  11th Consumer Communications and Networking Conference (CCNC)}}, pages
+  518--523. IEEE, 2014.
+
+\bibitem{quintavalle2020}
+Armanda~O Quintavalle, Michael Vasmer, Joschka Roffe, and Earl~T Campbell.
+\newblock \href{http://arxiv.org/abs/arXiv:2009.11790}{Single-shot error
+  correction of three-dimensional homological product codes}.
+\newblock {\em preprint arXiv:2009.11790}, 2020, arXiv:2009.11790.
+
+\bibitem{bombin2015single}
+H{\'e}ctor Bomb{\'\i}n.
+\newblock \href{http://dx.doi.org/10.1103/PhysRevX.5.031043}{Single-shot
+  fault-tolerant quantum error correction}.
+\newblock {\em Physical Review X}, 5(3):031043, 2015.
+
+\bibitem{vasmer2019three}
+Michael Vasmer and Dan~E Browne.
+\newblock
+  \href{http://dx.doi.org/10.1103/PhysRevA.100.012312}{Three-dimensional
+  surface codes: Transversal gates and fault-tolerant architectures}.
+\newblock {\em Physical Review A}, 100(1):012312, 2019.
+
+\bibitem{campbell2019theory}
+Earl Campbell.
+\newblock \href{http://dx.doi.org/10.1088/2058-9565/aafc8f}{A theory of
+  single-shot error correction for adversarial noise}.
+\newblock {\em Quantum Science and Technology}, 2019.
+
+\bibitem{vijay2016fracton}
+Sagar Vijay, Jeongwan Haah, and Liang Fu.
+\newblock Fracton topological order, generalized lattice gauge theory, and
+  duality.
+\newblock {\em Physical Review B}, 94(23):235157, 2016.
+
+\bibitem{hagiwara2011spatially}
+Manabu Hagiwara, Kenta Kasai, Hideki Imai, and Kohichi Sakaniwa.
+\newblock Spatially coupled quasi-cyclic quantum ldpc codes.
+\newblock In {\em 2011 IEEE International Symposium on Information Theory
+  Proceedings}, pages 638--642. IEEE, 2011.
+
+\bibitem{radford_neal}
+Radford~M. Neal.
+\newblock \href{http://radfordneal.github.io/LDPC-codes/}{Software for low
+  density parity check codes}.
+\newblock 2012.
+\newblock \url{http://radfordneal.github.io/LDPC-codes/}.
+
+\bibitem{scipy}
+{Virtanen} et~al. and SciPy 1.~0 {Contributors}.
+\newblock
+  \href{http://dx.doi.org/https://doi.org/10.1038/s41592-019-0686-2}{{SciPy
+  1.0: Fundamental Algorithms for Scientific Computing in Python}}.
+\newblock {\em Nature Methods}, 17:261--272, 2020.
+
+\bibitem{numpy}
+St{\'e}fan van~der Walt, S~Chris Colbert, and Gael Varoquaux.
+\newblock \href{http://dx.doi.org/10.1109/MCSE.2011.37}{The numpy array: a
+  structure for efficient numerical computation}.
+\newblock {\em Computing in Science \& Engineering}, 13(2):22--30, 2011.
+
+\bibitem{matplotlib}
+J.~D. Hunter.
+\newblock \href{http://dx.doi.org/10.1109/MCSE.2007.55}{Matplotlib: A 2d
+  graphics environment}.
+\newblock {\em Computing in Science \& Engineering}, 9(3):90--95, 2007.
+
+\end{thebibliography}

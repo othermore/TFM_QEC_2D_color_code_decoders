@@ -1,0 +1,40 @@
+
+
+\onecolumn
+
+\section{Proof of Theorem \ref{thm:revolver}} \label{sec:thm:proof}
+
+\input{theorem_proof}
+
+
+
+
+
+
+\section{Experiment Details}
+
+\paragraph{ Caching Intermediate Robots  }
+In practice, frequently calling the function for generating simulation environments could be costly.
+To avoid repetitively generating a new environment at the start of every epoch and to speed up the training process, we pre-generate and cache a large number (e.g. 1,000) of environments.
+At the start of each epoch, we randomly sample within the desired interpolation range and fetch a simulation environment from the cache.
+When the number of cached environments is large, the above sampling behavior is a good approximation to sampling from continuous robot evolution.
+
+
+
+\paragraph{Experiment Hyperparameter Setting}
+We illustrate the hyperparameters of the neural networks used in Gym and Hand Manipulation Suite experiments, including layer size, batch size and learning rate, in Table \ref{tab:supp:net:param}.
+
+
+\input{table_supp_hyperparam}
+
+
+\section{Qualitative Results}
+
+We show the process of transferring policy on intermediate robots on Hand Manipulation Suite tasks in Figure \ref{fig:dapg:evolve:viz}.
+We show the transferred policy on the target robot of Hand Manipulation Suite tasks in Figure \ref{fig:dapg:policy:viz}. 
+For more details, please refer to the supplementary video.
+
+
+\input{fig_supp_viz_2}
+\input{fig_supp_viz_1}
+

@@ -1,0 +1,300 @@
+\begin{thebibliography}{48}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Brockman et~al.(2016)Brockman, Cheung, Pettersson, Schneider,
+  Schulman, Tang, and Zaremba]{mujoco:gym}
+Brockman, G., Cheung, V., Pettersson, L., Schneider, J., Schulman, J., Tang,
+  J., and Zaremba, W.
+\newblock Openai gym, 2016.
+
+\bibitem[Chen et~al.(2018)Chen, Murali, and Gupta]{chen2018hardware}
+Chen, T., Murali, A., and Gupta, A.
+\newblock Hardware conditioned policies for multi-robot transfer learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pp.\
+  9355--9366, 2018.
+
+\bibitem[Cheney et~al.(2014)Cheney, MacCurdy, Clune, and
+  Lipson]{cheney2014unshackling}
+Cheney, N., MacCurdy, R., Clune, J., and Lipson, H.
+\newblock Unshackling evolution: evolving soft robots with multiple materials
+  and a powerful generative encoding.
+\newblock \emph{ACM SIGEVOlution}, 2014.
+
+\bibitem[Clune et~al.(2012)Clune, Pennock, Ofria, and
+  Lenski]{clune2012ontogeny}
+Clune, J., Pennock, R.~T., Ofria, C., and Lenski, R.~E.
+\newblock Ontogeny tends to recapitulate phylogeny in digital organisms.
+\newblock \emph{The American Naturalist}, 180\penalty0 (3):\penalty0 E54--E63,
+  2012.
+
+\bibitem[Coumans \& Bai(2016)Coumans and Bai]{pybullet}
+Coumans, E. and Bai, Y.
+\newblock Pybullet, a python module for physics simulation for games, robotics
+  and machine learning, 2016.
+
+\bibitem[Daudelin et~al.(2018)Daudelin, Jing, Tosun, Yim, Kress-Gazit, and
+  Campbell]{daudelin2018integrated}
+Daudelin, J., Jing, G., Tosun, T., Yim, M., Kress-Gazit, H., and Campbell, M.
+\newblock An integrated system for perception-driven autonomy with modular
+  robots.
+\newblock \emph{Science Robotics}, 2018.
+
+\bibitem[Fujimoto et~al.(2018)Fujimoto, Hoof, and Meger]{td3}
+Fujimoto, S., Hoof, H., and Meger, D.
+\newblock Addressing function approximation error in actor-critic methods.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  1587--1596. PMLR, 2018.
+
+\bibitem[Gilpin et~al.(2008)Gilpin, Kotay, Rus, and Vasilescu]{gilpin2008miche}
+Gilpin, K., Kotay, K., Rus, D., and Vasilescu, I.
+\newblock Miche: Modular shape formation by self-disassembly.
+\newblock \emph{IJRR}, 2008.
+
+\bibitem[Gupta et~al.(2021)Gupta, Savarese, Ganguli, and
+  Fei-Fei]{gupta2021embodied}
+Gupta, A., Savarese, S., Ganguli, S., and Fei-Fei, L.
+\newblock Embodied intelligence via learning and evolution.
+\newblock \emph{arXiv preprint arXiv:2102.02202}, 2021.
+
+\bibitem[Ha(2018)]{ha2018reinforcement}
+Ha, D.
+\newblock Reinforcement learning for improving agent design.
+\newblock \emph{arXiv preprint arXiv:1810.03779}, 2018.
+
+\bibitem[Ha et~al.(2017)Ha, Coros, Alspach, Kim, and Yamane]{ha2017joint}
+Ha, S., Coros, S., Alspach, A., Kim, J., and Yamane, K.
+\newblock Joint optimization of robot design and motion parameters using the
+  implicit function theorem.
+\newblock In \emph{Robotics: Science and Systems}, 2017.
+
+\bibitem[Haarnoja et~al.(2018)Haarnoja, Zhou, Abbeel, and Levine]{sac}
+Haarnoja, T., Zhou, A., Abbeel, P., and Levine, S.
+\newblock Soft actor-critic: Off-policy maximum entropy deep reinforcement
+  learning with a stochastic actor.
+\newblock In \emph{International conference on machine learning}, pp.\
+  1861--1870. PMLR, 2018.
+
+\bibitem[Hejna et~al.(2020)Hejna, Pinto, and Abbeel]{hejna2020hierarchically}
+Hejna, D., Pinto, L., and Abbeel, P.
+\newblock Hierarchically decoupled imitation for morphological transfer.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  4159--4171. PMLR, 2020.
+
+\bibitem[Hejna~III et~al.(2021)Hejna~III, Abbeel, and Pinto]{hejna2021task}
+Hejna~III, D.~J., Abbeel, P., and Pinto, L.
+\newblock Task-agnostic morphology evolution.
+\newblock \emph{arXiv preprint arXiv:2102.13100}, 2021.
+
+\bibitem[Ho \& Ermon(2016)Ho and Ermon]{gail}
+Ho, J. and Ermon, S.
+\newblock Generative adversarial imitation learning.
+\newblock \emph{Advances in neural information processing systems},
+  29:\penalty0 4565--4573, 2016.
+
+\bibitem[Huang et~al.(2020)Huang, Mordatch, and Pathak]{huang2020one}
+Huang, W., Mordatch, I., and Pathak, D.
+\newblock One policy to control them all: Shared modular policies for
+  agent-agnostic control.
+\newblock In \emph{International Conference on Machine Learning}, pp.\
+  4455--4464. PMLR, 2020.
+
+\bibitem[Kriegman et~al.(2018)Kriegman, Cheney, and
+  Bongard]{kriegman2018morphological}
+Kriegman, S., Cheney, N., and Bongard, J.
+\newblock How morphological development can guide evolution.
+\newblock \emph{Scientific reports}, 8\penalty0 (1):\penalty0 1--10, 2018.
+
+\bibitem[Kumar et~al.(2013)Kumar, Xu, and Todorov]{adroit}
+Kumar, V., Xu, Z., and Todorov, E.
+\newblock Fast, strong and compliant pneumatic actuation for dexterous
+  tendon-driven hands.
+\newblock In \emph{2013 IEEE international conference on robotics and
+  automation}, pp.\  1512--1519. IEEE, 2013.
+
+\bibitem[Kurin et~al.(2020)Kurin, Igl, Rockt{\"a}schel, Boehmer, and
+  Whiteson]{kurin2020my}
+Kurin, V., Igl, M., Rockt{\"a}schel, T., Boehmer, W., and Whiteson, S.
+\newblock My body is a cage: the role of morphology in graph-based incompatible
+  control.
+\newblock \emph{arXiv preprint arXiv:2010.01856}, 2020.
+
+\bibitem[Liu et~al.(2019)Liu, Ling, Mu, and Su]{sail}
+Liu, F., Ling, Z., Mu, T., and Su, H.
+\newblock State alignment-based imitation learning.
+\newblock \emph{arXiv preprint arXiv:1911.10947}, 2019.
+
+\bibitem[Liu et~al.(2018)Liu, Simonyan, and Yang]{darts}
+Liu, H., Simonyan, K., and Yang, Y.
+\newblock Darts: Differentiable architecture search.
+\newblock \emph{arXiv preprint arXiv:1806.09055}, 2018.
+
+\bibitem[Luo et~al.(2018)Luo, Xu, Li, Tian, Darrell, and Ma]{slbo}
+Luo, Y., Xu, H., Li, Y., Tian, Y., Darrell, T., and Ma, T.
+\newblock Algorithmic framework for model-based deep reinforcement learning
+  with theoretical guarantees.
+\newblock In \emph{International Conference on Learning Representations}, 2018.
+
+\bibitem[Murata \& Kurokawa(2007)Murata and Kurokawa]{murata2007self}
+Murata, S. and Kurokawa, H.
+\newblock Self-reconfigurable robots.
+\newblock \emph{IEEE Robotics \& Automation Magazine}, 2007.
+
+\bibitem[Ng et~al.(2000)Ng, Russell, et~al.]{irl}
+Ng, A.~Y., Russell, S.~J., et~al.
+\newblock Algorithms for inverse reinforcement learning.
+\newblock In \emph{Icml}, volume~1, pp.\ ~2, 2000.
+
+\bibitem[Pan et~al.(2021)Pan, Garg, Anandkumar, and Zhu]{xinlei:evolution}
+Pan, X., Garg, A., Anandkumar, A., and Zhu, Y.
+\newblock Emergent hand morphology and control from optimizing robust grasps of
+  diverse objects.
+\newblock In \emph{2021 IEEE International Conference on Robotics and
+  Automation (ICRA)}, pp.\  7540--7547. IEEE, 2021.
+
+\bibitem[Pathak et~al.(2019)Pathak, Lu, Darrell, Isola, and
+  Efros]{pathak2019learning}
+Pathak, D., Lu, C., Darrell, T., Isola, P., and Efros, A.~A.
+\newblock Learning to control self-assembling morphologies: a study of
+  generalization via modularity.
+\newblock \emph{NeurIPS}, 2019.
+
+\bibitem[Radosavovic et~al.(2020)Radosavovic, Wang, Pinto, and Malik]{soil}
+Radosavovic, I., Wang, X., Pinto, L., and Malik, J.
+\newblock State-only imitation learning for dexterous manipulation.
+\newblock \emph{arXiv preprint arXiv:2004.04650}, 2020.
+
+\bibitem[Rajeswaran et~al.(2017)Rajeswaran, Lowrey, Todorov, and Kakade]{npg}
+Rajeswaran, A., Lowrey, K., Todorov, E., and Kakade, S.
+\newblock Towards generalization and simplicity in continuous control.
+\newblock \emph{arXiv preprint arXiv:1703.02660}, 2017.
+
+\bibitem[Rajeswaran et~al.(2018)Rajeswaran, Kumar, Gupta, Vezzani, Schulman,
+  Todorov, and Levine]{dapg}
+Rajeswaran, A., Kumar, V., Gupta, A., Vezzani, G., Schulman, J., Todorov, E.,
+  and Levine, S.
+\newblock Learning complex dexterous manipulation with deep reinforcement
+  learning and demonstrations.
+\newblock In \emph{Proceedings of Robotics: Science and Systems (RSS)},
+  Pittsburgh, Pennsylvania, June 2018.
+\newblock \doi{10.15607/RSS.2018.XIV.049}.
+
+\bibitem[Romanishin et~al.(2013)Romanishin, Gilpin, and Rus]{romanishin2013m}
+Romanishin, J.~W., Gilpin, K., and Rus, D.
+\newblock M-blocks: Momentum-driven, magnetic modular robots.
+\newblock In \emph{IROS}, 2013.
+
+\bibitem[Ross et~al.(2011)Ross, Gordon, and Bagnell]{bc}
+Ross, S., Gordon, G., and Bagnell, D.
+\newblock A reduction of imitation learning and structured prediction to
+  no-regret online learning.
+\newblock In \emph{Proceedings of the fourteenth international conference on
+  artificial intelligence and statistics}, pp.\  627--635. JMLR Workshop and
+  Conference Proceedings, 2011.
+
+\bibitem[Sadeghi \& Levine(2016)Sadeghi and Levine]{cad2rl}
+Sadeghi, F. and Levine, S.
+\newblock Cad2rl: Real single-image flight without a single real image.
+\newblock \emph{arXiv preprint arXiv:1611.04201}, 2016.
+
+\bibitem[Scarselli et~al.(2009)Scarselli, Gori, Tsoi, Hagenbuchner, and
+  Monfardini]{scarselli2009graph}
+Scarselli, F., Gori, M., Tsoi, A.~C., Hagenbuchner, M., and Monfardini, G.
+\newblock The graph neural network model.
+\newblock \emph{IEEE Transactions on Neural Network}, 2009.
+
+\bibitem[Schaff et~al.(2018)Schaff, Yunis, Chakrabarti, and
+  Walter]{schaff2018jointly}
+Schaff, C., Yunis, D., Chakrabarti, A., and Walter, M.~R.
+\newblock Jointly learning to construct and control agents using deep
+  reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:1801.01432}, 2018.
+
+\bibitem[Sims(1994{\natexlab{a}})]{sims1994evolving1}
+Sims, K.
+\newblock Evolving virtual creatures.
+\newblock In \emph{Computer graphics and interactive techniques},
+  1994{\natexlab{a}}.
+
+\bibitem[Sims(1994{\natexlab{b}})]{sims1994evolving2}
+Sims, K.
+\newblock Evolving 3d morphology and behavior by competition.
+\newblock \emph{Artificial life}, 1994{\natexlab{b}}.
+
+\bibitem[Stoy et~al.(2010)Stoy, Brandt, Christensen, and Brandt]{stoy2010self}
+Stoy, K., Brandt, D., Christensen, D.~J., and Brandt, D.
+\newblock \emph{Self-reconfigurable robots: an introduction}.
+\newblock Mit Press Cambridge, 2010.
+
+\bibitem[Tobin et~al.(2017)Tobin, Fong, Ray, Schneider, Zaremba, and
+  Abbeel]{domain:randomization}
+Tobin, J., Fong, R., Ray, A., Schneider, J., Zaremba, W., and Abbeel, P.
+\newblock Domain randomization for transferring deep neural networks from
+  simulation to the real world.
+\newblock In \emph{2017 IEEE/RSJ international conference on intelligent robots
+  and systems (IROS)}, pp.\  23--30. IEEE, 2017.
+
+\bibitem[Von~Neumann et~al.(1966)Von~Neumann, Burks, et~al.]{von1966theory}
+Von~Neumann, J., Burks, A.~W., et~al.
+\newblock Theory of self-reproducing automata.
+\newblock \emph{IEEE Transactions on Neural Networks}, 1966.
+
+\bibitem[Wang et~al.(2019{\natexlab{a}})Wang, Lehman, Clune, and
+  Stanley]{wang2019paired}
+Wang, R., Lehman, J., Clune, J., and Stanley, K.~O.
+\newblock Paired open-ended trailblazer (poet): Endlessly generating
+  increasingly complex and diverse learning environments and their solutions.
+\newblock \emph{arXiv preprint arXiv:1901.01753}, 2019{\natexlab{a}}.
+
+\bibitem[Wang et~al.(2018)Wang, Liao, Ba, and Fidler]{wang2018nervenet}
+Wang, T., Liao, R., Ba, J., and Fidler, S.
+\newblock Nervenet: Learning structured policy with graph neural networks.
+\newblock \emph{ICLR}, 2018.
+
+\bibitem[Wang et~al.(2019{\natexlab{b}})Wang, Zhou, Fidler, and
+  Ba]{wang2019neural}
+Wang, T., Zhou, Y., Fidler, S., and Ba, J.
+\newblock Neural graph evolution: Towards efficient automatic robot design.
+\newblock \emph{arXiv preprint arXiv:1906.05370}, 2019{\natexlab{b}}.
+
+\bibitem[Whitman et~al.(2020)Whitman, Bhirangi, Travers, and
+  Choset]{whitman2020modular}
+Whitman, J., Bhirangi, R., Travers, M., and Choset, H.
+\newblock Modular robot design synthesis with deep reinforcement learning.
+\newblock In \emph{Proceedings of the AAAI Conference on Artificial
+  Intelligence}, volume~34, pp.\  10418--10425, 2020.
+
+\bibitem[Whitman et~al.(2021)Whitman, Travers, and Choset]{whitman2021learning}
+Whitman, J., Travers, M., and Choset, H.
+\newblock Learning modular robot control policies.
+\newblock \emph{arXiv preprint arXiv:2105.10049}, 2021.
+
+\bibitem[Wright et~al.(2007)Wright, Johnson, Peck, McCord, Naaktgeboren,
+  Gianfortoni, Gonzalez-Rivero, Hatton, and Choset]{wright2007design}
+Wright, C., Johnson, A., Peck, A., McCord, Z., Naaktgeboren, A., Gianfortoni,
+  P., Gonzalez-Rivero, M., Hatton, R., and Choset, H.
+\newblock Design of a modular snake robot.
+\newblock In \emph{IROS}, 2007.
+
+\bibitem[Yim et~al.(2000)Yim, Duff, and Roufas]{yim2000polybot}
+Yim, M., Duff, D.~G., and Roufas, K.~D.
+\newblock Polybot: a modular reconfigurable robot.
+\newblock In \emph{ICRA}, 2000.
+
+\bibitem[Zhao et~al.(2020)Zhao, Xu, Konakovi{\'c}-Lukovi{\'c}, Hughes,
+  Spielberg, Rus, and Matusik]{zhao2020robogrammar}
+Zhao, A., Xu, J., Konakovi{\'c}-Lukovi{\'c}, M., Hughes, J., Spielberg, A.,
+  Rus, D., and Matusik, W.
+\newblock Robogrammar: graph grammar for terrain-optimized robot design.
+\newblock \emph{ACM Transactions on Graphics (TOG)}, 39\penalty0 (6):\penalty0
+  1--16, 2020.
+
+\bibitem[Zoph \& Le(2016)Zoph and Le]{zoph2016neural}
+Zoph, B. and Le, Q.~V.
+\newblock Neural architecture search with reinforcement learning.
+\newblock \emph{arXiv preprint arXiv:1611.01578}, 2016.
+
+\end{thebibliography}

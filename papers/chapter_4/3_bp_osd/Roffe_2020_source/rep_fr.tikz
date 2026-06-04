@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+\draw[black,thick,solid] (0,0) -- (3.2,0);
+\filldraw[fill=white, draw=black] (0.0,0) circle (0.2) node [label=above right:{}](D35550){};
+\filldraw[fill=white, draw=black] (1.6,0) circle (0.2) node [label=above right:{}](D86454){};
+\filldraw[fill=white, draw=black] (3.2,0) circle (0.2) node [label=above right:{}](D75500){};
+\filldraw[fill=white, draw=black] (0.67,-0.13) rectangle (0.93,0.13) node [label={[label distance=-0.3cm]30:{}}](A84101){};
+\filldraw[fill=white, draw=black] (2.2700000000000005,-0.13) rectangle (2.5300000000000002,0.13) node [label={[label distance=-0.3cm]30:{}}](A96629){};
+\end{tikzpicture}

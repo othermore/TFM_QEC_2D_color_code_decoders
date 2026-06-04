@@ -1,0 +1,41 @@
+\begin{algorithm}[t]
+% \small
+\caption{Continuous Robot Evolution Policy Transfer}
+\label{alg:revolver}
+\begin{algorithmic}[1]
+\STATE{\textbf{Notation Summary:}}
+\STATE{$\alpha \in [0,1]$: robot evolution parameter}
+\STATE{$E: [0,1]\rightarrow \mathcal{M}$: continuous robot evolution model}
+\STATE{$\pi_{E(0)}$: expert policy on the source robot $E(0)$}
+\STATE{$\mathcal{R}$: replay buffer buffer}
+\STATE{$\xi \in \mathbb{R}^+$: range of sampling of evolution parameters}
+\STATE{$l_k \in \mathbb{R}^+$: progression of $\alpha$ in phase $k$, where $l_k<\xi$}
+\STATE{$h \in \mathbb{R}^+$: evolution reward shaping factor}
+\\\hrulefill
+\STATE{\textcolor{darkgray}{// initialize evolution parameter, policy and replay buffer}}
+\STATE{$\alpha \leftarrow 0$, $\pi \leftarrow \pi_{E(0)}$, $\mathcal{R} \leftarrow \emptyset$}
+\WHILE{$\alpha < 1$}
+    \FOR{epoch \textbf{in} $0,1,\ldots,N_e$}
+        \STATE{\textcolor{darkgray}{// sample an intermediate robot}}
+        \STATE{ $\beta \sim \text{Uniform}(\alpha, \min \{ \alpha+\xi, 1 \} )$ }
+        \STATE{$M_\beta \leftarrow E(\beta)$}
+        \STATE{$s_0^{\beta} \sim s_0$ \textcolor{darkgray}{// initial state distribution}}
+        \FOR{$t=0,1,\ldots,N$}
+            \STATE{ \textcolor{darkgray}{// execute current policy on the sampled robot and store the transition tuple to replay buffer}}
+            \STATE{$a_t^{\beta} \sim \pi(\cdot \mid s_t^{\beta})$}
+            \STATE{($s_{t+1}^{\beta}, r_t^{\beta}) \sim M_\beta(\cdot \mid s_t^{\beta}, a_t^{\beta})$}
+        \STATE{\textcolor{darkgray}{// local reward shaping} }
+        \STATE{${r_t^\prime}^{\beta}\leftarrow r_t^{\beta} \cdot \exp(h \cdot \beta)$ }
+            \STATE{$\mathcal{R} \leftarrow \mathcal{R} \cup \{(s_t^{\beta}, a_t^{\beta}, s_{t+1}^{\beta}, {r_t^\prime}^{\beta})\}$}
+            \STATE{sample $\{(s, a, s^\prime, r^\prime)\} \sim \mathcal{R}$}
+            \STATE{train $\pi$ with $\{(s, a, s^\prime, r^\prime)\}$ using RL}
+        \ENDFOR
+    \ENDFOR
+    \STATE{ \textcolor{darkgray}{// progress evolution parameter}}
+    \STATE{$\alpha \leftarrow \alpha + l_k$}
+    \STATE{ \textcolor{darkgray}{// clean up replay buffer}}
+    \STATE{$\mathcal{R} \leftarrow \{ (s_t^{\beta}, a_t^{\beta}, s_{t+1}^{\beta}, {r_t^\prime}^{\beta}) \in \mathcal{R}, \forall \beta \in [\alpha, \alpha+\xi]\}$}
+\ENDWHILE
+\STATE{\textbf{return} $\pi$}
+\end{algorithmic}
+\end{algorithm}

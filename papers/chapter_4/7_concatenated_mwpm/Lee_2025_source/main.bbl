@@ -1,0 +1,261 @@
+\begin{thebibliography}{10}
+
+\bibitem{bombin2006topological}
+H.~Bombin and M.~A. Martin-Delgado.
+\newblock ``Topological quantum distillation''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevLett.97.180501}{Phys. Rev. Lett. {\bf 97}, 180501}~(2006).
+
+\bibitem{bombin2013topological}
+H{\'e}ctor Bomb{\'\i}n.
+\newblock ``Topological codes''.
+\newblock In Daniel~A. Lidar and Todd~A. Brun, editors, Quantum Error Correction.
+\newblock \href{https://dx.doi.org/10.48550/arXiv.1311.0277}{Chapter~19, pages 455--481}.
+\newblock Cambridge~(2013).
+
+\bibitem{bravyi1998quantum}
+S.~B. Bravyi and A.~Yu. Kitaev.
+\newblock ``Quantum codes on a lattice with boundary''~(1998).
+\newblock  \href{http://arxiv.org/abs/quant-ph/9811052}{arXiv:quant-ph/9811052}.
+
+\bibitem{dennis2002topological}
+Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+\newblock ``Topological quantum memory''.
+\newblock \href{https://dx.doi.org/10.1063/1.1499754}{J. Math. Phys. {\bf 43}, 4452--4505}~(2002).
+
+\bibitem{landahl2011faulttolerant}
+Andrew~J. Landahl, Jonas~T. Anderson, and Patrick~R. Rice.
+\newblock ``Fault-tolerant quantum computing with color codes''~(2011).
+\newblock  \href{http://arxiv.org/abs/1108.5738}{arXiv:1108.5738}.
+
+\bibitem{thomsen2024lowoverhead}
+Felix Thomsen, Markus~S. Kesselring, Stephen~D. Bartlett, and Benjamin~J. Brown.
+\newblock ``Low-overhead quantum computing with the color code''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevResearch.6.043125}{Phys. Rev. Res. {\bf 6}, 043125}~(2024).
+
+\bibitem{chamberland2020very}
+Christopher Chamberland and Kyungjoo Noh.
+\newblock ``Very low overhead fault-tolerant magic state preparation using redundant ancilla encoding and flag qubits''.
+\newblock \href{https://dx.doi.org/10.1038/s41534-020-00319-5}{npj Quantum Inf. {\bf 6}, 91}~(2020).
+
+\bibitem{itogawa2024even}
+Tomohiro Itogawa, Yugo Takada, Yutaka Hirano, and Keisuke Fujii.
+\newblock ``Even more efficient magic state distillation by zero-level distillation''~(2024).
+\newblock  \href{http://arxiv.org/abs/2403.03991}{arXiv:2403.03991}.
+
+\bibitem{gidney2024magic}
+Craig Gidney, Noah Shutty, and Cody Jones.
+\newblock ``Magic state cultivation: Growing {T} states as cheap as {CNOT} gates''~(2024).
+\newblock  \href{http://arxiv.org/abs/2409.17595}{arXiv:2409.17595}.
+
+\bibitem{hirano2024leveraging}
+Yutaka Hirano, Tomohiro Itogawa, and Keisuke Fujii.
+\newblock ``Leveraging zero-level distillation to generate high-fidelity magic states''~(2024).
+\newblock  \href{http://arxiv.org/abs/2404.09740}{arXiv:2404.09740}.
+
+\bibitem{lee2024low}
+Seok-Hyung Lee, Felix Thomsen, Nicholas Fazio, Benjamin~J. Brown, and Stephen~D. Bartlett.
+\newblock ``Low-overhead magic state distillation with color codes''~(2024).
+\newblock  \href{http://arxiv.org/abs/2409.07707}{arXiv:2409.07707}.
+
+\bibitem{postler2022demonstration}
+Lukas Postler, Sascha Heu{$\beta$}en, Ivan Pogorelov, Manuel Rispler, Thomas Feldker, Michael Meth, Christian~D. Marciniak, Roman Stricker, Martin Ringbauer, Rainer Blatt, Philipp Schindler, Markus M{\"u}ller, and Thomas Monz.
+\newblock ``Demonstration of fault-tolerant universal quantum gate operations''.
+\newblock \href{https://dx.doi.org/10.1038/s41586-022-04721-1}{Nature {\bf 605}, 675--680}~(2022).
+
+\bibitem{ryananderson2022implementing}
+C.~Ryan-Anderson, N.~C. Brown, M.~S. Allman, B.~Arkin, G.~Asa-Attuah, C.~Baldwin, J.~Berg, J.~G. Bohnet, S.~Braxton, N.~Burdick, J.~P. Campora, A.~Chernoguzov, J.~Esposito, B.~Evans, D.~Francois, J.~P. Gaebler, T.~M. Gatterman, J.~Gerber, K.~Gilmore, D.~Gresh, A.~Hall, A.~Hankin, J.~Hostetter, D.~Lucchetti, K.~Mayer, J.~Myers, B.~Neyenhuis, J.~Santiago, J.~Sedlacek, T.~Skripka, A.~Slattery, R.~P. Stutz, J.~Tait, R.~Tobey, G.~Vittorini, J.~Walker, and D.~Hayes.
+\newblock ``Implementing fault-tolerant entangling gates on the five-qubit code and the color code''~(2022).
+\newblock  \href{http://arxiv.org/abs/2208.01863}{arXiv:2208.01863}.
+
+\bibitem{postler2024demonstration}
+Lukas Postler, Friederike Butt, Ivan Pogorelov, Christian~D. Marciniak, Sascha Heu\ss{}en, Rainer Blatt, Philipp Schindler, Manuel Rispler, Markus M\"uller, and Thomas Monz.
+\newblock ``Demonstration of fault-tolerant {Steane} quantum error correction''.
+\newblock \href{https://dx.doi.org/10.1103/PRXQuantum.5.030326}{PRX Quantum {\bf 5}, 030326}~(2024).
+
+\bibitem{bluvstein2024logical}
+Dolev Bluvstein, Simon~J. Evered, Alexandra~A. Geim, Sophie~H. Li, Hengyun Zhou, Tom Manovitz, Sepehr Ebadi, Madelyn Cain, Marcin Kalinowski, Dominik Hangleiter, J.~Pablo Bonilla~Ataides, Nishad Maskara, Iris Cong, Xun Gao, Pedro Sales~Rodriguez, Thomas Karolyshyn, Giulia Semeghini, Michael~J. Gullans, Markus Greiner, Vladan Vuleti{\'c}, and Mikhail~D. Lukin.
+\newblock ``Logical quantum processor based on reconfigurable atom arrays''.
+\newblock \href{https://dx.doi.org/10.1038/s41586-023-06927-3}{Nature {\bf 626}, 58--65}~(2024).
+
+\bibitem{rodriguez2024experimental}
+Pedro~Sales Rodriguez, John~M. Robinson, Paul~Niklas Jepsen, Zhiyang He, Casey Duckering, Chen Zhao, Kai-Hsin Wu, Joseph Campo, Kevin Bagnall, Minho Kwon, Thomas Karolyshyn, Phillip Weinberg, Madelyn Cain, Simon~J. Evered, Alexandra~A. Geim, Marcin Kalinowski, Sophie~H. Li, Tom Manovitz, Jesse Amato-Grill, James~I. Basham, Liane Bernstein, Boris Braverman, Alexei Bylinskii, Adam Choukri, Robert DeAngelo, Fang Fang, Connor Fieweger, Paige Frederick, David Haines, Majd Hamdan, Julian Hammett, Ning Hsu, Ming-Guang Hu, Florian Huber, Ningyuan Jia, Dhruv Kedar, Milan Kornjača, Fangli Liu, John Long, Jonathan Lopatin, Pedro L.~S. Lopes, Xiu-Zhe Luo, Tommaso Macrì, Ognjen Marković, Luis~A. Martínez-Martínez, Xianmei Meng, Stefan Ostermann, Evgeny Ostroumov, David Paquette, Zexuan Qiang, Vadim Shofman, Anshuman Singh, Manuj Singh, Nandan Sinha, Henry Thoreen, Noel Wan, Yiping Wang, Daniel Waxman-Lenz, Tak Wong, Jonathan Wurtz, Andrii Zhdanov, Laurent Zheng, Markus Greiner, Alexander Keesling, Nathan Gemelke,
+  Vladan Vuletić, Takuya Kitagawa, Sheng-Tao Wang, Dolev Bluvstein, Mikhail~D. Lukin, Alexander Lukin, Hengyun Zhou, and Sergio~H. Cantú.
+\newblock ``Experimental demonstration of logical magic state distillation''~(2024).
+\newblock  \href{http://arxiv.org/abs/2412.15165}{arXiv:2412.15165}.
+
+\bibitem{lacroix2024scaling}
+Nathan Lacroix, Alexandre Bourassa, Francisco J.~H. Heras, Lei~M. Zhang, Johannes Bausch, Andrew~W. Senior, Thomas Edlich, Noah Shutty, Volodymyr Sivak, Andreas Bengtsson, Matt McEwen, Oscar Higgott, Dvir Kafri, Jahan Claes, Alexis Morvan, Zijun Chen, Adam Zalcman, Sid Madhuk, Rajeev Acharya, Laleh~Aghababaie Beni, Georg Aigeldinger, Ross Alcaraz, Trond~I. Andersen, Markus Ansmann, Frank Arute, Kunal Arya, Abraham Asfaw, Juan Atalaya, Ryan Babbush, Brian Ballard, Joseph~C. Bardin, Alexander Bilmes, Sam Blackwell, Jenna Bovaird, Dylan Bowers, Leon Brill, Michael Broughton, David~A. Browne, Brett Buchea, Bob~B. Buckley, Tim Burger, Brian Burkett, Nicholas Bushnell, Anthony Cabrera, Juan Campero, Hung-Shen Chang, Ben Chiaro, Liang-Ying Chih, Agnetta~Y. Cleland, Josh Cogan, Roberto Collins, Paul Conner, William Courtney, Alexander~L. Crook, Ben Curtin, Sayan Das, Sean Demura, Laura~De Lorenzo, Agustin~Di Paolo, Paul Donohoe, Ilya Drozdov, Andrew Dunsworth, Alec Eickbusch, Aviv~Moshe Elbag, Mahmoud Elzouka,
+  Catherine Erickson, Vinicius~S. Ferreira, Leslie~Flores Burgos, Ebrahim Forati, Austin~G. Fowler, Brooks Foxen, Suhas Ganjam, Gonzalo Garcia, Robert Gasca, Élie Genois, William Giang, Dar Gilboa, Raja Gosula, Alejandro~Grajales Dau, Dietrich Graumann, Alex Greene, Jonathan~A. Gross, Tan Ha, Steve Habegger, Monica Hansen, Matthew~P. Harrigan, Sean~D. Harrington, Stephen Heslin, Paula Heu, Reno Hiltermann, Jeremy Hilton, Sabrina Hong, Hsin-Yuan Huang, Ashley Huff, William~J. Huggins, Evan Jeffrey, Zhang Jiang, Xiaoxuan Jin, Chaitali Joshi, Pavol Juhas, Andreas Kabel, Hui Kang, Amir~H. Karamlou, Kostyantyn Kechedzhi, Trupti Khaire, Tanuj Khattar, Mostafa Khezri, Seon Kim, Paul~V. Klimov, Bryce Kobrin, Alexander~N. Korotkov, Fedor Kostritsa, John~Mark Kreikebaum, Vladislav~D. Kurilovich, David Landhuis, Tiano Lange-Dei, Brandon~W. Langley, Pavel Laptev, Kim-Ming Lau, Justin Ledford, Kenny Lee, Brian~J. Lester, Loïck~Le Guevel, Wing~Yan Li, Yin Li, Alexander~T. Lill, William~P. Livingston, Aditya Locharla,
+  Erik Lucero, Daniel Lundahl, Aaron Lunt, Ashley Maloney, Salvatore Mandrà, Leigh~S. Martin, Orion Martin, Cameron Maxfield, Jarrod~R. McClean, Seneca Meeks, Anthony Megrant, Kevin~C. Miao, Reza Molavi, Sebastian Molina, Shirin Montazeri, Ramis Movassagh, Charles Neill, Michael Newman, Anthony Nguyen, Murray Nguyen, Chia-Hung Ni, Murphy~Y. Niu, Logan Oas, William~D. Oliver, Raymond Orosco, Kristoffer Ottosson, Alex Pizzuto, Rebecca Potter, Orion Pritchard, Chris Quintana, Ganesh Ramachandran, Matthew~J. Reagor, Rachel Resnick, David~M. Rhodes, Gabrielle Roberts, Eliott Rosenberg, Emma Rosenfeld, Elizabeth Rossi, Pedram Roushan, Kannan Sankaragomathi, Henry~F. Schurkus, Michael~J. Shearn, Aaron Shorter, Vladimir Shvarts, Spencer Small, W.~Clarke Smith, Sofia Springer, George Sterling, Jordan Suchard, Aaron Szasz, Alex Sztein, Douglas Thor, Eifu Tomita, Alfredo Torres, M.~Mert Torunbalci, Abeer Vaishnav, Justin Vargas, Sergey Vdovichev, Guifre Vidal, Catherine~Vollgraff Heidweiller, Steven Waltman, Jonathan
+  Waltz, Shannon~X. Wang, Brayden Ware, Travis Weidel, Theodore White, Kristi Wong, Bryan W.~K. Woo, Maddy Woodson, Cheng Xing, Z.~Jamie Yao, Ping Yeh, Bicheng Ying, Juhwan Yoo, Noureldin Yosri, Grayson Young, Yaxing Zhang, Ningfeng Zhu, Nicholas Zobrist, Hartmut Neven, Pushmeet Kohli, Alex Davies, Sergio Boixo, Julian Kelly, Cody Jones, Craig Gidney, and Kevin~J. Satzinger.
+\newblock ``Scaling and logic in the color code on a superconducting quantum processor''~(2024).
+\newblock  \href{http://arxiv.org/abs/2412.14256}{arXiv:2412.14256}.
+
+\bibitem{delfosse2014decoding}
+Nicolas Delfosse.
+\newblock ``Decoding color codes by projection onto surface codes''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.89.012317}{Phys. Rev. A {\bf 89}, 012317}~(2014).
+
+\bibitem{chamberland2020triangular}
+Christopher Chamberland, Aleksander Kubica, Theodore~J. Yoder, and Guanyu Zhu.
+\newblock ``Triangular color codes on trivalent graphs with flag qubits''.
+\newblock \href{https://dx.doi.org/10.1088/1367-2630/ab68fd}{New J. Phys. {\bf 22}, 023019}~(2020).
+
+\bibitem{beverland2021cost}
+Michael~E. Beverland, Aleksander Kubica, and Krysta~M. Svore.
+\newblock ``Cost of universality: A comparative study of the overhead of state distillation and code switching with color codes''.
+\newblock \href{https://dx.doi.org/10.1103/PRXQuantum.2.020341}{PRX Quantum {\bf 2}, 020341}~(2021).
+
+\bibitem{kubica2023efficient}
+Aleksander Kubica and Nicolas Delfosse.
+\newblock ``Efficient color code decoders in {$d\geq 2$} dimensions from toric code decoders''.
+\newblock \href{https://dx.doi.org/10.22331/q-2023-02-21-929}{{Quantum} {\bf 7}, 929}~(2023).
+
+\bibitem{zhang2024facilitating}
+Jiaxuan Zhang, Yu-Chun Wu, and Guo-Ping Guo.
+\newblock ``Facilitating practical fault-tolerant quantum computing based on color codes''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevResearch.6.033086}{Phys. Rev. Res. {\bf 6}, 033086}~(2024).
+
+\bibitem{sahay2022decoder}
+Kaavya Sahay and Benjamin~J. Brown.
+\newblock ``Decoder for the triangular color code by matching on a {M\"obius} strip''.
+\newblock \href{https://dx.doi.org/10.1103/PRXQuantum.3.010310}{PRX Quantum {\bf 3}, 010310}~(2022).
+
+\bibitem{gidney2023new}
+Craig Gidney and Cody Jones.
+\newblock ``New circuits and an open source decoder for the color code''~(2023).
+\newblock  \href{http://arxiv.org/abs/2312.08813}{arXiv:2312.08813}.
+
+\bibitem{chubb2021general}
+Christopher~T. Chubb.
+\newblock ``General tensor network decoding of {2D} {Pauli} codes''~(2021).
+\newblock  \href{http://arxiv.org/abs/2101.04125}{arXiv:2101.04125}.
+
+\bibitem{takada2024ising}
+Yugo Takada, Yusaku Takeuchi, and Keisuke Fujii.
+\newblock ``Ising model formulation for highly accurate topological color codes decoding''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevResearch.6.013092}{Phys. Rev. Res. {\bf 6}, 013092}~(2024).
+
+\bibitem{berent2024decoding}
+Lucas Berent, Lukas Burgholzer, Peter-Jan~H.S. Derks, Jens Eisert, and Robert Wille.
+\newblock ``Decoding quantum color codes with {M}ax{SAT}''.
+\newblock \href{https://dx.doi.org/10.22331/q-2024-10-23-1506}{{Quantum} {\bf 8}, 1506}~(2024).
+
+\bibitem{sabo2022trellis}
+Eric Sabo, Arun~B. Aloshious, and Kenneth~R. Brown.
+\newblock ``Trellis decoding for qudit stabilizer codes and its application to qubit topological codes''~(2022).
+\newblock  \href{http://arxiv.org/abs/2106.08251}{arXiv:2106.08251}.
+
+\bibitem{maskara2019advantages}
+Nishad Maskara, Aleksander Kubica, and Tomas Jochym-O'Connor.
+\newblock ``Advantages of versatile neural-network decoding for topological codes''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.99.052351}{Phys. Rev. A {\bf 99}, 052351}~(2019).
+
+\bibitem{delfosse2021almostlinear}
+Nicolas Delfosse and Naomi~H. Nickerson.
+\newblock ``Almost-linear time decoding algorithm for topological codes''.
+\newblock \href{https://dx.doi.org/10.22331/q-2021-12-02-595}{Quantum {\bf 5}, 595}~(2021).
+
+\bibitem{sarvepalli2012efficient}
+Pradeep Sarvepalli and Robert Raussendorf.
+\newblock ``Efficient decoding of topological color codes''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.85.022317}{Phys. Rev. A {\bf 85}, 022317}~(2012).
+
+\bibitem{piveteau2024tensor}
+Christophe Piveteau, Christopher~T. Chubb, and Joseph~M. Renes.
+\newblock ``Tensor-network decoding beyond {2D}''.
+\newblock \href{https://dx.doi.org/10.1103/PRXQuantum.5.040303}{PRX Quantum {\bf 5}, 040303}~(2024).
+
+\bibitem{lee2022universal}
+Seok-Hyung Lee and Hyunseok Jeong.
+\newblock ``Universal hardware-efficient topological measurement-based quantum computation via color-code-based cluster states''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevResearch.4.013010}{Phys. Rev. Res. {\bf 4}, 013010}~(2022).
+
+\bibitem{colorcodestim}
+Seok-Hyung Lee.
+\newblock ``color-code-stim''.
+\newblock \url{https://github.com/seokhyung-lee/color-code-stim}~(2024).
+
+\bibitem{fowler2011twodimensional}
+Austin~G. Fowler.
+\newblock ``Two-dimensional color-code quantum computation''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.83.042310}{Phys. Rev. A {\bf 83}, 1--8}~(2011).
+
+\bibitem{iyer2015hardness}
+Pavithran Iyer and David Poulin.
+\newblock ``Hardness of decoding quantum stabilizer codes''.
+\newblock \href{https://dx.doi.org/10.1109/TIT.2015.2422294}{IEEE Trans. Inf. Theory {\bf 61}, 5209--5223}~(2015).
+
+\bibitem{edmonds1965paths}
+Jack Edmonds.
+\newblock ``Paths, trees, and flowers''.
+\newblock \href{https://dx.doi.org/10.4153/CJM-1965-045-4}{Can. J. of Math. {\bf 17}, 449--467}~(1965).
+
+\bibitem{gidney2021stim}
+Craig Gidney.
+\newblock ``Stim: A fast stabilizer circuit simulator''.
+\newblock \href{https://dx.doi.org/10.22331/q-2021-07-06-497}{{Quantum} {\bf 5}, 497}~(2021).
+
+\bibitem{fowler2013surface}
+Austin~G. Fowler, Simon~J. Devitt, and Cody Jones.
+\newblock ``Surface code implementation of block code state distillation''.
+\newblock \href{https://dx.doi.org/10.1038/srep01939}{Scientific reports {\bf 3}, 1939}~(2013).
+
+\bibitem{fowler2013analytic}
+Austin~G. Fowler.
+\newblock ``Analytic asymptotic performance of topological codes''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.87.040301}{Phys. Rev. A {\bf 87}, 040301}~(2013).
+
+\bibitem{fowler2019low}
+Austin~G. Fowler and Craig Gidney.
+\newblock ``Low overhead quantum computation using lattice surgery''~(2019).
+\newblock  \href{http://arxiv.org/abs/1808.06709}{arxiv:1808.06709}.
+
+\bibitem{litinski2019game}
+Daniel Litinski.
+\newblock ``A game of surface codes: Large-scale quantum computing with lattice surgery''.
+\newblock \href{https://dx.doi.org/10.22331/q-2019-03-05-128}{Quantum {\bf 3}, 128}~(2019).
+
+\bibitem{litinski2019magic}
+Daniel Litinski.
+\newblock ``Magic state distillation: Not as costly as you think''.
+\newblock \href{https://dx.doi.org/10.22331/q-2019-12-02-205}{Quantum {\bf 3}, 205}~(2019-12-02).
+\newblock  \href{http://arxiv.org/abs/1905.06903}{arxiv:1905.06903}.
+
+\bibitem{raussendorf2007topological}
+R~Raussendorf, J~Harrington, and K~Goyal.
+\newblock ``Topological fault-tolerance in cluster state quantum computation''.
+\newblock \href{https://dx.doi.org/10.1088/1367-2630/9/6/199}{New J. Phys. {\bf 9}, 199}~(2007).
+
+\bibitem{fowler2012proof}
+Austin~G. Fowler.
+\newblock ``Proof of finite surface code threshold for matching''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevLett.109.180502}{Phys. Rev. Lett. {\bf 109}, 180502}~(2012).
+
+\bibitem{watson2014logical}
+Fern H.~E. Watson and Sean~D. Barrett.
+\newblock ``Logical error rate scaling of the toric code''.
+\newblock \href{https://dx.doi.org/10.1088/1367-2630/16/9/093045}{New J. Phys. {\bf 16}, 093045}~(2014).
+
+\bibitem{higgott2022pymatching}
+Oscar Higgott.
+\newblock ``{PyMatching}: A python package for decoding quantum codes with minimum-weight perfect matching''.
+\newblock \href{https://dx.doi.org/10.1145/3505637}{ACM Trans. Quantum Comput.{\bf 3}}~(2022).
+
+\bibitem{seabold2010statsmodels}
+Skipper Seabold and Josef Perktold.
+\newblock ``Statsmodels: Econometric and statistical modeling with python''.
+\newblock In 9th Python in Science Conference.
+\newblock ~(2010).
+
+\bibitem{bravyi2005universal}
+Sergey Bravyi and Alexei Kitaev.
+\newblock ``Universal quantum computation with ideal clifford gates and noisy ancillas''.
+\newblock \href{https://dx.doi.org/10.1103/PhysRevA.71.022316}{Phys. Rev. A {\bf 71}, 022316}~(2005).
+
+\bibitem{kesselring2024anyon}
+Markus~S. Kesselring, Julio~C. Magdalena de~la Fuente, Felix Thomsen, Jens Eisert, Stephen~D. Bartlett, and Benjamin~J. Brown.
+\newblock ``Anyon condensation and the color code''.
+\newblock \href{https://dx.doi.org/10.1103/PRXQuantum.5.010342}{PRX Quantum {\bf 5}, 010342}~(2024).
+
+\end{thebibliography}

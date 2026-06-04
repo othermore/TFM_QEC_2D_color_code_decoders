@@ -1,0 +1,388 @@
+\begin{thebibliography}{10}
+
+\bibitem{shor1995scheme}
+Peter~W Shor.
+\newblock ``Scheme for reducing decoherence in quantum computer memory''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.52.R2493}{Physical review A {\bf 52}, R2493}~(1995).
+
+\bibitem{shor1996fault}
+Peter~W Shor.
+\newblock ``Fault-tolerant quantum computation''.
+\newblock In Proceedings of 37th conference on foundations of computer science.
+\newblock \href{https://dx.doi.org/https://doi.org/10.48550/arXiv.quant-ph/9605011}{Pages 56--65}.
+\newblock IEEE~(1996).
+
+\bibitem{calderbank1996good}
+A~Robert Calderbank and Peter~W Shor.
+\newblock ``Good quantum error-correcting codes exist''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.54.1098}{Physical Review A {\bf 54}, 1098}~(1996).
+
+\bibitem{terhal2015quantum}
+Barbara~M Terhal.
+\newblock ``Quantum error correction for quantum memories''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/RevModPhys.87.307}{Reviews of Modern Physics {\bf 87}, 307}~(2015).
+
+\bibitem{brown2016quantum}
+Benjamin~J Brown, Daniel Loss, Jiannis~K Pachos, Chris~N Self, and James~R Wootton.
+\newblock ``Quantum memories at finite temperature''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/RevModPhys.88.045005}{Reviews of Modern Physics {\bf 88}, 045005}~(2016).
+
+\bibitem{campbell2017roads}
+Earl~T Campbell, Barbara~M Terhal, and Christophe Vuillot.
+\newblock ``Roads towards fault-tolerant universal quantum computation''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1038/nature23460}{Nature {\bf 549}, 172--179}~(2017).
+
+\bibitem{dennis2002topological}
+Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+\newblock ``Topological quantum memory''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1063/1.1499754}{Journal of Mathematical Physics {\bf 43}, 4452--4505}~(2002).
+
+\bibitem{duclos2010fast}
+Guillaume Duclos-Cianci and David Poulin.
+\newblock ``Fast decoders for topological quantum codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.104.050504}{Physical review letters {\bf 104}, 050504}~(2010).
+
+\bibitem{wootton2012high}
+James~R Wootton and Daniel Loss.
+\newblock ``High threshold error correction for the surface code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.109.160503}{Physical review letters {\bf 109}, 160503}~(2012).
+
+\bibitem{Anwar14}
+Hussain Anwar, Benjmain~J. Brown, Earl.~T. Campbell, and Dan~E. Browne.
+\newblock ``Fast decoders for qudit topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/16/6/063038}{New J. Phys. {\bf 16}, 063038}~(2014).
+
+\bibitem{hutter2014efficient}
+Adrian Hutter, James~R Wootton, and Daniel Loss.
+\newblock ``Efficient markov chain monte carlo algorithm for the surface code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.89.022326}{Physical Review A {\bf 89}, 022326}~(2014).
+
+\bibitem{Torlai2017neural}
+Giacomo Torlai and Roger~G. Melko.
+\newblock ``Neural decoder for topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.119.030501}{Phys. Rev. Lett. {\bf 119}, 030501}~(2017).
+
+\bibitem{panteleev2021degenerate}
+Pavel Panteleev and Gleb Kalachev.
+\newblock ``Degenerate quantum ldpc codes with good finite length performance''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2021-11-22-585}{Quantum {\bf 5}, 585}~(2021).
+
+\bibitem{Delfosse2021almostlineartime}
+Nicolas Delfosse and Naomi~H. Nickerson.
+\newblock ``Almost-linear time decoding algorithm for topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2021-12-02-595}{{Quantum} {\bf 5}, 595}~(2021).
+
+\bibitem{kitaev2003fault}
+A~Yu Kitaev.
+\newblock ``Fault-tolerant quantum computation by anyons''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1016/S0003-4916\%2802\%2900018-0}{Annals of physics {\bf 303}, 2--30}~(2003).
+
+\bibitem{bravyi1998quantum}
+S.~B. Bravyi and A.~Yu. Kitaev.
+\newblock ``Quantum codes on a lattice with boundary''~(1998).
+\newblock  \href{http://arxiv.org/abs/quant-ph/9811052}{arXiv:quant-ph/9811052}.
+
+\bibitem{Fowler12surface}
+Austin~G. Fowler, Matteo Mariantoni, John~M. Martinis, and Andrew~N. Cleland.
+\newblock ``Surface codes: Towards practical large-scale quantum computation''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.86.032324}{Phys. Rev. A {\bf 86}, 032324}~(2012).
+
+\bibitem{bombin2006topological}
+H.~Bombin and M.~A. Martin-Delgado.
+\newblock ``Topological quantum distillation''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.97.180501}{Phys. Rev. Lett. {\bf 97}, 180501}~(2006).
+
+\bibitem{bombin2007topological}
+Hector Bombin and Miguel-Angel Martin-Delgado.
+\newblock ``Topological computation without braiding''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.98.160502}{Physical review letters {\bf 98}, 160502}~(2007).
+
+\bibitem{Bombin_2015_gauge}
+Héctor Bombín.
+\newblock ``Gauge color codes: optimal transversal gates and gauge fixing in topological stabilizer codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/17/8/083002}{New Journal of Physics {\bf 17}, 083002}~(2015).
+
+\bibitem{Kubica2015universal}
+Aleksander Kubica and Michael~E. Beverland.
+\newblock ``Universal transversal gates with color codes: A simplified approach''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.91.032330}{Phys. Rev. A {\bf 91}, 032330}~(2015).
+
+\bibitem{Egan2021fault}
+Laird Egan, Dripto~M. Debroy, Crystal Noel, Andrew Risinger, Daiwei Zhu, Debopriyo Biswas, Michael Newman, Muyuan Li, Kenneth~R. Brown, Marko Cetina, and Christopher Monroe.
+\newblock ``Fault-tolerant control of an error-corrected qubit''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1038/s41586-021-03928-y}{Nature {\bf 598}, 281--286}~(2021).
+
+\bibitem{Ryan-Anderson2021realization}
+C.~Ryan-Anderson, J.~G. Bohnet, K.~Lee, D.~Gresh, A.~Hankin, J.~P. Gaebler, D.~Francois, A.~Chernoguzov, D.~Lucchetti, N.~C. Brown, T.~M. Gatterman, S.~K. Halit, K.~Gilmore, J.~A. Gerber, B.~Neyenhuis, D.~Hayes, and R.~P. Stutz.
+\newblock ``Realization of real-time fault-tolerant quantum error correction''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevX.11.041058}{Phys. Rev. X {\bf 11}, 041058}~(2021).
+
+\bibitem{Krinner2022realizing}
+Sebastian Krinner, Nathan Lacroix, Ants Remm, Agustin Di~Paolo, Elie Genois, Catherine Leroux, Christoph Hellings, Stefania Lazar, Francois Swiadek, Johannes Herrmann, Graham~J. Norris, Christian~Kraglund Andersen, Markus M{\"u}ller, Alexandre Blais, Christopher Eichler, and Andreas Wallraff.
+\newblock ``Realizing repeated quantum error correction in a distance-three surface code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1038/s41586-022-04566-8}{Nature {\bf 605}, 669--674}~(2022).
+
+\bibitem{Sundaresan2023demonstrating}
+Neereja Sundaresan, Theodore~J. Yoder, Youngseok Kim, Muyuan Li, Edward~H. Chen, Grace Harper, Ted Thorbeck, Andrew~W. Cross, Antonio~D. C{\'o}rcoles, and Maika Takita.
+\newblock ``Demonstrating multi-round subsystem quantum error correction using matching and maximum likelihood decoders''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1038/s41467-023-38247-5}{Nature Communications {\bf 14}, 2852}~(2023).
+
+\bibitem{google2023suppressing}
+Google~Quantum AI.
+\newblock ``Suppressing quantum errors by scaling a surface code logical qubit''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.48550/arXiv.2207.06431}{Nature {\bf 614}, 676--681}~(2023).
+
+\bibitem{gupta2023encoding}
+Riddhi~S. Gupta, Neereja Sundaresan, Thomas Alexander, Christopher~J. Wood, Seth~T. Merkel, Michael~B. Healy, Marius Hillenbrand, Tomas Jochym-O'Connor, James~R. Wootton, Theodore~J. Yoder, Andrew~W. Cross, Maika Takita, and Benjamin~J. Brown.
+\newblock ``Encoding a magic state with beyond break-even fidelity''~(2023).
+
+\bibitem{wang2003confinement}
+Chenyang Wang, Jim Harrington, and John Preskill.
+\newblock ``Confinement-higgs transition in a disordered gauge theory and the accuracy threshold for quantum memory''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1016/S0003-4916(02)00019-2}{Annals of Physics {\bf 303}, 31--58}~(2003).
+
+\bibitem{Raussendorf2007fault}
+Robert Raussendorf and Jim Harrington.
+\newblock ``Fault-tolerant quantum computation with high threshold in two dimensions''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.98.190504}{Phys. Rev. Lett. {\bf 98}, 190504}~(2007).
+
+\bibitem{edmonds1965paths}
+Jack Edmonds.
+\newblock ``Paths, trees, and flowers''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.4153/CJM-1965-045-4}{Canadian Journal of mathematics {\bf 17}, 449--467}~(1965).
+
+\bibitem{higgott2023sparse}
+Oscar Higgott and Craig Gidney.
+\newblock ``Sparse blossom: correcting a million errors per core second with minimum-weight matching''~(2023).
+
+\bibitem{Fowler2013coping}
+Austin~G. Fowler.
+\newblock ``Coping with qubit leakage in topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.88.042308}{Phys. Rev. A {\bf 88}, 042308}~(2013).
+
+\bibitem{Fowler2014quantifying}
+Austin~G. Fowler and John~M. Martinis.
+\newblock ``Quantifying the effects of local many-qubit errors and nonlocal two-qubit errors on the surface code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.89.032316}{Phys. Rev. A {\bf 89}, 032316}~(2014).
+
+\bibitem{Hutter2014breakdown}
+Adrian Hutter and Daniel Loss.
+\newblock ``Breakdown of surface-code error correction due to coupling to a bosonic bath''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.89.042334}{Phys. Rev. A {\bf 89}, 042334}~(2014).
+
+\bibitem{Nickerson2019analysingcorrelated}
+Naomi~H. Nickerson and Benjamin~J. Brown.
+\newblock ``Analysing correlated noise on the surface code using adaptive decoding algorithms''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2019-04-08-131}{{Quantum} {\bf 3}, 131}~(2019).
+
+\bibitem{tuckett2020fault}
+David~K Tuckett, Stephen~D Bartlett, Steven~T Flammia, and Benjamin~J Brown.
+\newblock ``Fault-tolerant thresholds for the surface code in excess of 5\% under biased noise''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevLett.124.130501}{Physical review letters {\bf 124}, 130501}~(2020).
+
+\bibitem{bonilla2021xzzx}
+J~Pablo Bonilla~Ataides, David~K Tuckett, Stephen~D Bartlett, Steven~T Flammia, and Benjamin~J Brown.
+\newblock ``The xzzx surface code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1038/s41467-021-22274-1}{Nature communications {\bf 12}, 2172}~(2021).
+
+\bibitem{Strikis21}
+Armands Strikis, Simon~C. Benjamin, and Benjamin~J. Brown.
+\newblock ``Quantum computing is scalable on a planar array of qubits with fabrication defects''~(2021).
+
+\bibitem{siegel2022adaptive}
+Adam Siegel, Armands Strikis, Thomas Flatters, and Simon Benjamin.
+\newblock ``Adaptive surface code for quantum error correction in the presence of temporary or permanent defects''~(2022).
+
+\bibitem{lin2023empirical}
+Sophia~Fuhui Lin, Joshua Viszlai, Kaitlin~N. Smith, Gokul~Subramanian Ravi, Charles Yuan, Frederic~T. Chong, and Benjamin~J. Brown.
+\newblock ``Empirical overhead of the adapted surface code on defective qubit arrays''~(2023).
+
+\bibitem{brown2020parallelized}
+Benjamin~J Brown and Dominic~J Williamson.
+\newblock ``Parallelized quantum error correction with fracton topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevResearch.2.013303}{Physical Review Research {\bf 2}, 013303}~(2020).
+
+\bibitem{nixon2021correcting}
+Georgia~M Nixon and Benjamin~J Brown.
+\newblock ``Correcting spanning errors with a fractal code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1109/TIT.2021.3068359}{IEEE Transactions on Information Theory {\bf 67}, 4504--4516}~(2021).
+
+\bibitem{Miguel2023cellularautomaton}
+Jonathan F.~San Miguel, Dominic~J. Williamson, and Benjamin~J. Brown.
+\newblock ``A cellular automaton decoder for a noise-bias tailored color code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2023-03-09-940}{{Quantum} {\bf 7}, 940}~(2023).
+
+\bibitem{Wang2010graphical}
+David~S. Wang, Austin~G. Fowler, Charles~D. Hill, and Lloyd C.~L. Hollenberg.
+\newblock ``Graphical algorithms and threshold error rates for the 2d color code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.48550/arXiv.0907.1708}{Quantum Info. Comput. {\bf 10}, 780–802}~(2010).
+
+\bibitem{delfosse2014decoding}
+Nicolas Delfosse and Jean-Pierre Tillich.
+\newblock ``A decoding algorithm for css codes using the x/z correlations''.
+\newblock In 2014 IEEE International Symposium on Information Theory.
+\newblock \href{https://dx.doi.org/https://doi.org/10.48550/arXiv.1401.6975}{Pages 1071--1075}.
+\newblock IEEE~(2014).
+
+\bibitem{Chamberland_2020}
+Christopher Chamberland, Aleksander Kubica, Theodore~J Yoder, and Guanyu Zhu.
+\newblock ``Triangular color codes on trivalent graphs with flag qubits''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/ab68fd}{New Journal of Physics {\bf 22}, 023019}~(2020).
+
+\bibitem{Beverland2021cost}
+Michael~E. Beverland, Aleksander Kubica, and Krysta~M. Svore.
+\newblock ``Cost of universality: A comparative study of the overhead of state distillation and code switching with color codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PRXQuantum.2.020341}{PRX Quantum {\bf 2}, 020341}~(2021).
+
+\bibitem{sahay2022decoder}
+Kaavya Sahay and Benjamin~J Brown.
+\newblock ``Decoder for the triangular color code by matching on a m{\"o}bius strip''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PRXQuantum.3.010310}{PRX Quantum {\bf 3}, 010310}~(2022).
+
+\bibitem{kubica2023efficient}
+Aleksander Kubica and Nicolas Delfosse.
+\newblock ``Efficient color code decoders in $ d \backslash geq 2$ dimensions from toric code decoders''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2023-02-21-929}{Quantum {\bf 7}, 929}~(2023).
+
+\bibitem{Raussendorf2005long}
+Robert Raussendorf, Sergey Bravyi, and Jim Harrington.
+\newblock ``Long-range quantum entanglement in noisy cluster states''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.71.062313}{Phys. Rev. A {\bf 71}, 062313}~(2005).
+
+\bibitem{Higgott2021}
+Oscar Higgott and Nikolas~P. Breuckmann.
+\newblock ``Subsystem codes with high thresholds by gauge fixing and reduced qubit overhead''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevX.11.031039}{Phys. Rev. X {\bf 11}, 031039}~(2021).
+
+\bibitem{Gidney2022benchmarkingplanar}
+Craig Gidney, Michael Newman, and Matt McEwen.
+\newblock ``Benchmarking the {P}lanar {H}oneycomb {C}ode''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2022-09-21-813}{{Quantum} {\bf 6}, 813}~(2022).
+
+\bibitem{Paetznick2023performance}
+Adam Paetznick, Christina Knapp, Nicolas Delfosse, Bela Bauer, Jeongwan Haah, Matthew~B. Hastings, and Marcus~P. da~Silva.
+\newblock ``Performance of planar floquet codes with majorana-based qubits''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PRXQuantum.4.010310}{PRX Quantum {\bf 4}, 010310}~(2023).
+
+\bibitem{kesselring2022anyon}
+Markus~S. Kesselring, Julio C.~Magdalena de~la Fuente, Felix Thomsen, Jens Eisert, Stephen~D. Bartlett, and Benjamin~J. Brown.
+\newblock ``Anyon condensation and the color code''~(2022).
+
+\bibitem{brown2022conservation}
+Benjamin~J Brown.
+\newblock ``Conservation laws and quantum error correction: towards a generalised matching decoder''~(2022).
+
+\bibitem{fowler2013optimal}
+Austin~G. Fowler.
+\newblock ``Optimal complexity correction of correlated errors in the surface code''~(2013).
+
+\bibitem{higgott2023improved}
+Oscar Higgott, Thomas~C Bohdanowicz, Aleksander Kubica, Steven~T Flammia, and Earl~T Campbell.
+\newblock ``Improved decoding of circuit noise and fragile boundaries of tailored surface codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.48550/arXiv.2203.04948}{Physical Review X {\bf 13}, 031007}~(2023).
+
+\bibitem{bombin2012universal}
+Hector Bombin, Guillaume Duclos-Cianci, and David Poulin.
+\newblock ``Universal topological phase of two-dimensional stabilizer codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/14/7/073048}{New Journal of Physics {\bf 14}, 073048}~(2012).
+
+\bibitem{Kubica_2015}
+Aleksander Kubica, Beni Yoshida, and Fernando Pastawski.
+\newblock ``Unfolding the color code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/17/8/083026}{New Journal of Physics {\bf 17}, 083026}~(2015).
+
+\bibitem{Bhagoji15}
+Arjun Bhagoji and Pradeep Sarvepalli.
+\newblock ``Equivalence of 2d color codes (without translational symmetry) to surface codes''.
+\newblock In 2015 IEEE International Symposium on Information Theory (ISIT).
+\newblock \href{https://dx.doi.org/https://doi.org/10.1109/ISIT.2015.7282627}{Page 1109}.
+\newblock ~(2015).
+
+\bibitem{criger2016noise}
+Ben Criger and Barbara Terhal.
+\newblock ``Noise thresholds for the [[4, 2, 2]]-concatenated toric code''~(2016).
+
+\bibitem{BENNETT1976}
+Charles~H Bennett.
+\newblock ``Efficient estimation of free energy differences from monte carlo data''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1016/0021-9991(76)90078-4}{Journal of Computational Physics {\bf 22}, 245--268}~(1976).
+
+\bibitem{Bravyi_2013}
+Sergey Bravyi and Alexander Vargo.
+\newblock ``Simulation of rare events in quantum error correction''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/physreva.88.062308}{Physical Review A{\bf 88}}~(2013).
+
+\bibitem{stace2010error}
+Thomas~M Stace and Sean~D Barrett.
+\newblock ``Error correction and degeneracy in surface codes suffering loss''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.81.022317}{Physical Review A {\bf 81}, 022317}~(2010).
+
+\bibitem{criger2018multi}
+Ben Criger and Imran Ashraf.
+\newblock ``Multi-path summation for decoding 2d topological codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2018-10-19-102}{Quantum {\bf 2}, 102}~(2018).
+
+\bibitem{beverland2019role}
+Michael~E Beverland, Benjamin~J Brown, Michael~J Kastoryano, and Quentin Marolleau.
+\newblock ``The role of entropy in topological quantum error correction''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1742-5468/ab25de}{Journal of Statistical Mechanics: Theory and Experiment {\bf 2019}, 073404}~(2019).
+
+\bibitem{Gottesman_1998}
+Daniel Gottesman.
+\newblock ``Theory of fault-tolerant quantum computation''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/physreva.57.127}{Physical Review A {\bf 57}, 127--137}~(1998).
+
+\bibitem{gidney2023newcircuitsopensource}
+Craig Gidney and Cody Jones.
+\newblock ``New circuits and an open source decoder for the color code''~(2023).
+\newblock  \href{http://arxiv.org/abs/2312.08813}{arXiv:2312.08813}.
+
+\bibitem{Srivastava2022xyzhexagonal}
+Basudha Srivastava, Anton Frisk~Kockum, and Mats Granath.
+\newblock ``The $xyz^2$ hexagonal stabilizer code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2022-04-27-698}{{Quantum} {\bf 6}, 698}~(2022).
+
+\bibitem{huang2022tailoring}
+Eric Huang, Arthur Pesah, Christopher~T. Chubb, Michael Vasmer, and Arpit Dua.
+\newblock ``Tailoring three-dimensional topological codes for biased noise''~(2022).
+\newblock  \href{http://arxiv.org/abs/2211.02116}{arXiv:2211.02116}.
+
+\bibitem{yoshida2011classification}
+Beni Yoshida.
+\newblock ``Classification of quantum phases and topology of logical operators in an exactly solved model of quantum codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1016/j.aop.2010.10.009}{Annals of Physics {\bf 326}, 15--95}~(2011).
+
+\bibitem{Brell_2011}
+Courtney~G Brell, Steven~T Flammia, Stephen~D Bartlett, and Andrew~C Doherty.
+\newblock ``Toric codes and quantum doubles from two-body hamiltonians''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1088/1367-2630/13/5/053039}{New Journal of Physics {\bf 13}, 053039}~(2011).
+
+\bibitem{steane1996simple}
+Andrew~M Steane.
+\newblock ``Simple quantum error-correcting codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.54.4741}{Physical Review A {\bf 54}, 4741}~(1996).
+
+\bibitem{roffe2023bias}
+Joschka Roffe, Lawrence~Z Cohen, Armanda~O Quintavalle, Daryus Chandra, and Earl~T Campbell.
+\newblock ``Bias-tailored quantum ldpc codes''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2023-05-15-1005}{Quantum {\bf 7}, 1005}~(2023).
+
+\bibitem{chan2023strictly}
+Tim Chan and Simon~C. Benjamin.
+\newblock ``Strictly local union-find''~(2023).
+
+\bibitem{griffiths2023unionfind}
+Sam~J. Griffiths and Dan~E. Browne.
+\newblock ``Union-find quantum decoding without union-find''~(2023).
+
+\bibitem{Huang2020}
+Shilin Huang, Michael Newman, and Kenneth~R. Brown.
+\newblock ``Fault-tolerant weighted union-find decoding on the toric code''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.1103/PhysRevA.102.012419}{Phys. Rev. A {\bf 102}, 012419}~(2020).
+
+\bibitem{Haah2022boundarieshoneycomb}
+Jeongwan Haah and Matthew~B. Hastings.
+\newblock ``Boundaries for the {H}oneycomb {C}ode''.
+\newblock \href{https://dx.doi.org/https://doi.org/10.22331/q-2022-04-21-693}{{Quantum} {\bf 6}, 693}~(2022).
+
+\end{thebibliography}

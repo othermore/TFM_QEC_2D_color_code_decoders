@@ -1,0 +1,79 @@
+
+Note that when $h\rightarrow\infty$, the optimization objective in Equation \eqref{eq:local:reward:opt} is reduce to
+\begin{equation} \label{eq:local:reward:opt:infty}
+\begin{split}
+    \max_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{
+    a_t \sim \pi(\cdot \mid s_t) \\ 
+    s_{t+1} \sim M(\cdot \mid s_t, a_t)
+    }}
+    [\sum_{t} \gamma^t r_t]
+\end{split}
+\end{equation}
+where $M = E(\alpha_k + \delta)$,
+which is essentially deterministic in Equation \eqref{eq:det:opt} with evolution progression size $l_{k+1}$ equals to the neighborhood range $\delta$.
+
+
+\begin{equation}
+\begin{split}
+    f(\alpha^\prime) & = (1+h\alpha^\prime)V^{\pi^*_{E(\alpha^\prime)},E(\alpha^\prime)}- \frac{1}{\delta} \int_{\beta=\alpha}^{\alpha+\delta} (1 + h \beta)
+    V^{\pi^*_{E(\alpha^\prime)},E(\beta)}  \dd{\beta} \\
+    & = \int_{\beta=\alpha}^{\alpha+\delta} (V^{\pi^*_{E(\alpha^\prime)},E(\alpha^\prime)} - V^{\pi^*_{E(\alpha^\prime)},E(\beta)} ) + h 
+\end{split}
+\end{equation}
+is maximized at $\alpha^\prime$
+\begin{equation}
+\begin{split}
+    & \lim_{\delta \rightarrow 0}
+    \left[
+    \mathop{\arg\max}_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{
+    \beta \sim U([\alpha, \alpha+\delta])
+    }}
+    \mathop{\mathbb{E}}_{ 
+    \substack{(s_t, a_t) \sim \pi, E(\beta)
+    }}
+    \sum_{t} \gamma^t r_t (1 + h \beta)
+    \right] \\
+    & = \lim_{\delta \rightarrow 0}
+    \left[
+    \mathop{\arg\max}_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{
+    \beta \sim U([\alpha, \alpha+\delta])
+    }}
+    (1 + h \beta)
+    \mathop{\mathbb{E}}_{ 
+    \substack{(s_t, a_t) \sim \pi, E(\beta)
+    }}
+    \sum_{t} \gamma^t r_t 
+    \right] \\
+    & = \lim_{\delta \rightarrow 0}
+    \left[
+    \mathop{\arg\max}_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{
+    \beta \sim U([\alpha, \alpha+\delta])
+    }}
+    (1 + h \beta) V^{\pi, E(\beta)} 
+    \right] \\
+    & = \lim_{\delta \rightarrow 0}
+    \left[
+    \mathop{\arg\max}_{\pi}
+    \int_{\beta=\alpha}^{\alpha+\delta} (1+h\beta)
+    \right] \\
+\end{split}
+\end{equation}
+    
+    
+    
+    By the assumption in Equation \ref{eq:alpha:lipschitz:assumption},
+\begin{equation}
+\begin{split}
+  \exists \delta > 0, \text{s.t. } \forall |\alpha^\prime - \alpha | < \delta, 
+ ||E(\alpha)(s) - E(\alpha^\prime)(s)|| \le L_1 |\alpha - \alpha^\prime|,
+ \forall s\in\mathcal{S} 
+\end{split}
+\end{equation}

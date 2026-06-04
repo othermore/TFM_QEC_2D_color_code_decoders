@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\draw[black,thick,solid] (0.8,0.0) -- (0.40000000000000013,0.6928203230275509);
+\draw[black,thick,solid] (0.8,0.0) -- (0.39999999999999947,-0.6928203230275513);
+\draw[black,thick,solid] (-0.39999999999999986,0.692820323027551) -- (-0.8,9.797174393178826e-17);
+\draw[black,thick,solid] (-0.39999999999999986,0.692820323027551) -- (0.40000000000000013,0.6928203230275509);
+\draw[black,thick,solid] (-0.40000000000000036,-0.6928203230275507) -- (0.39999999999999947,-0.6928203230275513);
+\draw[black,thick,solid] (-0.40000000000000036,-0.6928203230275507) -- (-0.8,9.797174393178826e-17);
+\filldraw[fill=white, draw=black] (0.8,0.0) circle (0.2) node [label=above right:{}](D94057){};
+\filldraw[fill=white, draw=black] (-0.39999999999999986,0.692820323027551) circle (0.2) node [label=above right:{}](D90343){};
+\filldraw[fill=white, draw=black] (-0.40000000000000036,-0.6928203230275507) circle (0.2) node [label=above right:{}](D82275){};
+\filldraw[fill=white, draw=black] (0.27000000000000013,0.5628203230275509) rectangle (0.5300000000000001,0.8228203230275509) node [label={[label distance=-0.3cm]30:{}}](A68680){};
+\filldraw[fill=white, draw=black] (-0.93,-0.1299999999999999) rectangle (-0.67,0.13000000000000012) node [label={[label distance=-0.3cm]30:{}}](A86537){};
+\filldraw[fill=white, draw=black] (0.26999999999999946,-0.8228203230275513) rectangle (0.5299999999999995,-0.5628203230275513) node [label={[label distance=-0.3cm]30:{}}](A25026){};
+\end{tikzpicture}

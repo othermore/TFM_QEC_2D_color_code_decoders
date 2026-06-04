@@ -1,0 +1,26 @@
+\begin{theorem}\label{thm:revolver}
+
+Suppose the policy that optimizes the objective in Equation \eqref{eq:local:reward:opt} with evolution reward shaping factor of $h$ is the optimal policy $\pi_{M_\varphi}^*$ on robot $M_\varphi=E(\varphi), \varphi \in [\alpha_k, \alpha_k + \xi]$, i.e. 
+\begin{equation}\label{eq:thm}
+\begin{split}
+    & 
+    \mathop{\arg\max}_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{
+    \beta \sim U(\alpha_k, \alpha_k + \xi) \\
+    M_\beta = E(\beta)
+    }}
+    \mathop{\mathbb{E}}_{ 
+    \substack{a_t \sim \pi(\cdot \mid s_t) \\ 
+    s_{t+1} \sim M_\beta(\cdot \mid s_t, a_t)}}
+    \sum_{t} \gamma^t r_t \exp(h \cdot \beta)
+    \\
+    & = \pi_{M_\varphi}^* = \mathop{\arg\max}_{\pi}
+    \mathop{\mathbb{E}}_{ 
+    \substack{a_t \sim \pi(\cdot \mid s_t) \\ 
+    s_{t+1} \sim M_\varphi(\cdot \mid s_t, a_t)}}
+    \sum_{t} \gamma^t r_t
+\end{split}
+\end{equation}
+Then when $\xi\rightarrow 0$, $\varphi = \alpha_k + \frac{1}{2}\xi + \frac{1}{4} h\xi^2 + o(\xi^2)$.  
+\end{theorem}

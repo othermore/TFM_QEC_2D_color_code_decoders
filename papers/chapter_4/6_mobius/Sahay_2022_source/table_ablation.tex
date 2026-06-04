@@ -1,0 +1,19 @@
+\newcommand\chck{{\color{black}\ding{51}}}
+\newcommand\chx{{\color{black}\ding{55}}}
+\begin{table}[t]
+\small
+\centering
+\begin{tabular}{c|c|c}
+\hline
+\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}} Randomized \\  Evolution \end{tabular}} & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}} Reward \\ Shaping Factor \end{tabular}} & \multirow{2}{*}{Reward} \\
+&&\\ \hline
+\chx & $h=0.0$ & 5363.89 $\pm$ 419.90 \\ \hline
+\chck & $h=0.0$ & 5844.46 $\pm$ 33.63 \\ \hline
+\chck & $h=1.0$ &  6279.35 $\pm$ 290.33 \\ \hline
+\end{tabular}
+\caption{
+\textbf{Ablation studies} on local randomized evolution and evolution reward shaping.
+The RL algorithm used in the experiments is SAC and the task evaluated is \texttt{Ant-length-mass}. 
+}
+\label{tab:ablation}
+\end{table}

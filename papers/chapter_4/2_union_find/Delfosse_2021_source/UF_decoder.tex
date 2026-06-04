@@ -1,0 +1,1363 @@
+\documentclass[a4paper, 10pt, accepted=2021-11-03]{quantumarticle}
+
+\pdfoutput=1
+
+\usepackage[titletoc,title]{appendix}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks]{hyperref}
+\usepackage[english]{babel} 
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{euscript}
+\usepackage[ruled, linesnumbered, noend]{algorithm2e}
+\usepackage[numbers,sort&compress]{natbib}
+
+\newtheorem{theo}{Theorem}
+\newtheorem{defi}{Definition}
+\newtheorem{prop}{Proposition}
+\newtheorem{coro}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{exam}{Example}
+\newtheorem{conj}{Conjecture}
+
+\DeclareMathOperator{\Gal}{Gal}
+\DeclareMathOperator{\pgcd}{pgcd}
+\DeclareMathOperator{\ppcm}{ppcm}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\vect}{vect}
+\DeclareMathOperator{\Supp}{Supp}
+\DeclareMathOperator{\Fix}{Fix}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Ker}{Ker}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\modp}{mod}
+\DeclareMathOperator{\Mat}{Mat}
+\DeclareMathOperator{\Find}{Find}
+\DeclareMathOperator{\Union}{Union}
+\DeclareMathOperator{\Grow}{Grow}
+\DeclareMathOperator{\Support}{Support}
+\DeclareMathOperator{\cl}{cl}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\CC}{{\EuScript C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\X}{\EuScript X}
+%\newcommand{\e}{\varepsilon}
+\newcommand{\h}{\mathcal{H}}
+\newcommand{\hn}{\mathcal{H}^{\otimes n}}
+\newcommand{\s}{\mathbb{S}}
+\newcommand{\E}{{\EuScript E}}
+\newcommand{\Esp}{{\mathbb E}}
+\newcommand{\Prob}{{\mathbb P}}
+\newcommand{\Pauli}{\mathcal{P}}
+\newcommand{\HH}{\mathbf H}
+\newcommand{\hh}{\mathbf h}
+\newcommand{\KK}{\mathbf K}
+\newcommand{\GG}{\mathbf G}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\e}{\varepsilon}
+
+\newcommand\ket[1]{|#1\rangle}
+\newcommand\bra[1]{\langle #1|}
+\newcommand\braket[2]{\langle #1|#2 \rangle}
+\newcommand\proj[1]{|#1\rangle \langle #1|}
+\newcommand\gen[1]{\langle {#1}\rangle}
+
+
+
+\title{Almost-linear time decoding algorithm for topological codes}
+
+\makeatletter
+\let\@fnsymbol\@arabic
+\makeatother
+
+\author{Nicolas Delfosse}
+\affiliation{IQIM, California Institute of Technology, Pasadena, CA, USA}
+\affiliation{Department of Physics and Astronomy, University of California, Riverside, CA, USA}
+\affiliation{Station Q Quantum Architectures and Computation Group, Microsoft Research, Redmond, WA 98052, USA}
+
+\email{nidelfos@microsoft.com}
+
+\author{Naomi H. Nickerson}
+\affiliation{Quantum Optics and Laser Science, Blackett Laboratory, Imperial College London, Prince Consort Road, London SW7 2AZ, United Kingdom}
+
+\begin{document}
+
+\begin{abstract}
+In order to build a large scale quantum computer, one must be able to  
+correct errors extremely fast. We design a fast decoding algorithm 
+for topological codes to correct for Pauli errors and erasure
+and combination of both errors and erasure. 
+Our algorithm has a worst case complexity of $O(n \alpha(n))$, 
+where $n$ is the number of physical qubits and 
+$\alpha$ is the inverse of Ackermann's function, which is very slowly growing.
+For all practical purposes, $\alpha(n) \leq 3$.
+We prove that our algorithm performs optimally for errors of weight up to $(d-1)/2$
+and for loss of up to $d-1$ qubits, where $d$ is the minimum distance of the code.
+Numerically, we obtain a threshold of $9.9\%$ for the 2d-toric code with perfect syndrome measurements and $2.6\%$ with faulty measurements.
+\end{abstract}
+
+\maketitle
+
+
+\section*{Introduction}
+
+
+\medskip
+The main obstacle to the construction of a quantum computer is the unavoidable
+presence of errors, which left unchecked quickly destroy quantum information. 
+Error correction will therefore be essential to perform meaningful quantum computation.
+Experimental efforts have made rapid progress in recent years~\cite{barends2014superconducting,kalb2017entanglement,ballance2014high,debnath2016demonstration,heeres2017implementing,carolan2015universal,hill2015surface,monz2016realization,lekitsch2017blueprint,ibm}, 
+and may soon have the capabilities to demonstrate small-scale error correction. 
+Topological codes, in particular Kitaev's surface code~\cite{kitaev2003fault}, are currently expected 
+to form the core architecture of this first generation of quantum computers, due to their high thresholds 
+and their locality. However, to use these codes, we also require a classical decoding algorithm, 
+which must process measurement information fast enough to keep pace with the clock-speed
+of the quantum device. 
+While the question of which codes will be the first to be realized seems to 
+be answered, no existing decoder is yet fast enough to match the speeds 
+that the first generation of quantum processors will require~\cite{fowler2017:QEC_talk}.
+
+\medskip
+Many decoding algorithms that run in polynomial time have developed~\cite{
+dennis2002topological,
+harrington2004:phd,
+dennis2005:phd,
+raussenfort2007:ft,
+stace2010error,
+barrett2010fault,
+duclos2010fast,
+fowler2012topological,
+fowler2012:decoding,
+wootton2012high,
+duclos2013fault,
+duclos2013kitaev,
+bravyi2013quantum,
+hutter2014:HDRG,
+anwar2014fast,
+bravyi2014efficient,
+hutter2015:improved_HDRG,
+wootton2015:simple_decoder,
+fowler2015:parallel_MWPM,
+watson2015fast,
+varsamopoulos2017decoding,
+herold2015fault,
+torlai2017neural,
+tuckett2017ultra,
+landahl2011:color_codes_decoding,
+wang2009graphical,
+sarvepalli2012efficient,
+bombin2012:color_codes_decoder,
+delfosse2014decoding, 
+kubica2018:phd}
+%wang2003confinement,
+%breuckmann2016local,
+%edmonds1965paths,
+but although this is considered efficient, in practice quadratic or cubic complexity
+is likely too slow to correct errors faster than they accumulate in a quantum device. 
+Minimum weight perfect matching (MWPM) decoder~\cite{dennis2002topological}
+is currently the most standard decoder for topological codes, and has a worst case 
+complexity of between $O(n^3)$ and $O(n^7)$ depending on the implementation~\cite{kolmogorov2009:blossom}. 
+Significant efforts have been made to optimize its performance~\cite{fowler2012topological}, and extend it to more general noise models~\cite{stace2010:loss_long, barrett2010:loss, stace2010:percolation, whiteside2014:loss}. Most notably, Fowler
+has achieved large speed improvements~\cite{fowler2015:parallel_MWPM}.
+But despite this, further speed-up is required if the decoder is to be practical in a real device. 
+
+\medskip
+In this work, we design a decoding algorithm for topological codes 
+that runs in the worst case in almost-linear time in the number of physical qubits $n$,
+with a high threshold (See Table~\ref{tab:thresholds}).
+We focus on the worst case complexity and not only on the average case complexity 
+since it is the maximum running time of the decoder that will determine the clock-time 
+of the quantum computer.
+Our key insight is the use of the Union-Find data-structure 
+algorithm~\cite{galler1964:union_find_algorithm, tarjan1975:union_find_complexity} 
+that allows us to dynamically keep track of and update the estimation of the error as the decoder runs. 
+We obtain a threshold of $9.9\%$ for correction of phase-flip or bit-flip Pauli error 
+and $2.6\%$ with faulty syndrome measurement. 
+By {\em almost-linear} complexity, we do not mean $O(n \log n)$ but even lower.
+Our decoder has a worst-case complexity $O(n \alpha(n))$, where 
+$\alpha$ is the inverse of Ackermann's function \cite{tarjan1975:union_find_complexity}. 
+Although it is not formally linear, $\alpha$ is so slowly growing that it can be considered 
+as a constant. 
+If the number of physical qubits used is smaller than the number of atoms in the universe, 
+then $\alpha(n) \leq 3$. 
+
+
+ \begin{table}[hb]
+\centering
+\footnotesize
+\caption{Comparison of the Union-Find and MWPM decoders' thresholds under 
+phase-flip error.}
+\label{tab:thresholds}
+\begin{tabular}{c c c}
+\hline
+ & UF decoder & MWPM decoder\\
+\hline
+\text{2d-toric code } & $9.9\%$ & $10.3\%$ \cite{dennis2002topological}\\
+\hline
+\text{2+1d-toric code} & $2.6\%$ & $2.9\%$ \cite{wang2003confinement}\\
+\hline
+\text{2d-hexagonal color code} & $8.4\%$ & $8.7\%$ \cite{delfosse2014decoding}\\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+We begin by introducing the surface code in Section~\ref{sec:background}. In Section~\ref{sec:uf} we introduce an outline of the 
+decoding algorithm, and give analytic arguments about its performance in Section~\ref{sec:performance}. Sections~\ref{sec:complexity} and~\ref{sec:weighted_growth}
+contains our main result, the description of the implementation that can be used to implement our
+decoding algorithm in almost-linear time. Finally we present our numerical results, and 
+discuss the application of the decoder beyond the surface code in Section~\ref{sec:application}. Further discussion of the complexity scaling,
+and numerical simulations is given in the Appendices. 
+
+
+
+\begin{figure}
+\includegraphics[width=0.9\columnwidth]{time_scaling.pdf}
+\caption{\label{fig:time_scaling} {\bf Average running time.} We show the time taken to perform $10^6$ Montecarlo trials of decoding for a 2d toric lattice, under Pauli error and erasure error, with $p_e=0.1$. The average decoder running time increases linearly with the number of qubits. Our decoder was implemented in C, and run on a single 2.9 GHz Intel Core i5 CPU.}
+\end{figure}
+
+
+
+
+\section{Background - the surface code \label{sec:background}}
+
+Our decoding algorithm generalizes to any surface code with any genus, 
+with or without boundaries~\cite{freedman2001:planar, bravyi1998:planar}
+as well as to color codes \cite{bombin2006:color_codes}. For simplicity, we choose to
+describe the implementation for the surface code without periodic boundary conditions.  
+
+\medskip
+{\bf The surface code: }
+The surface code, introduced by Kitaev~\cite{kitaev2003fault}, is a topological code, 
+defined on a square lattice of the torus, where a qubit is placed on each edge. 
+Denote respectively by $V,E,F$ the set of vertices, edges and faces of the lattice.
+The code is defined to be the ground space of the Hamiltonian,
+$$
+H = -\sum_{v \in V} X_v - \sum_{f \in F} Z_f
+$$
+There is an operator $X_v$ associated with each vertex $v$ of the lattice
+and a plaquette operator $Z_f$ associated with each face $f$.
+$X_v$ is the product of the Pauli-$X$ matrices acting on the edges incident to $v$,
+{\em i.e.} $X_v = \prod_{e \in v} X_e$, and 
+$Z_f = \prod_{e \in f} Z_e$ is the product of the Pauli-$Z$ acting on all edge of the face $f$.
+The code space is defined as the simultaneous `+1' eigenstate of these operators $X_v$ and $Z_f$. 
+These operators, and any product of them, are called the {\em stabilizers} of the code, and form
+the stabilizer group, $S$.
+
+\medskip
+{\bf Error model: }
+For simplicity, we consider only i.i.d. phase-flip errors, where each qubit is subjected 
+to a $Z$-error with probability $p_Z$. The $X$-part of a Pauli error 
+can be corrected identically. In addition to Pauli errors, a qubit may be {\em erased}, with probability $p_e$. 
+We call the set of all erased qubits, {\em the erasure}, $\e$. 
+We use the term erasure to describe the error channel through
+which a qubit at a {\em known location} is subjected to a Pauli $Z$ error with probability $1/2$.
+The terms {\em erasure}, {\em loss} and {\em leakage} are sometimes used interchangably, 
+but physically loss and leakage are two separate mechanisms through which a qubit can be erased.
+If we detect that a qubit has left the computational subspace (leakage), or that it is physically missing (lost),
+it can be reinitialized or replaced, which corresponds to a random Pauli error after measurement of the stabilizers. 
+However, it is worth noting that other physical processes could cause an error at a known location, 
+and these can be treated identically as an erasure.
+
+\medskip
+{\bf Error correction: }
+Error correction proceeds by measuring the stabilizer 
+operators $X_v$. When an error $E_Z \in \{I, Z\}^{\otimes n}$ has affected the qubits of the code, 
+any stabilizer $X_v$ that anticommutes with the error returns a `-1' outcome. The subset of vertices, $v$, with $-1$ measurement outcomes is called the {\em syndrome}, $\sigma$. 
+Given a syndrome, $\sigma$, and an erasure, $\e$, the role of the decoder is to find a correction 
+operator, $\cal{C}(\sigma, \e)$, such that $\mathcal{C}(\sigma, \e) E_Z \in S$. That is, when the correction operator is applied to the code, the error is corrected up to a stabilizer. 
+
+
+
+\section{Union-Find decoder for surface codes\label{sec:uf}}
+
+We begin by introducing an outline of the decoding procedure, without the 
+details of its implementation that are required to achieve low complexity.
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{uf_schematic.pdf}
+\caption{{\bf The two stages of decoding.} The erasure decoder proceeds in two stages. We begin with a syndrome, $\sigma$, caused by an error, $E_Z$, that is supported only partially in $\e$. In the first stage, syndrome validation modifies the erasure to $\e'$ in such a way that there is an error $E_Z'$, entirely supported within $\e'$, whose syndrome is also $\sigma$. In the second stage $\sigma$ and $\e'$ are decoded using the erasure decoder. \label{fig:stages}}
+\end{figure}
+
+\medskip
+Our algorithm is motivated by the fact that erasure errors are much simpler to decode than Pauli errors. 
+Simply put, we can describe an erasure error as a Pauli error at a known location. When erasure is the only source of error
+the decoding problem is significantly simplified, as errors can only be present within the erasure.
+The peeling decoder for erasure introduced in~\cite{delfosse2017:linear_decoding} uses this fact
+to find a correction in the case that only erasure errors are present. When Pauli errors can also occur this algorithm will necessarily fail, as the correction now has support outside the erasure. 
+
+\medskip
+The decoder is divided into two stages, as shown in Figure~\ref{fig:stages}. 
+The goal of the first stage is to take a syndrome generated by both 
+Pauli error and erasure, $\e$, and from this generate a modified erasure, $\e'$,
+such that there is a valid correction operator supported entirely in $\e'$.
+We call this stage {\em syndrome validation}. After the syndrome is validated, 
+we can apply the peeling decoder to 
+find a correction.
+
+\medskip
+To perform syndrome validation, we identify `invalid' clusters of erasures, and iteratively 
+grow them until the updated state is correctable by the erasure decoder. 
+This idea of growing and merging clusters in order to correct them as locally as 
+possible has been previously explored~\cite{ harrington2004:phd, dennis2005:phd, duclos2010fast},
+but in order to make such a decoder fast one needs to be able rapidly 
+update the clusters as they grow. This dynamical update gives the dominant contribution to the decoding complexity.
+
+\medskip
+To define how we can identify invalid clusters of erasures, we state our first lemma.
+
+\begin{lemma}[even vs odd clusters] \label{lemma:erasure_decoding_parity_condition}
+Let $\e$ be a connected subset of edges and let $\sigma$ be a set of syndrome 
+vertices included in $\e$.
+There exists a  $Z$-error $E_Z \subset \e$ of syndrome $\sigma$ if and only if
+the cardinality of $\sigma$ is even.
+\end{lemma}
+
+
+This is straightforward to prove. 
+We define a cluster to be a connected component of erased qubits in the subgraph $(V,\e)$.
+These clusters can be either a connected subgraph induced by a subset of erased edges, 
+or an isolated vertex.
+If no Pauli error is present, it must be the case that the cluster supports an even number
+of syndrome bits. If the cluster supports an odd number of syndrome vertices then we identify it as `invalid', at least 
+one error chain must terminate in this cluster. The erasure decoder cannot be applied
+directly to odd clusters
+
+\medskip
+Since we cannot apply the erasure decoder to odd clusters directly, instead we grow these clusters
+by adding edges to the erasure until they connect with another odd cluster. When two odd clusters merge
+the resulting cluster is even, and can therefore be corrected. 
+Note that a single vertex outside the erasure supporting a syndrome bit is an odd cluster.
+
+\medskip
+Algorithm~\ref{algo:uf_naive} describes this procedure. Steps 1-7 
+perform syndrome validation, and in step 8 the erasure decoder is applied. 
+Lemma~\ref{lemma:erasure_decoding_parity_condition} proves that we can apply the erasure decoding at the end of Algorithm~\ref{algo:uf_naive} 
+and that this final step will return a correction $\mathcal{C}$ that is consistent with the syndrome.
+Figure~\ref{fig:schematic} shows
+an example of the growing and merging procedure. 
+
+\medskip
+We will later discuss the detail of the implementation required to achieve a low complexity, but first we
+focus on the error tolerance of the algorithm. 
+
+\begin{algorithm}[h]
+  \SetAlgoLined
+  \DontPrintSemicolon
+
+  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+  \Input{The set of erased positions $\e \subset E$ and the syndrome $\sigma \subset V$ of an error $E_Z$.}
+  \Output{An estimation ${\cal C}$ of $E_Z$ up to a stabilizer.}
+  \BlankLine
+	
+  Create the list of all odd clusters $C_1, \dots, C_m$, and initialize the modified erasure $\e'=\e$. \;
+  \While{there exists an odd cluster}{
+    \For{all odd cluster $C_i$}{
+      Grow $C_i$ by increasing its radius by one half-edge. \;
+      If $C_i$ meets another cluster, fuse and update parity. \;
+      If $C_i$ is even, remove it from the odd cluster list. \;
+  	}
+  }
+  Add full edges that are in the grown clusters to $\e'$. \;
+  Apply the peeling decoder to the erasure to find $\mathcal{C}$. \;
+  
+	\caption{Union-Find decoder -- Naive version}
+	\label{algo:uf_naive}
+\end{algorithm}
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{uf_schematic_4.pdf}
+\caption{\label{fig:schematic} Schematic representation of syndrome validation.
+}
+\end{figure}
+
+
+
+
+
+\section{Decoder Performance\label{sec:performance}}
+
+We now discuss the performance of the decoder in the low error regime, and 
+show that it performs just as well as the most likely error (MLE) decoder below the minimum distance.
+MLE decoder returns the most likely error configuration given the observed syndrome. 
+The MWPM-decoder is an implementation of an MLE decoder.
+
+\medskip
+For any code, the MLE decoder can correct any error configuration, $E_Z$, with a weight
+of up to $(d-1)/2$, where $d$ is the minimum distance of the code.
+For the erasure channel, any erasure pattern
+of up to $d-1$ qubits can be corrected. 
+Moreover, both of these bounds are tight. Reaching these values 
+with an efficient decoding algorithm is evidence of good performance.
+
+\medskip
+In our mixed noise model, MLE decoder can correct any combination
+of $t$ erased qubits and $s$ $Z$-errors (outside the erased set) as long as
+$t + 2s<d$. This bound, generalizing both previous cases, is also tight.
+
+\begin{theo} \label{theo:UF_perf}
+If $t + 2s<d$, Algorithm~\ref{algo:uf_naive} can correct any 
+combination of $t$ erased qubits and $s$ $Z$-error.
+\end{theo}
+
+This algorithm performs well for both Pauli errors, erasures and combinations of the two. 
+
+\begin{proof}
+For the case of erasures the proof is straightforward since the erasure decoder can be called 
+immediately without going through steps 1. to 7.
+Consider next the other extreme where only Pauli errors occur and denote the error by
+$E_Z$.
+A cluster $C$ grows in Algorithm~\ref{algo:uf_naive} (Step 4.), 
+when there are an odd number of syndrome vertices contained within it.
+This implies that there exists at least one path in the support of $E_Z$
+connecting a vertex of $C$ to a vertex outside of $C$.
+Therefore, when a cluster grows, at least one new half-edge of $E_Z$ is covered.
+After at most $2s$ rounds of growth, the grown cluster covers 
+the entire error $E_Z$ and there can be no more odd clusters left to grow.
+At the end of the growing procedure, the diameter of the largest erased
+cluster is at most $2s$ edges ($4s$ half-edges). 
+By erasing this cluster, we obtain an erasure pattern that covers $E_Z$ 
+and that does not cover a non-trivial logical error since $2s < d$. 
+When the peeling decoder is run in the final step it must therefore succeed at identifying $E_Z$ up 
+to a stabilizer. This argument relies on the optimality of the peeling decoder proven in \cite{delfosse2017:linear_decoding}
+
+The general argument for a combination of $s$ errors and $t$ erasures is similar. 
+Growing the clusters increases the diameter of the largest cluster by at 
+most $2s$. It is then upper bounded by $2s+t<d$. Just as in the case of only Pauli errors, the final 
+step returns an error equivalent to $E_Z$, up to a stabilizer.
+\end{proof}
+
+
+
+\section{Achieving almost-linear complexity\label{sec:complexity}}
+
+Our next goal is to show that our decoder can be implemented in almost-linear time
+in the number of qubits, $n$, by exploiting Union-Find data-structure 
+algorithms~\cite{galler1964:union_find_algorithm, tarjan1975:union_find_complexity}.
+
+\subsection{Union-Find algorithm for cluster growth}
+The key function of the decoder is to grow clusters, and fuse them when they
+meet. For this we need two things: a function $\Union(u, v)$ that performs the 
+fusion operation on two clusters
+$C_u$ and $C_v$, and a function $\Find(v)$ that identifies the cluster to which
+vertex $v$ belongs. The $\Find()$ function
+allows us to distinguish clusters from one another, since we only wish to fuse
+clusters when they are distinct.  
+When an edge, $(u,v)$ is added to a growing cluster, we call the function
+$\Find(u)$ and $\Find(v)$ on its two endpoints. 
+If the endpoints belong to the same cluster, $\Find(u)=\Find(v)$,
+in which case we do nothing. If $\Find(u)\neq\Find(v)$, they belong to different clusters and we must fuse
+$C_u$ and $C_v$. The complexity of this subroutine provides the leading order in the complexity of 
+our decoder.
+
+\medskip
+{\bf A naive algorithm:}
+We first describe a naive implementation of the $\Union()$ and $\Find()$ functions.
+Let us store an index $\Find(v)$ for each vertex $v$
+in a look-up table of size $|V|$.
+This makes the cluster identification trivial.
+However, when $\Union(u, v)$ is called one must update 
+the cluster indices $\Find(w)$ for all the vertices $w$ of one the 
+two clusters $C_u$ or $C_v$ in order to correctly update the state. 
+This might require a number of updates of cluster indices $\Find(v)$,
+which is itself linear in $n$. 
+In the worst case, we call $\Union$ up to $n-1$ times, yielding a 
+quadratic overall complexity, $O(n^2)$.
+
+\subsection{Implementation}
+We now describe the data structure, and steps required in the implementation
+to achieve an almost-linear complexity. 
+
+\medskip
+{\bf Weighted Union:}
+In order to reduce the complexity due to updating the cluster index
+after merging, we can choose to always select the smallest component of the two 
+clusters, $C_u$ and $C_v$, to update.
+The size of the small cluster at least doubles at each call of $\Union()$,
+which means that every vertex index is updated at most $O(\log(n))$ times,
+reducing the complexity of the Union-Find update to $O(n \log n)$.
+To do this it is also necessary to store the size of each component, but this
+does not affect the complexity, as we can simply add them to our look-up table. 
+
+\medskip
+{\bf Tree representation:}
+We now consider how the clusters can be stored in memory in order
+to speed up the index update in $\Union()$. The representation we choose
+increases the cost of the $\Find()$ function, but overall the complexity 
+is reduced. 
+We represent each cluster $C$ as a tree that we call a {\em cluster tree}. 
+The vertices of the cluster-tree correspond to the vertices of the
+cluster $C$ of the lattice, however, the cluster-tree is an arbitrary 
+tree and does not have to respect the lattice structure. An example of this
+data structure is shown in Figure~\ref{fig:data_structure}. 
+An arbitrary vertex $u$ of $C$ is chosen as the {\em root} of the 
+cluster-tree and is used to identify the cluster. The size of the cluster and its parity are also stored at its root.
+$\Find(v)$ returns the root of $u$, for which we must traverse the tree from $u$ to its root.
+The cost of $\Find()$ is therefore given by the depth of the tree. 
+To minimize this cost, the cluster-trees are initialized with depth 1 at the beginning of the 
+Union-Find decoder. 
+When $\Union(u, v)$ is applied, one must first check whether $u$ and $v$ belong
+to the same cluster. To do this we call $\Find(u)$ and $\Find(v)$ and walk through the trees 
+from $u$ and $v$ to their respective roots. 
+If these components are distinct, the trees are merged in two steps. 
+First, the smallest cluster-tree (say $C_v$) is added as a subtree of the root 
+$\Find(u)$ of the largest cluster-tree ($C_u$).
+Then, the size and parity stored at the root is updated. Path compression
+can then be applied to minimize the depth of the new clusters.
+
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{data_structure.pdf}
+\caption{\label{fig:data_structure} {\bf A cluster-tree data structure.}  The tree is initialized with depth one but 
+this may increase during the decoding procedure.
+The size and parity are stored at the root of the cluster-tree.}
+\end{figure}
+
+\medskip
+{\bf Path compression:}
+When $Find(u)$ is called, we step through the tree until we reach its root. 
+Once the root of $u$ is reached we compress the by pointing all the vertices 
+encountered along the path directly to the root. 
+This only doubles the cost $Find()$ but speeds up any future call to the function that passes
+through any part of the compressed path. Using path compression alone, without
+weighted union also leads to a complexity of $O(n \log n)$. However, when combining both
+procedures together there is a further reduction of the complexity. 
+The analysis of Union-Find algorithms with both weighted union and 
+path compression is quite involved, Tarjan proved that remarkably the worst-case 
+complexity is $O(n \alpha(n))$ 
+\cite{tarjan1975:union_find_complexity}. It has also been shown that this result is optimal \cite{tarjan1979:union_find_lower_bound, fredman1989:union_find_lower_bound}.
+
+
+\medskip
+{\bf Support of the growing clusters:}
+The cluster-trees encode the set of vertices of the clusters.
+The edges are represented by a look-up table, $\Support$, of size $|E|$
+that stores the state of an edge, which can take one of 
+three values: {\em Unoccupied}, {\em Grown} or {\em Half-grown}.
+When an edge is half-grown also store the vertex of the lattice
+from which it was grown.
+$\Support$ is initialized with all erased edges marked as {\em Grown}
+and all other edges being {\em Unoccupied}. As the algorithm proceeds, 
+half-edges are grown, growing by one half-edge twice produces a grown edge. 
+
+
+
+\medskip
+{\bf Boundary representation:}
+In order to preserve the low complexity of the dynamical fusion 
+using Union-Find, we must be careful when updating $\Support$. In each round
+of growth we must identify the boundary vertices of a cluster from which we will
+grow new edges. By a {\em boundary vertex}, we mean a vertex of the lattice such that at least one of the
+incident edges is not in the erasure, $\e$. One way to do this would be to explore the cluster to identify
+the boundary, but this would induce a linear cost in the size of the cluster 
+in each round, resulting in a quadratic complexity overall.
+We now describe a more efficient strategy.
+
+\medskip
+We can avoid recomputing the boundary of the cluster by
+storing a list of boundary vertices for each root. 
+To grow a cluster, we must then simply iterate over this list and grow the incident edges.
+When clusters are fused, it is necessary to update the boundary lists. We now describe a 
+subroutine $\Grow(\cal L)$ that can achieve this in linear time. 
+This function takes a list ${\cal L} = \{u_1, u_2, \dots, u_m\}$ of cluster roots as an input, 
+each with its associated boundary list. The function $\Grow(\cal L)$ increases the radius of 
+these clusters by one half-edge, fuses the clusters that meet and 
+updates the clusters and their boundary lists.
+The function runs in five steps.
+{\begin{itemize}
+\item 
+{\em $(i)$ Growth:} Grow all the clusters of root $u_i$ by one half-edge. This is done by running over the
+lists of boundary vertices and by growing the incident half-edges in the table $\Support$. 
+This step returns a list of all the newly grown edges that connect two distinct clusters. 
+Call these edges {\em fusion edges}.
+\item 
+{\em $(ii)$ Fusion of clusters:} Run over fusion edges 
+$e=\{u,v\}$ and if $u$ and $v$ belong to distinct clusters then merge them with $\Union(u,v)$, otherwise remove $e$ from the list of fusion edges.
+\item 
+{\em $(iii)$ Fusion of boundary lists:}
+Run over fusion edges (updated in (ii)) and for each $e=\{u,v\}$, 
+append the boundary list of the smallest cluster $C_u$ or $C_v$ (before fusion) 
+at the end of the boundary list of the largest one (before fusion).
+\item
+{\em $(iv)$ Update roots:} Replace each element $u_i$ of the root list $\cal L$ by $\Find(u_i)$.
+\item 
+{\em $(v)$ Update Boundary lists:} Run once more over each boundary list and
+remove the vertices that are no longer boundary vertices.
+\end{itemize}
+
+We remark that new boundary vertices are added when merging the boundary list with the
+boundary list of a neighbor cluster. We only need to remove vertices from those lists
+in the last step to update them.
+
+\medskip
+{\bf Avoiding growth duplication:}
+In order to simplify the description of the algorithm, we have so far omitted a detail of the implementation.
+If two clusters of the list are fused during step {\em (ii)}, then updating their roots 
+in {\em (iv)} results in a duplicated root in the list.
+We can avoid this issue by also storing in a look-up table an indicator that marks 
+the vertices of the odd-root list at the beginning of each round of growth. 
+Maintaining this extra look-up table (of linear-size) does not increase the complexity of the algorithm. 
+This modification allows us to detect the presence of $Find(u)$ in 
+the list before replacing $u$ by $Find(u)$. If it is already present, we simply remove $u$
+from the list, and avoid creating a duplicate.
+
+
+\subsection{Summary of data structure and algorithm}
+
+Each cluster $C$ in the lattice is encoded using the following data:
+\begin{itemize}
+\item {\bf Cluster-tree:} A tree whose vertices encode the vertices of $C$ with an arbitrary root.
+\item {\bf Size and Parity:} The size of the cluster and the parity of $C$ are stored at the root of the cluster-tree.
+\item {\bf Support:} A look-up table that stores the state of each edge in the growing clusters.
+\item {\bf Boundary List:} The list of all the boundary vertices of $C$.
+\end{itemize}
+
+A full version of the algorithm we have described is given in Algorithm~\ref{algo:uf_linear}. Let us now summarize the contribution of each part of the algorithm to the overall complexity.
+
+\medskip
+{\bf Complexity of the full algorithm: } Algorithm~\ref{algo:uf_linear} 
+can be decomposed into three blocks. 
+The first block contains lines 1-2 and initializes the clusters.
+Block 2 contains lines 3-11 and relies on a Union-Find algorithm that we have 
+just described. The complexity of this subroutine provides the leading order in the complexity of 
+our decoder. In the third block, line 12, the erasure decoder is applied. 
+
+\medskip
+Creating the list of clusters can be achieved in linear time by exploring the connected
+components of the sublattice of erased edges \cite{hopcroft1973:graph_components_algo}.
+During this same exploration, we can compute the size and syndrome parity of the cluster, and store it at 
+the root, which does not affect the complexity. 
+The table $\Support$ is also initialized in linear time.
+The second block grows and merges odd clusters until they disappear and 
+runs from line 3 to 11. We have discussed how the Union-Find algorithm can be used
+to achieve this in $O(n \alpha(n))$ time. 
+Each of the $n$ vertices can be at a boundary during at most two rounds of growth, and during 
+the growing procedure each list is iterated over $O(1)$ times. 
+The complexity of growing $\Support$ and updating the boundary
+lists is therefore $O(n)$. 
+The support of the clusters and the boundary lists can be updated in linear time $O(n)$
+using $\Grow()$. 
+The last two instructions are simply the erasure decoder and are already known 
+to have linear complexity \cite{delfosse2017:linear_decoding}.
+The dominant contribution to the complexity is therefore the $O(n \alpha(n))$ 
+due to the Union-Find algorithm used to keep track of the cluster-trees during syndrome validation. 
+
+
+\begin{algorithm}[h]
+  \SetAlgoLined
+  \DontPrintSemicolon
+
+  \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
+  \Input{The set of erased positions $\e \subset E$ and the syndrome $\sigma \subset V$ of an error $E_Z$.}
+  \Output{An estimation ${\cal C}$ of $E_Z$ up to a stabilizer.}
+  \BlankLine
+
+  Initialize cluster-trees, $\Support$ and boundary lists for all clusters. \;
+  Create the lists ${\cal L}$ of roots of odd clusters. \;
+  \While{${\cal L}$ is not empty}{
+    (o) Initialize the fusion list $\cal F$ as an empty list. \;
+    (i) For all $u \in {\cal L}$, grow the cluster $C_u$ of a half-edge in the Table $\Support$. If a new grown edge $e$ is added in $\Support$ then add $e$ to the fusion list $\cal F$. \;
+    (ii) For all $e=\{u,v\} \in {\cal F}$, if $Find(u) \neq Find(v)$ then applies $\Union(u,v)$ to merge the cluster $C_u$ and $C_v$. If $Find(u) = Find(v)$ then remove $e$ from the list $\cal F$. \;
+    (iii) For all $e=\{u,v\} \in {\cal F}$, read the sizes of the clusters $C_u$ and $C_v$ stored at the roots (uses $Find()$) and append the boundary list of the smallest cluster at the end of the boundary list of the largest one. \;
+    (iv) Replace each root $u \in {\cal L}$ by $\Find(u_i)$. (in a way that does not create duplicated elements) \;
+    (v) For all $u \in {\cal L}$, remove the vertices of the boundary list of $u$ that are not boundary vertices. \;
+    (vi) For all $u \in {\cal L}$, if $C_u$ is an even cluster then remove it from $\cal L$. \;
+  }
+  Erase all the edges that are fully grown in $Support$. \;
+  Apply the peeling decoder to the erasure. \;
+
+  \caption{Union-Find decoder -- Almost-linear time version}
+  \label{algo:uf_linear}
+\end{algorithm}
+
+
+
+
+\section{ Weighted growth version of the Union-Find decoder\label{sec:weighted_growth}}
+The algorithm we have described so far grows all (odd) clusters uniformly in each round.
+We now discuss one simple way in which this growth strategy can be altered 
+to improve the performance of the decoder.
+We recall that our basic argument in the proof of Theorem~\ref{theo:UF_perf}
+was that if a cluster is odd there exists at least one path of errors connecting this cluster to
+a vertex outside the cluster. When the error rate is small, it is likely
+that only one error chain terminates in the cluster. When the cluster grows, we add some number
+of edges that is proportional to the number of boundary vertices. If we add $b$ 
+new edges, then only $1/b$ of those edges correctly cover the error. The larger
+the boundary of the cluster, the more 'incorrect' edges we are adding. 
+By growing smaller clusters first, fewer erasures will be added in total, which increases
+the chance success in the the final erasure decoding step .
+
+\medskip
+The {\em Weighted Growth} version of the Union-Find decoder is achieved by 
+always growing the cluster with the smallest boundary size. 
+This small modification improves the threshold of the 2d toric code from $9.2\%$ to $9.9\%$
+for phase-flip errors and from $2.4\%$ to $2.6\%$ with faulty-syndrome measurements.
+
+\medskip
+The Weighted Growth Union-Find decoder can also be implemented in almost-linear time.
+To achieve this complexity, we need to sort the clusters by boundary size. This can be done in linear time in $n$ because clusters boundary size are integer with values between 1 and $O(n)$.
+
+\section{Application to Quantum Computing\label{sec:application}}
+
+We have so far described the decoder only for the 2d surface code. To be of use for quantum computing applications, where measurements may be faulty, we must be able to solve the 
+(2+1)-dimensional variant of the decoding problem \cite{dennis2002topological}. Multiple rounds of syndrome measurement on the surface code produce a three-dimensional cubic lattice of syndrome outcomes, where the x-y directions correspond to the physical code, and the third dimension represents time. Space-like edges in this syndrome lattice correspond to physical errors on the qubits of the code, while time-like edges correspond to measurement errors. The decoder as we have described it requires no adaption to be applied to the 3d lattice. 
+
+\medskip
+Conceptually we can understand the decoder as adding virtual erasures to the syndrome information that include the support of the error operator, and we can extend this interpretation to the 3d case. Erasing the space-like edges of the syndrome graph corresponds to erasure of a physical qubit, while erasing a time-like edge of the syndrome graph corresponds to the erasure of a measurement outcome - a classical erasure. Physically such a measurement erasure corresponds to the case that no stabilizer outcome was recorded.
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{correctable_region_2.pdf}
+\caption{\label{fig:plots} {\bf Performance results.} a) Results of numerical threshold simulations on the 2d toric code under an error model of erasure and Pauli error at independent error rates $p_e$ and $p_Z$. The shaded area indicates the correctable region, which is below threshold. Example threshold plots can be seen in the Appendix. b) Results of numerical threshold simulations of the 2+1d toric code under an error model of erasure and phenomenological error at independent error rates $p_e$ and $p_Z$. 
+}
+\end{figure}
+
+
+
+\medskip
+We performed numerical simulations to quantify the performance of the decoder in both 2d and 3d. In 2d each qubit is treated as erased with a probability $p_e$ and acquires a Pauli $Z$ error with a probability $p_Z$. In 3d we consider making $L$ rounds of repeated syndrome measurements, for a lattice of dimension $L$. Each measurement outcome is erased with probability $p_e$ and returns the incorrect value with probability $p_Z$. Between rounds of measurement each qubit is erased with probability $p_e$ and acquires a Pauli $Z$ error with probability $p_Z$. This corresponds to the phenomenologial error model in the case that $p_e=0$. More details of the numerics are described in Appendix~\ref{sec:numerics}. The results of threshold calculations are shown in Figure~\ref{fig:plots}a) and b), defining a correctable region in the space of erasure and Pauli error. In 2d, with no erasure, we find $p_{th} = 9.9\%$ and in 3d we find $p_{th} = 2.6\%$. This is only a small reduction in the decoder performance compared with MWPM (see Table-\ref{tab:thresholds}). Below threshold the logical error rate is well behaved, showing a clear exponential supression with increasing lattice size.
+
+\medskip
+We measured the average running time to perform decoding as a function of the number of qubits, which gives numerical evidence of a linear average complexity. Figure~\ref{fig:time_scaling} shows the running time, for a C implementation of the decoder running on a single 2.9 GHz Intel Core i5 CPU. 
+
+
+\subsection{Application beyond the surface code}
+
+The functionality of the Union-Find decoder extends beyond Pauli errors, as the decoder naturally handles a mixed noise model of erasure and Pauli error. Barrett and Stace \cite{stace2010:loss_long, barrett2010:loss} first introduced an algorithm to decode the Raussendorf lattice \cite{raussenfort2007:cluster, raussenfort2006:ft, raussenfort2007:ft} in the presence of erasure, which combines MWPM with geometric deformations of the lattice around erased qubits, and runs in $O(n^3)$ time. This noise model is particularly relevant for photonic measurement based quantum computing 
+ \cite{knill2001:LOQC, nielsen2004:LOCC_cluster, browne2005:LOCC_efficient, kieling2007:LOCC_percolation}, where qubit erasure is likely to be a dominant source of error. However, in these architectures the complexity of the Barrett-Stace algorithm would make it challenging to implement fast enough to keep up with the natural clock-speed of a quantum computer. The Union-Find decoder provides a significant decrease in computational requirements for decoding in a photonic architecture, with only a small decrease in threshold. 
+
+\medskip
+As well as its speed, one advantage of the Union-Find decoder is its immediate flexibility to other geometries and dimensions. The Union-Find decoder requires only an underlying graph structure, and therefore requires no alteration to run in any geometry as long as the errors form string-like objects. This makes it a simple tool for use in complex geometries, such as hyperbolic codes~\cite{freedman2002z,zemor2009cayley,delfosse2013tradeoffs,breuckmann2016:hyperbolic,breuckmann2017hyperbolic}. In contrast, MWPM must in general be combined with costly path finding algorithms to compute the distance between syndrome measurements. Here we have only simulated the performance on a torus, but non periodic boundary conditions can be handled by allowing clusters to become valid by merging with a rough boundary. Furthermore, the decoder can also be used on a syndrome graph of any dimension, although we expect that the threshold performance of the Union-Find algorithm, at least in its basic form, will decrease relative to perfect matching as the dimension of the space increases. 
+
+\medskip
+Beyond surface codes, the Union-Find decoder can also be used to decode the 2D color code, when used in combination with the method introduced in~\cite{delfosse2014decoding} for projecting color codes onto surface codes. This procedure does not affect the complexity of the algorithm. By numerically simulating decoding on a hexagonal lattice, we find a threshold for the [6,6,6] color code of 8.4\% under i.i.d Pauli $Z$ error. 
+
+
+\section{Conclusion}
+
+We have presented a decoder with a high threshold which has a considerably lower worst-case complexity than any other existing practical decoder. 
+Indeed, we are very close to the the best possible complexity for any decoder that is not parallelized. 
+Since one must at a minimum iterate at least once over the syndrome, the lowest possible time is O(n). 
+But we are interested in practical applications, and complexity is not the only figure of merit. It is 
+important that our algorithm also has a small constant overhead, making it fast in practice as well as in theory.
+
+\medskip
+Instead of designing a fast decoder which approximates the MWPM decoder as we did in this work, one could consider a parallel MWPM decoder~\cite{fowler2015:parallel_MWPM} which achieves a linear average-case complexity. It would be interesting to investigate the parallelization of the Union-Find decoder.
+
+\medskip
+Many questions remain to be answered. Our implementation achieved linear complexity, but was not heavily optimized for speed. Work should be done to understand how much this can be improved, in particular by implementing the algorithm in hardware. In terms of error tolerance, we have studied only simple noise models, and the performance under circuit-level error will need to be studied to draw a more meaningful comparison with the thresholds of other decoders. 
+
+\medskip
+There are many challenges still to solve before an error corrected quantum computer can be realized, and one of these is decoding. Our algorithm has important practical implications in achieving this goal, and is a significant step towards overcoming the hurdle of fast decoding in real quantum devices. 
+
+\medskip
+{\em Acknowledgement -- The authors would like to thank 
+Eric Johnson and Chris Dawson for valuable discussions, and 
+Terry Rudolph for first introducing them to the question of 
+error correction in photonic devices. The authors would like to 
+thank Aleksander Kubica for his comments on a preliminary 
+version of this paper.
+ND acknowledges funding provided by the Institute for Quantum Information and Matter, an NSF Physics Frontiers Center (NSF Grant PHY-1125565) with support of the
+Gordon and Betty Moore Foundation (GBMF-2644).}
+
+
+%\bibliographystyle{plainnat}
+%\bibliography{bib_erasure}
+
+\newcommand{\SortNoop}[1]{}
+\begin{thebibliography}{68}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anwar et~al.(2014)Anwar, Brown, Campbell, and Browne]{anwar2014fast}
+Hussain Anwar, Benjamin~J Brown, Earl~T Campbell, and Dan~E Browne.
+\newblock Fast decoders for qudit topological codes.
+\newblock \emph{New Journal of Physics}, 16\penalty0 (6):\penalty0 063038,
+  2014.
+\newblock \doi{10.1088/1367-2630/16/6/063038}.
+
+\bibitem[Ballance et~al.(2014)Ballance, Harty, Linke, and
+  Lucas]{ballance2014high}
+CJ~Ballance, TP~Harty, NM~Linke, and DM~Lucas.
+\newblock High-fidelity two-qubit quantum logic gates using trapped calcium-43
+  ions.
+\newblock \emph{arXiv preprint arXiv:1406.5473}, 2014.
+\newblock \doi{10.1103/PhysRevLett.117.060504}.
+
+\bibitem[Barends et~al.(2014)Barends, Kelly, Megrant, Veitia, Sank, Jeffrey,
+  White, Mutus, Fowler, Campbell, et~al.]{barends2014superconducting}
+Rami Barends, Julian Kelly, Anthony Megrant, Andrzej Veitia, Daniel Sank, Evan
+  Jeffrey, Ted~C White, Josh Mutus, Austin~G Fowler, Brooks Campbell, et~al.
+\newblock Superconducting quantum circuits at the surface code threshold for
+  fault tolerance.
+\newblock \emph{Nature}, 508\penalty0 (7497):\penalty0 500--503, 2014.
+\newblock \doi{10.1038/nature13171}.
+
+\bibitem[Barrett and Stace(2010{\natexlab{a}})]{barrett2010:loss}
+Sean~D Barrett and Thomas~M Stace.
+\newblock Fault tolerant quantum computation with very high threshold for loss
+  errors.
+\newblock \emph{Physical review letters}, 105\penalty0 (20):\penalty0 200502,
+  2010{\natexlab{a}}.
+\newblock \doi{10.1103/PhysRevLett.105.200502}.
+
+\bibitem[Barrett and Stace(2010{\natexlab{b}})]{barrett2010fault}
+Sean~D Barrett and Thomas~M Stace.
+\newblock Fault tolerant quantum computation with very high threshold for loss
+  errors.
+\newblock \emph{Physical review letters}, 105\penalty0 (20):\penalty0 200502,
+  2010{\natexlab{b}}.
+\newblock \doi{10.1103/PhysRevLett.105.200502}.
+
+\bibitem[Bombin and Martin-Delgado(2006)]{bombin2006:color_codes}
+Hector Bombin and Miguel~Angel Martin-Delgado.
+\newblock Topological quantum distillation.
+\newblock \emph{Physical review letters}, 97\penalty0 (18):\penalty0 180501,
+  2006.
+\newblock \doi{10.1103/PhysRevLett.97.180501}.
+
+\bibitem[Bombin et~al.(2012)Bombin, Duclos-Cianci, and
+  Poulin]{bombin2012:color_codes_decoder}
+Hector Bombin, Guillaume Duclos-Cianci, and David Poulin.
+\newblock Universal topological phase of two-dimensional stabilizer codes.
+\newblock \emph{New Journal of Physics}, 14\penalty0 (7):\penalty0 073048,
+  2012.
+\newblock \doi{10.1088/1367-2630/14/7/073048}.
+
+\bibitem[Bravyi and Kitaev(1998)]{bravyi1998:planar}
+S.~B. Bravyi and A.~Y. Kitaev.
+\newblock Quantum codes on a lattice with boundary.
+\newblock \emph{\href{https://arxiv.org/abs/quant-ph/9811052}{arXiv preprint
+  arXiv:9811052}}, 1998.
+
+\bibitem[Bravyi and Haah(2013)]{bravyi2013quantum}
+Sergey Bravyi and Jeongwan Haah.
+\newblock Quantum self-correction in the 3d cubic code model.
+\newblock \emph{Physical review letters}, 111\penalty0 (20):\penalty0 200501,
+  2013.
+\newblock \doi{10.1103/PhysRevLett.111.200501}.
+
+\bibitem[Bravyi et~al.(2014)Bravyi, Suchara, and Vargo]{bravyi2014efficient}
+Sergey Bravyi, Martin Suchara, and Alexander Vargo.
+\newblock Efficient algorithms for maximum likelihood decoding in the surface
+  code.
+\newblock \emph{Physical Review A}, 90\penalty0 (3):\penalty0 032326, 2014.
+\newblock \doi{10.1103/PhysRevA.90.032326}.
+
+\bibitem[Breuckmann and Terhal(2016)]{breuckmann2016:hyperbolic}
+Nikolas~P Breuckmann and Barbara~M Terhal.
+\newblock Constructions and noise threshold of hyperbolic surface codes.
+\newblock \emph{IEEE Transactions on Information Theory}, 62\penalty0
+  (6):\penalty0 3731--3744, 2016.
+\newblock \doi{10.1109/TIT.2016.2555700}.
+
+\bibitem[Breuckmann et~al.(2017)Breuckmann, Vuillot, Campbell, Krishna, and
+  Terhal]{breuckmann2017hyperbolic}
+Nikolas~P Breuckmann, Christophe Vuillot, Earl Campbell, Anirudh Krishna, and
+  Barbara~M Terhal.
+\newblock Hyperbolic and semi-hyperbolic surface codes for quantum storage.
+\newblock \emph{arXiv preprint arXiv:1703.00590}, 2017.
+\newblock \doi{10.1088/2058-9565/aa7d3b}.
+
+\bibitem[Browne and Rudolph(2005)]{browne2005:LOCC_efficient}
+Daniel~E Browne and Terry Rudolph.
+\newblock Resource-efficient linear optical quantum computation.
+\newblock \emph{Physical Review Letters}, 95\penalty0 (1):\penalty0 010501,
+  2005.
+\newblock \doi{10.1103/PhysRevLett.95.010501}.
+
+\bibitem[Carolan et~al.(2015)Carolan, Harrold, Sparrow, Mart{\'\i}n-L{\'o}pez,
+  Russell, Silverstone, Shadbolt, Matsuda, Oguma, Itoh,
+  et~al.]{carolan2015universal}
+Jacques Carolan, Christopher Harrold, Chris Sparrow, Enrique
+  Mart{\'\i}n-L{\'o}pez, Nicholas~J Russell, Joshua~W Silverstone, Peter~J
+  Shadbolt, Nobuyuki Matsuda, Manabu Oguma, Mikitaka Itoh, et~al.
+\newblock Universal linear optics.
+\newblock \emph{Science}, 349\penalty0 (6249):\penalty0 711--716, 2015.
+\newblock \doi{10.1126/science.aab3642}.
+
+\bibitem[Debnath et~al.(2016)Debnath, Linke, Figgatt, Landsman, Wright, and
+  Monroe]{debnath2016demonstration}
+S~Debnath, NM~Linke, C~Figgatt, KA~Landsman, K~Wright, and C~Monroe.
+\newblock Demonstration of a small programmable quantum computer with atomic
+  qubits.
+\newblock \emph{Nature}, 536\penalty0 (7614):\penalty0 63--66, 2016.
+\newblock \doi{10.1038/nature18648}.
+
+\bibitem[Delfosse(2013)]{delfosse2013tradeoffs}
+Nicolas Delfosse.
+\newblock Tradeoffs for reliable quantum information storage in surface codes
+  and color codes.
+\newblock In \emph{Information Theory Proceedings (ISIT), 2013 IEEE
+  International Symposium on}, pages 917--921. IEEE, 2013.
+\newblock \doi{10.1109/ISIT.2013.6620360}.
+
+\bibitem[Delfosse(2014)]{delfosse2014decoding}
+Nicolas Delfosse.
+\newblock Decoding color codes by projection onto surface codes.
+\newblock \emph{Physical Review A}, 89\penalty0 (1):\penalty0 012317, 2014.
+\newblock \doi{10.1103/PhysRevA.89.012317}.
+
+\bibitem[Delfosse and Z{\'e}mor(2017)]{delfosse2017:linear_decoding}
+Nicolas Delfosse and Gilles Z{\'e}mor.
+\newblock Linear-time maximum likelihood decoding of surface codes over the
+  quantum erasure channel.
+\newblock \emph{arXiv preprint arXiv:1703.01517}, 2017.
+\newblock \doi{10.1103/PhysRevResearch.2.033042}.
+
+\bibitem[Dennis(2005)]{dennis2005:phd}
+Eric Dennis.
+\newblock Purifying quantum states: Quantum and classical algorithms.
+\newblock \emph{\href{https://arxiv.org/abs/quant-ph/0503169}{arXiv preprint
+  quant-ph/0503169}}, 2005.
+
+\bibitem[Dennis et~al.(2002)Dennis, Kitaev, Landahl, and
+  Preskill]{dennis2002topological}
+Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+\newblock Topological quantum memory.
+\newblock \emph{Journal of Mathematical Physics}, 43\penalty0 (9):\penalty0
+  4452--4505, 2002.
+\newblock \doi{10.1063/1.1499754}.
+
+\bibitem[Duclos-Cianci and Poulin(2010)]{duclos2010fast}
+Guillaume Duclos-Cianci and David Poulin.
+\newblock Fast decoders for topological quantum codes.
+\newblock \emph{Physical review letters}, 104\penalty0 (5):\penalty0 050504,
+  2010.
+\newblock \doi{10.1103/PhysRevLett.104.050504}.
+
+\bibitem[Duclos-Cianci and Poulin(2013)]{duclos2013kitaev}
+Guillaume Duclos-Cianci and David Poulin.
+\newblock Kitaev's z d-code threshold estimates.
+\newblock \emph{Physical Review A}, 87\penalty0 (6):\penalty0 062338, 2013.
+\newblock \doi{10.1103/PhysRevA.87.062338}.
+
+\bibitem[Duclos-Cianci and Poulin(2014)]{duclos2013fault}
+Guillaume Duclos-Cianci and David Poulin.
+\newblock Fault-tolerant renormalization group decoder for abelian topological
+  codes.
+\newblock \emph{Quantum Info. Comput.}, 14\penalty0 (9 \& 10):\penalty0
+  721–740, jul 2014.
+\newblock ISSN 1533-7146.
+\newblock \doi{10.5555/2638670.2638671}.
+
+\bibitem[Fowler(2017)]{fowler2017:QEC_talk}
+Austin Fowler.
+\newblock Towards sufficiently fast quantum error correction.
+\newblock \emph{\href{https://qec2017.gatech.edu/}{Conference QEC 2017}}, 2017.
+
+\bibitem[Fowler(2015)]{fowler2015:parallel_MWPM}
+Austin~G Fowler.
+\newblock Minimum weight perfect matching of fault-tolerant topological quantum
+  error correction in average $ o (1) $ parallel time.
+\newblock \emph{Quantum Information and Computation}, 15\penalty0
+  (1\&2):\penalty0 0145--0158, 2015.
+\newblock \doi{10.5555/2685188.2685197}.
+
+\bibitem[Fowler et~al.(2012{\natexlab{a}})Fowler, Whiteside, and
+  Hollenberg]{fowler2012:decoding}
+Austin~G Fowler, Adam~C Whiteside, and Lloyd~CL Hollenberg.
+\newblock Towards practical classical processing for the surface code.
+\newblock \emph{Physical review letters}, 108\penalty0 (18):\penalty0 180501,
+  2012{\natexlab{a}}.
+\newblock \doi{10.1103/PhysRevLett.108.180501}.
+
+\bibitem[Fowler et~al.(2012{\natexlab{b}})Fowler, Whiteside, McInnes, and
+  Rabbani]{fowler2012topological}
+Austin~G Fowler, Adam~C Whiteside, Angus~L McInnes, and Alimohammad Rabbani.
+\newblock Topological code autotune.
+\newblock \emph{Physical Review X}, 2\penalty0 (4):\penalty0 041003,
+  2012{\natexlab{b}}.
+\newblock \doi{10.1103/PhysRevX.2.041003}.
+
+\bibitem[Fredman and Saks(1989)]{fredman1989:union_find_lower_bound}
+Michael Fredman and Michael Saks.
+\newblock The cell probe complexity of dynamic data structures.
+\newblock In \emph{Proceedings of the twenty-first annual ACM symposium on
+  Theory of computing}, pages 345--354. ACM, 1989.
+\newblock \doi{10.1145/73007.73040}.
+
+\bibitem[Freedman and Meyer(2001)]{freedman2001:planar}
+M.~H. Freedman and D.~A. Meyer.
+\newblock Projective plane and planar quantum codes.
+\newblock \emph{Foundations of Computational Mathematics}, 1\penalty0
+  (3):\penalty0 325--332, 2001.
+\newblock \doi{10.1007/s102080010013}.
+
+\bibitem[Freedman et~al.(2002)Freedman, Meyer, Luo, and DC.]{freedman2002z}
+M.H. Freedman, D.A. Meyer, F.~Luo, and Computer Society (IEEE)~Washington DC.
+\newblock \emph{Z(2)-Systolic Freedom and Quantum Codes}.
+\newblock Defense Technical Information Center, 2002.
+\newblock \doi{10.2140/gtm.1999.2.113}.
+\newblock URL \url{https://books.google.com/books?id=KieaDAEACAAJ}.
+
+\bibitem[Galler and Fisher(1964)]{galler1964:union_find_algorithm}
+Bernard~A Galler and Michael~J Fisher.
+\newblock An improved equivalence algorithm.
+\newblock \emph{Communications of the ACM}, 7\penalty0 (5):\penalty0 301--303,
+  1964.
+\newblock \doi{10.1145/364099.364331}.
+
+\bibitem[Harrington(2004)]{harrington2004:phd}
+James~William Harrington.
+\newblock \emph{Analysis of quantum error-correcting codes: symplectic lattice
+  codes and toric codes}.
+\newblock PhD thesis, California Institute of Technology, 2004.
+
+\bibitem[Heeres et~al.(2017)Heeres, Reinhold, Ofek, Frunzio, Jiang, Devoret,
+  and Schoelkopf]{heeres2017implementing}
+Reinier~W Heeres, Philip Reinhold, Nissim Ofek, Luigi Frunzio, Liang Jiang,
+  Michel~H Devoret, and Robert~J Schoelkopf.
+\newblock Implementing a universal gate set on a logical qubit encoded in an
+  oscillator.
+\newblock \emph{Nature Communications}, 8, 2017.
+\newblock \doi{10.1038/s41467-017-00045-1}.
+
+\bibitem[Herold et~al.(2015)Herold, Kastoryano, Campbell, and
+  Eisert]{herold2015fault}
+Michael Herold, Michael~J Kastoryano, Earl~T Campbell, and Jens Eisert.
+\newblock Fault tolerant dynamical decoders for topological quantum memories.
+\newblock \emph{arXiv preprint arXiv:1511.05579}, 2015.
+\newblock \doi{10.1088/1367-2630/aa7099}.
+
+\bibitem[Hill et~al.(2015)Hill, Peretz, Hile, House, Fuechsle, Rogge, Simmons,
+  and Hollenberg]{hill2015surface}
+Charles~D Hill, Eldad Peretz, Samuel~J Hile, Matthew~G House, Martin Fuechsle,
+  Sven Rogge, Michelle~Y Simmons, and Lloyd~CL Hollenberg.
+\newblock A surface code quantum computer in silicon.
+\newblock \emph{Science advances}, 1\penalty0 (9):\penalty0 e1500707, 2015.
+\newblock \doi{10.1038/npjqi.2015.19}.
+
+\bibitem[Hopcroft and Tarjan(1973)]{hopcroft1973:graph_components_algo}
+John Hopcroft and Robert Tarjan.
+\newblock Algorithm 447: efficient algorithms for graph manipulation.
+\newblock \emph{Communications of the ACM}, 16\penalty0 (6):\penalty0 372--378,
+  1973.
+\newblock \doi{10.1145/362248.362272}.
+
+\bibitem[Hutter et~al.(2014)Hutter, Wootton, and Loss]{hutter2014:HDRG}
+Adrian Hutter, James~R Wootton, and Daniel Loss.
+\newblock Efficient markov chain monte carlo algorithm for the surface code.
+\newblock \emph{Physical Review A}, 89\penalty0 (2):\penalty0 022326, 2014.
+\newblock \doi{10.1103/PhysRevA.89.022326}.
+
+\bibitem[Hutter et~al.(2015)Hutter, Loss, and
+  Wootton]{hutter2015:improved_HDRG}
+Adrian Hutter, Daniel Loss, and James~R Wootton.
+\newblock Improved hdrg decoders for qudit and non-abelian quantum error
+  correction.
+\newblock \emph{New Journal of Physics}, 17\penalty0 (3):\penalty0 035017,
+  2015.
+\newblock \doi{10.1088/1367-2630/17/3/035017}.
+
+\bibitem[IBM(2017)]{ibm}
+IBM.
+\newblock Quantum experience {API}.
+\newblock \emph{\href{https://github.com/QISKit}{https://github.com/QISKit}},
+  2017.
+
+\bibitem[Kalb et~al.(2017)Kalb, Reiserer, Humphreys, Bakermans, Kamerling,
+  Nickerson, Benjamin, Twitchen, Markham, and Hanson]{kalb2017entanglement}
+Norbert Kalb, Andreas~A Reiserer, Peter~C Humphreys, Jacob~JW Bakermans, Sten~J
+  Kamerling, Naomi~H Nickerson, Simon~C Benjamin, Daniel~J Twitchen, Matthew
+  Markham, and Ronald Hanson.
+\newblock Entanglement distillation between solid-state quantum network nodes.
+\newblock \emph{Science}, 356\penalty0 (6341):\penalty0 928--932, 2017.
+\newblock \doi{10.1126/science.aan0070}.
+
+\bibitem[Kieling et~al.(2007)Kieling, Rudolph, and
+  Eisert]{kieling2007:LOCC_percolation}
+Konrad Kieling, Terry Rudolph, and Jens Eisert.
+\newblock Percolation, renormalization, and quantum computing with
+  nondeterministic gates.
+\newblock \emph{Physical Review Letters}, 99\penalty0 (13):\penalty0 130501,
+  2007.
+\newblock \doi{10.1103/PhysRevLett.99.130501}.
+
+\bibitem[Kitaev(2003)]{kitaev2003fault}
+A~Yu Kitaev.
+\newblock Fault-tolerant quantum computation by anyons.
+\newblock \emph{Annals of Physics}, 303\penalty0 (1):\penalty0 2--30, 2003.
+\newblock \doi{10.1016/S0003-4916(02)00018-0}.
+
+\bibitem[Knill et~al.(2001)Knill, Laflamme, and Milburn]{knill2001:LOQC}
+Emanuel Knill, Raymond Laflamme, and Gerald~J Milburn.
+\newblock A scheme for efficient quantum computation with linear optics.
+\newblock \emph{nature}, 409\penalty0 (6816):\penalty0 46--52, 2001.
+\newblock \doi{10.1038/35051009}.
+
+\bibitem[Kolmogorov(2009)]{kolmogorov2009:blossom}
+Vladimir Kolmogorov.
+\newblock Blossom v: a new implementation of a minimum cost perfect matching
+  algorithm.
+\newblock \emph{Mathematical Programming Computation}, 1\penalty0 (1):\penalty0
+  43--67, 2009.
+\newblock \doi{10.1007/s12532-009-0002-8}.
+
+\bibitem[Kubica(2018)]{kubica2018:phd}
+Aleksander~Marek Kubica.
+\newblock \emph{The ABCs of the Color Code: A Study of Topological Quantum
+  Codes as Toy Models for Fault-Tolerant Quantum Computation and Quantum Phases
+  Of Matter}.
+\newblock PhD thesis, California Institute of Technology, 2018.
+
+\bibitem[Landahl et~al.(2011)Landahl, Anderson, and
+  Rice]{landahl2011:color_codes_decoding}
+Andrew~J Landahl, Jonas~T Anderson, and Patrick~R Rice.
+\newblock Fault-tolerant quantum computing with color codes.
+\newblock \emph{\href{https://arxiv.org/abs/1108.5738}{arXiv preprint
+  arXiv:1108.5738}}, 2011.
+
+\bibitem[Lekitsch et~al.(2017)Lekitsch, Weidt, Fowler, M{\o}lmer, Devitt,
+  Wunderlich, and Hensinger]{lekitsch2017blueprint}
+Bjoern Lekitsch, Sebastian Weidt, Austin~G Fowler, Klaus M{\o}lmer, Simon~J
+  Devitt, Christof Wunderlich, and Winfried~K Hensinger.
+\newblock Blueprint for a microwave trapped ion quantum computer.
+\newblock \emph{Science Advances}, 3\penalty0 (2):\penalty0 e1601540, 2017.
+\newblock \doi{10.1126/sciadv.1601540}.
+
+\bibitem[Monz et~al.(2016)Monz, Nigg, Martinez, Brandl, Schindler, Rines, Wang,
+  Chuang, and Blatt]{monz2016realization}
+Thomas Monz, Daniel Nigg, Esteban~A Martinez, Matthias~F Brandl, Philipp
+  Schindler, Richard Rines, Shannon~X Wang, Isaac~L Chuang, and Rainer Blatt.
+\newblock Realization of a scalable shor algorithm.
+\newblock \emph{Science}, 351\penalty0 (6277):\penalty0 1068--1070, 2016.
+\newblock \doi{10.1126/science.aad9480}.
+
+\bibitem[Nielsen(2004)]{nielsen2004:LOCC_cluster}
+Michael~A Nielsen.
+\newblock Optical quantum computation using cluster states.
+\newblock \emph{Physical review letters}, 93\penalty0 (4):\penalty0 040503,
+  2004.
+\newblock \doi{10.1103/PhysRevLett.93.040503}.
+
+\bibitem[Raussendorf and Harrington(2007)]{raussenfort2007:ft}
+R.~Raussendorf and J.~Harrington.
+\newblock Fault-tolerant quantum computation with high threshold in two
+  dimensions.
+\newblock \emph{Physical Review Letters}, 98\penalty0 (19):\penalty0 190504,
+  2007.
+\newblock \doi{10.1103/PhysRevLett.98.190504}.
+
+\bibitem[Raussendorf et~al.(2007)Raussendorf, Harrington, and
+  Goyal]{raussenfort2007:cluster}
+R.~Raussendorf, J.~Harrington, and K.~Goyal.
+\newblock Topological fault-tolerance in cluster state quantum computation.
+\newblock \emph{New Journal of Physics}, 9:\penalty0 199, 2007.
+\newblock \doi{10.1088/1367-2630/9/6/199}.
+
+\bibitem[Raussendorf et~al.(2006)Raussendorf, Harrington, and
+  Goyal]{raussenfort2006:ft}
+Robert Raussendorf, Jim Harrington, and Kovid Goyal.
+\newblock A fault-tolerant one-way quantum computer.
+\newblock \emph{Annals of physics}, 321\penalty0 (9):\penalty0 2242--2270,
+  2006.
+\newblock \doi{10.1016/j.aop.2006.01.012}.
+
+\bibitem[Sarvepalli and Raussendorf(2012)]{sarvepalli2012efficient}
+Pradeep Sarvepalli and Robert Raussendorf.
+\newblock Efficient decoding of topological color codes.
+\newblock \emph{Physical Review A}, 85\penalty0 (2):\penalty0 022317, 2012.
+\newblock \doi{10.1103/PhysRevA.85.022317}.
+
+\bibitem[Stace and Barrett(2010{\natexlab{a}})]{stace2010:loss_long}
+Thomas~M Stace and Sean~D Barrett.
+\newblock Error correction and degeneracy in surface codes suffering loss.
+\newblock \emph{Physical Review A}, 81\penalty0 (2):\penalty0 022317,
+  2010{\natexlab{a}}.
+\newblock \doi{10.1103/PhysRevA.81.022317}.
+
+\bibitem[Stace and Barrett(2010{\natexlab{b}})]{stace2010error}
+Thomas~M Stace and Sean~D Barrett.
+\newblock Error correction and degeneracy in surface codes suffering loss.
+\newblock \emph{Physical Review A}, 81\penalty0 (2):\penalty0 022317,
+  2010{\natexlab{b}}.
+\newblock \doi{10.1103/PhysRevA.81.022317}.
+
+\bibitem[Stace et~al.(2009)Stace, Barrett, and Doherty]{stace2010:percolation}
+T.M. Stace, S.D. Barrett, and A.C. Doherty.
+\newblock Thresholds for topological codes in the presence of loss.
+\newblock \emph{Physical Review Letters}, 102\penalty0 (20):\penalty0 200501,
+  2009.
+\newblock \doi{10.1103/PhysRevLett.102.200501}.
+
+\bibitem[Tarjan(1975)]{tarjan1975:union_find_complexity}
+Robert~Endre Tarjan.
+\newblock Efficiency of a good but not linear set union algorithm.
+\newblock \emph{Journal of the ACM (JACM)}, 22\penalty0 (2):\penalty0 215--225,
+  1975.
+\newblock \doi{10.1145/321879.321884}.
+
+\bibitem[Tarjan(1979)]{tarjan1979:union_find_lower_bound}
+Robert~Endre Tarjan.
+\newblock A class of algorithms which require nonlinear time to maintain
+  disjoint sets.
+\newblock \emph{Journal of computer and system sciences}, 18\penalty0
+  (2):\penalty0 110--127, 1979.
+\newblock \doi{10.1016/0022-0000(79)90042-4}.
+
+\bibitem[Torlai and Melko(2017)]{torlai2017neural}
+Giacomo Torlai and Roger~G Melko.
+\newblock Neural decoder for topological codes.
+\newblock \emph{Physical Review Letters}, 119\penalty0 (3):\penalty0 030501,
+  2017.
+\newblock \doi{10.1103/PhysRevLett.119.030501}.
+
+\bibitem[Tuckett et~al.(2017)Tuckett, Bartlett, and Flammia]{tuckett2017ultra}
+David~K Tuckett, Stephen~D Bartlett, and Steven~T Flammia.
+\newblock Ultra-high error threshold for surface codes with biased noise.
+\newblock \emph{arXiv preprint arXiv:1708.08474}, 2017.
+\newblock \doi{10.1103/PhysRevLett.120.050505}.
+
+\bibitem[Varsamopoulos et~al.(2017)Varsamopoulos, Criger, and
+  Bertels]{varsamopoulos2017decoding}
+Savvas Varsamopoulos, Ben Criger, and Koen Bertels.
+\newblock Decoding small surface codes with feedforward neural networks.
+\newblock \emph{arXiv preprint arXiv:1705.00857}, 2017.
+\newblock \doi{10.1088/2058-9565/aa955a}.
+
+\bibitem[Wang et~al.(2003)Wang, Harrington, and Preskill]{wang2003confinement}
+Chenyang Wang, Jim Harrington, and John Preskill.
+\newblock Confinement-higgs transition in a disordered gauge theory and the
+  accuracy threshold for quantum memory.
+\newblock \emph{Annals of Physics}, 303\penalty0 (1):\penalty0 31--58, 2003.
+\newblock \doi{10.1016/S0003-4916(02)00019-2}.
+
+\bibitem[Wang et~al.(2009)Wang, Fowler, Hill, and
+  Hollenberg]{wang2009graphical}
+David~S Wang, Austin~G Fowler, Charles~D Hill, and Lloyd Christopher~L
+  Hollenberg.
+\newblock Graphical algorithms and threshold error rates for the 2d colour
+  code.
+\newblock \emph{Quantum Info. Comput.}, 10\penalty0 (9):\penalty0 780–802,
+  sep 2009.
+\newblock ISSN 1533-7146.
+\newblock \doi{10.5555/2011464.2011469}.
+
+\bibitem[Watson et~al.(2015)Watson, Anwar, and Browne]{watson2015fast}
+Fern~HE Watson, Hussain Anwar, and Dan~E Browne.
+\newblock Fast fault-tolerant decoder for qubit and qudit surface codes.
+\newblock \emph{Physical Review A}, 92\penalty0 (3):\penalty0 032309, 2015.
+\newblock \doi{10.1103/PhysRevA.92.032309}.
+
+\bibitem[Whiteside and Fowler(2014)]{whiteside2014:loss}
+Adam~C. Whiteside and Austin~G. Fowler.
+\newblock Upper bound for loss in practical topological-cluster-state quantum
+  computing.
+\newblock \emph{Phys. Rev. A}, 90:\penalty0 052316, Nov 2014.
+\newblock \doi{10.1103/PhysRevA.90.052316}.
+
+\bibitem[Wootton(2015)]{wootton2015:simple_decoder}
+James Wootton.
+\newblock A simple decoder for topological codes.
+\newblock \emph{Entropy}, 17\penalty0 (4):\penalty0 1946--1957, 2015.
+\newblock \doi{10.3390/e17041946}.
+
+\bibitem[Wootton and Loss(2012)]{wootton2012high}
+James~R Wootton and Daniel Loss.
+\newblock High threshold error correction for the surface code.
+\newblock \emph{Physical review letters}, 109\penalty0 (16):\penalty0 160503,
+  2012.
+\newblock \doi{10.1103/PhysRevLett.109.160503}.
+
+\bibitem[Z{\'e}mor(2009)]{zemor2009cayley}
+Gilles Z{\'e}mor.
+\newblock On cayley graphs, surface codes, and the limits of homological coding
+  for quantum error correction.
+\newblock In \emph{IWCC}, pages 259--273. Springer, 2009.
+\newblock \doi{10.1007/978-3-642-01877-0_21}.
+
+\end{thebibliography}
+
+
+\begin{appendix}
+
+\section{Ackermann's function}
+
+Different versions of Ackermann's original function exist, though they generally only different 
+in a constant. 
+In this section, we describe the version used by Tarjan to obtain an optimal 
+upper bound on the complexity of Union-Find algorithms \cite{tarjan1975:union_find_complexity}.
+Ackermann's function is a two-parameter function defined for any pair 
+$(i, j)$ of non-negative integers by the following relations,
+\begin{align*}
+& A(0, i) = 2i\\
+& A(i, 0) = 0\\
+& A(i, 1) = 2\\
+& A(i, j) = A(i-1, A(i, j-1))
+\end{align*}
+From this recursive definition, we find, for instance, that for all $j \geq 1$
+$$
+A(1, j) = A(0, A(1, j-1)) = 2A(1,j-1) = 2^j \cdot
+$$
+A similar calculation shows that $A(2,1) = 2, A(2,2) = 4$ and
+$$
+A(2, j) = 2^{{{2^{2}}^{-}}^{2}} \text{ with } j \text{ twos} \cdot
+$$
+
+We call the inverse of Ackermann's function, which we denote $\alpha(n)$, the
+value 
+$$
+\alpha(n) = \min \{ i | \ | A(i, 4) \geq \log_2 n \}
+$$
+Ackermann's function grows amazingly quickly. The first terms to appear in the
+definition of $\alpha$ are
+$$
+A(1,4) = 2^4,
+$$
+and
+$$
+A(2,4) = 2^{2^{2^{2}}} = 2^{16} = 65536.
+$$
+Then, we obtain $A(3,4) = A(2, A(3,3)) = A(2, A(2, A(3,2))) = A(2, A(2,4))$
+and using $A(3,2) = 4$, we find
+$$
+A(3,4) = 2^{{{2^{2}}^{-}}^{2}} \text{ with 65536 twos} \cdot
+$$
+This number is so large that we never hit $A(3,4)$
+in any practical situation, making $\alpha(n) \leq 3$.
+
+
+
+
+\section{Numerical results \label{sec:numerics}}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.44\columnwidth]{threshold_2d_WG}
+\includegraphics[width=0.45\columnwidth]{threshold_3d_WG}
+
+(a) \hspace{0.3\columnwidth} (b)
+
+\caption{
+(a) Threshold of the 2d toric code for $Z$-type error with no erasure.
+(b) Threshold of the 3d toric code for $Z$-type error with no erasure.
+}
+\label{fig:threshold0}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.75\columnwidth]{below_threshold_plot.pdf}
+\caption{\label{fig:scaling} Below threshold performance for the 2d toric code with $p_e=0.1$. Below the threshold the logical error rate is exponentially suppressed as the lattice size increases. We perform up to $10^{9}$ Montecarlo trials per data point. }
+\end{figure}
+
+
+Here we show an example of the threshold plots for the numerics that were used to generate the data shown in Figure~\ref{fig:plots}. All data points were computed by repeated montecarlo simulations of random erasure and noise on a surface code followed by decoding. The simulations were repeated until at least 10,000 failures had been observed. Figure~\ref{fig:threshold0}(a) shows the threshold for the 2d toric code, when $p_e=0$, for which we find a threshold of $9.9\%$. Figure~\ref{fig:threshold0}(b) shows the threshold for the 2+1d toric code, when $p_e=0$, for which we find a threshold of $2.6\%$. 
+
+Figure~\ref{fig:scaling} shows the below threshold scaling of the where $p_e=0.1$. We see an exponential suppression in the logical error rate with increasing lattice size, strong evidence of the threshold behavior.
+
+\end{appendix}
+
+\end{document}

@@ -1,0 +1,48 @@
+\begin{figure*}[t]
+\centering
+\small
+\newcommand\antwidth{0.14}
+\newcommand\humanoidwidth{0.14}
+\subfloat[\texttt{Ant-length-mass} environment.]{
+\begin{tabular}{c}
+\addvbuffer[0pt 0pt]{\includegraphics[width=\antwidth\textwidth, valign=m]{Figures/gym/ant_leg_length_mass_interp_0.00.jpg}} $\rightarrow$ \addvbuffer[0pt 0pt]{\includegraphics[width=\antwidth\textwidth,valign=m]{Figures/gym/ant_leg_length_mass_interp_1.00.jpg}}
+\end{tabular} 
+\label{fig:ant:length:mass}
+} 
+\hspace{5ex}
+\subfloat[\texttt{Ant-length-mass} policy transfer experiment results. ]{
+\input{tabular_ant_length_mass} 
+\label{tab:ant:length:mass}
+} 
+\\
+\subfloat[\texttt{Humanoid-length-mass} environment.]{
+\begin{tabular}{c}
+\addvbuffer[0pt 0pt]{\includegraphics[height=\humanoidwidth\textwidth, valign=m]{Figures/gym/huamoid_leg_length_mass_interp_0.00.jpg}} $\rightarrow$ \addvbuffer[3pt 0pt]{\includegraphics[height=\humanoidwidth\textwidth,valign=m]{Figures/gym/huamoid_leg_length_mass_interp_1.00.jpg}} 
+\end{tabular} 
+\label{fig:humanoid:length:mass}
+} 
+\hspace{5ex}
+\subfloat[\texttt{Humanoid-length-mass} policy transfer experiment results. ]{
+\input{tabular_humanoid_leg_mass}
+\label{tab:humanoid:length:mass}
+} 
+\\
+\subfloat[\texttt{Ant-leg-emerge} environment.]{
+\begin{tabular}{c}
+\addvbuffer[0pt 0pt]{\includegraphics[width=\antwidth\textwidth, valign=m]{Figures/gym/ant_leg_emerge_interp_0.00.jpg}} $\rightarrow$ \addvbuffer[3pt 0pt]{\includegraphics[width=\antwidth\textwidth,valign=m]{Figures/gym/ant_leg_emerge_interp_1.00.jpg}} \\
+\end{tabular}
+\label{fig:ant:leg:emerge}
+} 
+\hspace{5ex}
+\subfloat[\texttt{Ant-leg-emerge} policy transfer experiment results.]{
+\input{tabular_ant_leg_emerge}
+\label{tab:ant:leg:emerge}
+}
+\caption{
+\textbf{Experiments on source-to-target policy transfer on the MuJoCo Gym environments.}
+All methods are trained for three million iterations with five different seeds. 
+Mean and standard deviation of the reward of an epoch are reported. Our approach outperforms the baselines across different policy optimization schemes and across environments.
+}
+\label{fig:gym:combine}
+\end{figure*}
+

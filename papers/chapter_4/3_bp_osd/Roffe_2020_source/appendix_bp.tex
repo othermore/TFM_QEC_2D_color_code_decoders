@@ -1,0 +1,127 @@
+We gave only a short summary of BP in the paper; we provide further details here to avoid the ambiguity often found in the literature, where BP is formulated for different applications and with many variations. We use a variant of the ``min-sum'' algorithm, using log-likelihood ratios for probabilities and the incorporation of variable scaling to prevent runaway values.
+ 
+Belief Propagation calculates marginal probabilities over graphical probabilistic models, a form of statistical inference, and is widely applied to the decoding of classical error-correcting codes. In the quantum domain the decoding task differs slightly in that, rather than trying to infer the original codeword from the received message, we are given the syndrome indicating whether a given ``parity check'' failed and must infer a recovery operator; we must also cope with quantum degeneracy. Despite these differences, the task of quantum error correction can be reformulated as a classical syndrome-based decoding problem. Unfortunately,  syndrome-based decoding is not common in the classical decoding literature and there are few good references on the topic.
+
+A more significant difference when applying BP to quantum codes is that all CSS and non-CSS QLDPC codes have factor graphs of girth four; originally BP was designed to work on acyclic graphs, but these factor graphs contain short cycles. Whilst this violates the invariants of the algorithm and hence its proof of its correctness, empirically BP has been found to perform surprisingly well on cyclic graphs. Although it may sometimes fail to converge to a feasible solution, we can detect this by checking that its output satisfies the syndrome equation.
+
+\subsection*{Formulating QEC Decoding for BP}
+A QEC factor graph has data nodes representing each bit in the error string, which we denote $v_j$. It has one ``check'' or ``parity'' node for each syndrome measurement, which we denote $u_i$. The graph is described by the parity check matrix $H$ (whether it concerns X or Z errors alone, or both, is immaterial; the methodology is the same). A one at position $(i, j)$ in $H$ indicates that parity node $u_i$ has an edge directly connecting it to data node $v_j$.
+
+There are two forms of prior information we must incorporate into the graph: the error rate of the channel, $p$, and the syndrome $s$. The error rate is incorporated as a hidden input to the data nodes. The syndrome measurement is implicitly present in the graph via calculations made at the parity nodes.
+
+BP is conceptualised as a message passing algorithm. We denote a message from a parity to a data node $m_{u_i \rightarrow v_j}$ and from a data node to a parity node as $m_{v_j \rightarrow u_i}$. As we possess only the syndrome, and not the received codeword, the factor graph for QEC is slightly different from the standard graph found in classical decoding --- but it is indeed equivalent to the (rarely discussed) syndrome-based classical decoding.
+
+Our task is as follows: given the syndrome $s$ and the structure represented by the factor graph, what is the most likely value of each bit in the error string?
+
+\subsection*{Algorithm Description}
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\Statex
+\Function{BeliefProp}{$H$, $\textbf{s}$, $p$}  
+\Statex
+\State $\triangleright$ Channel LLR
+\Let{$p_l$}{\mbox{log}((1 - $p$)/$p)$} 
+\Statex
+\State $\triangleright$ (1) Initialisation
+\For{$(v_j, u_i) \in H$} 
+\Let{$m_{v_j \rightarrow u_i}$}{$p_l$} 
+\EndFor
+\Statex
+\For{$iter \gets 1 \textrm{ to }max$}
+\Statex
+\State $\triangleright$ Scaling Factor
+\Let{$\alpha$}{$1 - 2^{-iter}$} 
+\Statex
+\State $\triangleright$ (2) Parity to Data Msgs
+\For{$(u_i, v_j) \in H$} 
+\Let{$w$}{$\mbox{min}_{\sim v_j \in V(u_i)} \{ |m_{v_j' \rightarrow u_i}| \}$}
+\State $m_{u_i \rightarrow v_j} = -1^{s_i} \alpha ( \prod_{\sim v_j \in V(u_i) } sign ( m_{v_j' \rightarrow u_i}) ) w$
+\EndFor   
+\Statex
+\State $\triangleright$ (3) Data to Parity Msgs 
+\For{$(v_j, u_i) \in H$} 
+\Let{$m_{v_j \rightarrow u_i}$}{$m + \sum_{\sim u_i \in U(v_j)} m_{u_i' \to v_j}$}
+\EndFor
+\Statex
+\State $\triangleright$ Hard Decision
+\For{$(v_j, u_i) \in H$} 
+\Let{$P_1(e_j)$}{$p_j + \sum_{u_i' \in U(v_j)} m_{u_i' \to v_j}$}
+\Let{$\mathbf{e}_{BP}^{j}$}{$- sign(P_1(e_j))$}
+\EndFor  			   		
+\Statex
+\State $\triangleright$ (4) Termination Check    						
+\If{$H \cdot \mathbf{e}_{BP} = \textbf{s}$} 
+\State \Return{True, $\mathbf{e}_{BP}$, $P_1$}
+\EndIf
+\EndFor
+\Statex
+\State $\triangleright$ Failed to Converge
+\State \Return{False, $\mathbf{e}_{BP}$, $P_1$} 
+\EndFunction
+\end{algorithmic}
+\caption{Pseudocode for Belief Propagation using log likelihood ratios, the minsum product algorithm, and a scaling factor. Log likelihood ratios and the minsum algorithm (the use of $w$ in Line 13) make the computation more efficient and avoid the numerical instability of other implementations.}
+\label{alg:bp}
+\end{algorithm}
+
+The pseudocode for our implementation is given in Algorithm \ref{alg:bp}, and consists of four sequential steps:
+
+\begin{enumerate}
+
+	\item Initialisation
+	
+	Messages are sent from data nodes to parity nodes giving the a priori probability of that bit in the error string being a one, i.e. the LLR (log likehood ratio) of the channel error rate $p$, which we denote $p_l$ in its log likelihood form:
+
+	\begin{equation}
+		p_l \triangleq log( (1-p) / p )
+	\end{equation}
+	
+
+	\item Parity nodes to data nodes
+	
+	Messages are sent from parity nodes to data nodes containing the marginal probability of an error at the destination data node. However, we implement several optimisations that somewhat complicate the calculation of this message. Denoting the neighbouring data nodes of a given parity node $u_i$ as $V(u_i)$, the messages sent are:
+	
+\begin{align}
+	m_{u_i \rightarrow v_j} &= \etc{-1^{s_i}} \alpha \\
+	&\cdot \Bigg( \prod_{v_j' \in V(u_i) \setminus v_j} \mbox{sign} ( m_{v_j' \rightarrow u_i}) \Bigg) \\ 	
+	&\cdot \mbox{min}_{v_j' \in V(u_i) \setminus v_j} \{ |m_{v_j' \rightarrow u_i}| \}
+\end{align}
+
+	The set minus notation in the subscripts indicates that this is a marginal distribution, i.e. we consider only the probabilities from other data nodes when calculating the marginal for this bit. The sign function and the first exponential $(-1)^{s_i}$ are used to incorporate the syndrome\etc{, with $s_i$ being the $i^{\mathrm{th}}$ bit of the syndrome}. In other words: ``consider all configurations of connected error bits, and increase the probability of the implied value for this bit compatible with the observed syndrome.''  The first factor is an XOR operation that establishes the sign of this probability, i.e. whether $u_i$ is implied to be a one or a zero, based on the decision represented by the messages sent by other data bits. The second factor describes the magnitude of the probability, is based on the notion that the `cheapest' way that this value of $u_i$ could be incorrect is if one of the other bits was flipped. For a full explanation, see \cite{kschischang2001factor}.
+	
+We also include $alpha$, a scaling factor as outlined in \cite{emran2014simplified}. The scaling factor $\alpha$ is set according to the current iteration $iter$, where the first iteration is numbered $iter=1$:
+		
+\begin{equation}
+\alpha = 1 - 2^{-iter}
+\end{equation}
+
+	
+	\item Data nodes to parity nodes
+	
+	Next, messages are sent from data nodes to parity nodes giving the probability ratio for that bit in the error string, calculated by summing the inbound marginals and taking into account the error rate for the channel, omitting normalisation for efficiency:
+	
+\begin{equation}
+m_{v_j \rightarrow u_i} = p_l + \sum_{u_i' \in U(v_j) \setminus u_i} m_{u_i' \to v_j}
+\end{equation}
+
+\etc{Where we have denote the neighbouring data nodes of a given check node $v_j$ as $U(v_j)$.}
+
+	
+	\item Termination check. If the factor graph is a tree, we can always terminate after a single iteration of the algorithm. If it is cyclic (as in QEC), then we will terminate on success or else when a given number of iterations are complete. We first calculate a ``hard decision'' of the most likely error string, by selecting the most likely configuration via the bitwise marginals we have calculated:
+	
+\begin{equation}
+P_1(e_j) = p_l + \sum_{u_i' \in U(v_j)} m_{u_i' \to v_j}
+\end{equation}
+	
+	We then select the most likely error string $\tilde E$ given these bitwise probabilities, and calculate the expected syndrome:
+	
+	\begin{equation}
+		\textbf{s} = H \cdot \mathbf{e}
+	\end{equation}
+	
+	We terminate if $\mathbf{s}$ matches the measured syndrome, or if we have reached a preset maximum number of iterations (often equal to the block length). Otherwise, we return to Step 2, sending `parity nodes to data nodes' messages.
+	
+\end{enumerate}
+
+The outputs of BP are both the soft and hard decisions; the former are used by OSD if BP has failed to converge, i.e. the hard decision does not satisfy the syndrome equation. The soft decision is a bit-wise estimate of the probability an error occurred, which OSD uses to bias its search for an error string.
+
+

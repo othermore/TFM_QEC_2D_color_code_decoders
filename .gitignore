@@ -10,3 +10,4 @@ debugging
 cache
 scratch
 .build
+/aux/

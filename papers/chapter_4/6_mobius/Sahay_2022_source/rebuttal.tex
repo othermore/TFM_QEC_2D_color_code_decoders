@@ -1,0 +1,171 @@
+%%%%%%%% ICML 2022 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass[nohyperref]{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+% \usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{hhline}
+% \usepackage{subcaption}
+\usepackage[export]{adjustbox}
+\usepackage{subfig}
+\usepackage{tabu}
+\usepackage{comment}
+\usepackage{boldline}
+\usepackage{verbatimbox}
+\usepackage{pifont}
+\usepackage{tablefootnote}
+\usepackage{footnote}
+\usepackage{physics}
+\usepackage{multicol}
+
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2022} with \usepackage[nohyperref]{icml2022} above.
+\usepackage{hyperref}
+
+\captionsetup[subfigure]{margin=-9pt}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+% \newtheorem{theorem}{Theorem}
+
+% Use the following line for the initial blind version submitted for review:
+\usepackage{icml2022}
+
+% If accepted, instead use the following line for the camera-ready submission:
+% \usepackage[accepted]{icml2022}
+
+% For theorems and such
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+\definecolor{viz_red}{RGB}{204, 0, 0}
+\definecolor{viz_yellow}{RGB}{241, 194, 50}
+\definecolor{viz_green}{RGB}{52, 183, 47}
+\definecolor{viz_blue}{RGB}{17, 85, 204}
+
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{REvolveR: Continuous Evolutionary Models for Robot-to-robot Policy Transfer}
+
+\begin{document}
+
+
+% \section*{REvolveR: Continuous Evolutionary Models for Robot-to-robot Policy Transfer -- Rebuttal}
+
+We thank the reviewers for their valuable and insightful comments. 
+% In this document, we answer concerns from the reviewers and provide additional clarification to our paper. 
+For the future version, we are committed to making adjustments to reflect the reviewers' comments.
+
+% We are glad reviewers found our work has novel and impressive real-world demonstrations [\Rthree], is the ``first instance in the literature of a navigation system that combines vision and proprioception for legged robots bumping into obstacles" [\Rthree], a good and robust system [\Rone, \Rthree], and has easy-to-follow writing and source code [\Rone]. We are glad to report the additional requested experiments below.
+
+% We are glad that all reviews found our idea novel, results ``highly effective'' (\rtwo), contributions ``solid'' (\rthree), ``original'' (\rfive), ``surprising'' and ``significant'' (\rsix). The main concern was missing 3D baselines. We are pleased to report \textit{four new 3D-baselines} as suggested by \rthree{} and \rfive{} which further support our approach as shown below. Thanks reviewers!
+
+\textbf{\textcolor{viz_blue}{R3}: \textit{The novelty of the policy transfer method is not clear, especially when compared with the previous methods that can also well address policy transfer when robots have similar configurations}. } \\
+Prior works rely on imitation learning to \textit{directly} transfer the policy from source to target robot by matching the distributions of  action/state/reward between the source and target robots. Hence, they only work when source-target robot configurations and dynamics are similar, and fail to transfer policies between \textcolor{viz_red}{\textbf{large robot differences}} with very different dynamics (such as different number of fingers/joints).
+In contrast, our method can deal with extremely large robot changes because we decompose a large robot change into multiple steps of small robot changes and generate a sequence of evolving robot models. We decompose the problem into a sequence of policy fine-tuning sub-problems which are much easier to solve. 
+
+% We would like to emphasize that prior work that relies on imitation learning on policy transfer cannot work with \textcolor{viz_red}{\textbf{extremely large robot differences}} with very different dynamics (such as different number of fingers/joints). The reason is that, prior works directly transfer the policy from source to target robot and can only work when robot configurations and dynamics are similar, because their optimization goal is to match the distributions of  action/state/reward between source and target robots. In comparison, our method can deal with extremely large robot changes because we decompose a large robot change into multiple steps of small robot changes and generate a sequence of evolving robot models, thus making the sequence of policy fine-tuning problems much easier to solve. 
+
+% If the proposed policy transfer method is a novelty of the paper, the experiments need to justify this novelty, for example, to compare the proposed policy transfer method with others that iteratively transfer policy using a sequence of the generated evolutional robot models.
+
+\textbf{\textcolor{viz_blue}{R3}: \textit{Compare the proposed policy transfer method with others that iteratively transfer policy using a sequence of the generated evolutional robot models}. } \\
+To the best of our knowledge, the prior works in the area do not iteratively transfer policy between the source and the target robot through intermediate designs but rather transfer the policy directly from source to target. Such examples include SOIL \cite{soil} or SAIL \cite{sail}. We did compare against these state-of-the-art robot policy transfer method, e.g. SOIL \cite{soil}, in Section 5.1 and Figures 3(b)(d)(f).
+
+However, we would like to emphasize that \textcolor{viz_red}{\textbf{our contribution is orthogonal to these prior methods}}. 
+Hence, any type of direct source-to-target robot policy transfer algorithm (e.g. SOIL, SAIL) can be used in our method to solve the smaller sub-problems of transferring policy between intermediate robot evolutions by replacing line 25 of Algorithm 1.
+
+% To the best of our knowledge, we are the \textcolor{viz_red}{\textbf{first}} method that propose to iteratively transfer policy using a sequence of the generated evolving robot models.
+% To clarify, our main contribution is not to improve the RL algorithm per se that is used for policy transfer, but the idea of using iterative evolution of robot models. 
+% Any type of direct source-to-target robot policy transfer algorithm (e.g. SOIL, SAIL) can be used in our method by replacing line 25 of Algorithm 1 on page 5, and if the replaced algorithm is better than the RL algorithm we used, it may be able to further improve our method. \\
+% In terms of experiments, we did compare against state-of-the-art robot policy transfer method SOIL \cite{soil} in Section 5.1 and Figures 3(b)(d)(f).
+% As for the request of ``\textit{comparing with other methods that also iteratively transfer policy using a sequence of generated evolutional robot models}'', we are the \textcolor{viz_red}{\textbf{first}} to propose this idea and there is no related work to compare with.
+% we are happy to compare with such a previous method with the same/similar idea if \textbf{\textcolor{viz_blue}{R3}} can provide reference to such a method.
+
+
+\textbf{\textcolor{viz_blue}{R3}: \textit{Discussion of using the proposed method for policy transfer on real robots}. } \\
+If the physical parameters of the target robot ($\alpha=1$) in simulation can match the physical parameters of the real robot, the target robot policy trained in simulation can be easily transferred to real robots.
+However, Sim-to-Real transfer is not the focus of this paper.
+
+\textbf{\textcolor{viz_yellow}{R4}: \textit{The two `different' robots are more essentially different as there are only some parameters modified. This limits the potential usage of this method.}} \\
+In Section 4.1 and Figure 2, we show that \textcolor{viz_red}{\textbf{any two different robots can be mapped to the same parameter space}}, even if they are completely different in their kinematics and morphology (e.g. different number of fingers and/or joints).
+This is done by matching the topology of their kinematic trees by adding additional body and joint nodes (Figure 2).
+After this step, the two different robots can simply be represented by different parameters (e.g. finger lengths and/or joint ranges) in their \textcolor{viz_red}{\textbf{shared parameter space}}.
+We show an example of five-finger robot to two-finger robot policy transfer in Section 5.2 and the third row of Figure 1.
+
+\textbf{\textcolor{viz_yellow}{R4}: \textit{The author should emphasize on their difference between continuous learning and their method; the authors may also consider the catastrophic forgetting effect of transferred policy.}} \\
+% Our method is in different domain than continual learning.
+In continual learning, the agent is supposed to learn to do well on a stream of data coming online while not forgetting the old data.
+In contrast, we adapt the policy that works on one robot design (source) to work well on a different robot design (target). In our setting, it is not necessary for the same adapted policy to work well on the original robot, in other words, it is ok to forget as long as the policy can perform well for target robot design.
+
+% Our goal is to transfer an expert policy on source robot to a target robot. So we expect the policy to `forget' about the source robot after transferred to the target robot.
+
+\textbf{\textcolor{viz_yellow}{R4}: \textit{The authors should also plot some curves showing the learning progress.}} \\
+As mentioned in % \textcolor{viz_red}{\textbf{
+footnote 1 on page 7 of the main paper,
+% }}
+unlike ordinary RL algorithms that are trained on a single robot and have performance vs. time results, our REvolveR is only able to deliver valid \emph{target robot performance} at the end of the policy transfer.
+Therefore, there is no way to plot curves to show the learning progress on the target robot.
+
+\textbf{\textcolor{viz_yellow}{R4}: \textit{Calling the learning process `evolution' might confuse the readers.}} \\
+We did not call the learning process `evolution'.
+The term `evolution' is used to describe the change of \emph{robot model}, not the update of policy.
+We will make this clear in the future version of the paper.
+
+\textbf{\textcolor{viz_yellow}{R4}} \& \textbf{\textcolor{viz_green}{R5}: \textit{More references can be added for comparison.}} \\
+We are happy to include more references to compare against related domains such as continual learning.
+
+\textbf{\textcolor{viz_green}{R5}: \textit{It may be interesting to see how the policy transfer results in the paper behave within distributional RL benchmarks such as D4PG.}} \\
+We would be happy to experiment with more RL algorithms such as D4PG.
+On the other hand, we have already experimented with three different RL algorithms (TD3, SAC and NPG) in our paper and we believe our existing experiments are enough to support the claims made in our paper.
+
+
+
+{\small
+\bibliography{bib}
+\bibliographystyle{icml2022}
+}
+
+% \end{multicols}
+
+\end{document}
+
+
+

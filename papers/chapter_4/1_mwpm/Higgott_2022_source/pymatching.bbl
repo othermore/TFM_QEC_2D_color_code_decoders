@@ -1,0 +1,183 @@
+\begin{thebibliography}{10}
+
+\bibitem{hsieh2011np}
+Min-Hsiu Hsieh and Fran{\c{c}}ois Le~Gall.
+\newblock Np-hardness of decoding quantum error-correction codes.
+\newblock {\em Physical Review A}, 83(5):052331, 2011.
+
+\bibitem{kuo2012hardness}
+Kao-Yueh Kuo and Chung-Chin Lu.
+\newblock On the hardness of decoding quantum stabilizer codes under the
+  depolarizing channel.
+\newblock In {\em 2012 International Symposium on Information Theory and its
+  Applications}, pages 208--211. IEEE, 2012.
+
+\bibitem{kuo2020hardnesses}
+Kao-Yueh Kuo and Chung-Chin Lu.
+\newblock On the hardnesses of several quantum decoding problems.
+\newblock {\em Quantum Information Processing}, 19(4):1--17, 2020.
+
+\bibitem{iyer2015hardness}
+Pavithran Iyer and David Poulin.
+\newblock Hardness of decoding quantum stabilizer codes.
+\newblock {\em IEEE Transactions on Information Theory}, 61(9):5209--5223,
+  2015.
+
+\bibitem{edmonds1965paths}
+Jack Edmonds.
+\newblock Paths, trees, and flowers.
+\newblock {\em Canadian Journal of mathematics}, 17:449--467, 1965.
+
+\bibitem{dennis2002topological}
+Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+\newblock Topological quantum memory.
+\newblock {\em Journal of Mathematical Physics}, 43(9):4452--4505, 2002.
+
+\bibitem{bravyi2012subsystem}
+Sergey Bravyi, Guillaume Duclos-Cianci, David Poulin, and Martin Suchara.
+\newblock Subsystem surface codes with three-qubit check operators.
+\newblock {\em arXiv preprint arXiv:1207.1443}, 2012.
+
+\bibitem{breuckmann2016constructions}
+Nikolas~P Breuckmann and Barbara~M Terhal.
+\newblock Constructions and noise threshold of hyperbolic surface codes.
+\newblock {\em IEEE transactions on Information Theory}, 62(6):3731--3744,
+  2016.
+
+\bibitem{higgott2020subsystem}
+Oscar Higgott and Nikolas~P Breuckmann.
+\newblock Subsystem codes with high thresholds by gauge fixing and reduced
+  qubit overhead.
+\newblock {\em arXiv preprint arXiv:2010.09626}, 2020.
+
+\bibitem{bonilla2020xzzx}
+J~Pablo Bonilla-Ataides, David~K Tuckett, Stephen~D Bartlett, Steven~T Flammia,
+  and Benjamin~J Brown.
+\newblock The xzzx surface code.
+\newblock {\em arXiv preprint arXiv:2009.07851}, 2020.
+
+\bibitem{li20192d}
+Muyuan Li, Daniel Miller, Michael Newman, Yukai Wu, and Kenneth~R Brown.
+\newblock 2d compass codes.
+\newblock {\em Physical Review X}, 9(2):021041, 2019.
+
+\bibitem{chamberland2020topological}
+Christopher Chamberland, Guanyu Zhu, Theodore~J Yoder, Jared~B Hertzberg, and
+  Andrew~W Cross.
+\newblock Topological and subsystem codes on low-degree graphs with flag
+  qubits.
+\newblock {\em Physical Review X}, 10(1):011022, 2020.
+
+\bibitem{quintavalle2020single}
+Armanda~O Quintavalle, Michael Vasmer, Joschka Roffe, and Earl~T Campbell.
+\newblock Single-shot error correction of three-dimensional homological product
+  codes.
+\newblock {\em arXiv preprint arXiv:2009.11790}, 2020.
+
+\bibitem{brown2016fault}
+Benjamin~J Brown, Naomi~H Nickerson, and Dan~E Browne.
+\newblock Fault-tolerant error correction with the gauge color code.
+\newblock {\em Nature communications}, 7(1):1--8, 2016.
+
+\bibitem{kubica2019efficient}
+Aleksander Kubica and Nicolas Delfosse.
+\newblock Efficient color code decoders in $d\geq 2$ dimensions from toric code
+  decoders.
+\newblock {\em arXiv preprint arXiv:1905.07393}, 2019.
+
+\bibitem{brown2020parallelized}
+Benjamin~J Brown and Dominic~J Williamson.
+\newblock Parallelized quantum error correction with fracton topological codes.
+\newblock {\em Physical Review Research}, 2(1):013303, 2020.
+
+\bibitem{nixon2021correcting}
+Georgia~M Nixon and Benjamin~J Brown.
+\newblock Correcting spanning errors with a fractal code.
+\newblock {\em IEEE Transactions on Information Theory}, 2021.
+
+\bibitem{kolmogorov2009blossom}
+Vladimir Kolmogorov.
+\newblock Blossom v: a new implementation of a minimum cost perfect matching
+  algorithm.
+\newblock {\em Mathematical Programming Computation}, 1(1):43--67, 2009.
+
+\bibitem{dezsHo2011lemon}
+Bal{\'a}zs Dezs{\H{o}}, Alp{\'a}r J{\"u}ttner, and P{\'e}ter Kov{\'a}cs.
+\newblock Lemon--an open source c++ graph template library.
+\newblock {\em Electronic Notes in Theoretical Computer Science},
+  264(5):23--45, 2011.
+
+\bibitem{fowler2012topological}
+Austin~G Fowler, Adam~C Whiteside, Angus~L McInnes, and Alimohammad Rabbani.
+\newblock Topological code autotune.
+\newblock {\em Physical Review X}, 2(4):041003, 2012.
+
+\bibitem{qecsim}
+David~Kingsley Tuckett.
+\newblock {\em Tailoring surface codes: Improvements in quantum error
+  correction with biased noise}.
+\newblock PhD thesis, University of Sydney, 2020.
+\newblock (qecsim: \url{https://github.com/qecsim/qecsim}).
+
+\bibitem{bravyi2014efficient}
+Sergey Bravyi, Martin Suchara, and Alexander Vargo.
+\newblock Efficient algorithms for maximum likelihood decoding in the surface
+  code.
+\newblock {\em Physical Review A}, 90(3):032326, 2014.
+
+\bibitem{siek2002boost}
+Jeremy Siek, Andrew Lumsdaine, and Lie-Quan Lee.
+\newblock {\em The boost graph library: user guide and reference manual}.
+\newblock Addison-Wesley, 2002.
+
+\bibitem{fowler2012towards}
+Austin~G Fowler, Adam~C Whiteside, and Lloyd~CL Hollenberg.
+\newblock Towards practical classical processing for the surface code.
+\newblock {\em Physical review letters}, 108(18):180501, 2012.
+
+\bibitem{xu2019high}
+Xiaosi Xu, Qi~Zhao, Xiao Yuan, and Simon~C Benjamin.
+\newblock High-threshold code for modular hardware with asymmetric noise.
+\newblock {\em Physical Review Applied}, 12(6):064006, 2019.
+
+\bibitem{delfosse2017almost}
+Nicolas Delfosse and Naomi~H Nickerson.
+\newblock Almost-linear time decoding algorithm for topological codes.
+\newblock {\em arXiv preprint arXiv:1709.06218}, 2017.
+
+\bibitem{das2020scalable}
+Poulami Das, Christopher~A Pattison, Srilatha Manne, Douglas Carmean, Krysta
+  Svore, Moinuddin Qureshi, and Nicolas Delfosse.
+\newblock A scalable decoder micro-architecture for fault-tolerant quantum
+  computing.
+\newblock {\em arXiv preprint arXiv:2001.06598}, 2020.
+
+\bibitem{huang2020fault}
+Shilin Huang, Michael Newman, and Kenneth~R Brown.
+\newblock Fault-tolerant weighted union-find decoding on the toric code.
+\newblock {\em Physical Review A}, 102(1):012419, 2020.
+
+\bibitem{meinerz2021scalable}
+Kai Meinerz, Chae-Yeun Park, and Simon Trebst.
+\newblock Scalable neural decoder for topological surface codes.
+\newblock {\em arXiv preprint arXiv:2101.07285}, 2021.
+
+\bibitem{hu2020quasilinear}
+Mark~Shui Hu and David Elkouss.
+\newblock Quasilinear time decoding algorithm for topological codes with high
+  error threshold.
+\newblock 2020.
+
+\bibitem{wang2003confinement}
+Chenyang Wang, Jim Harrington, and John Preskill.
+\newblock Confinement-higgs transition in a disordered gauge theory and the
+  accuracy threshold for quantum memory.
+\newblock {\em Annals of Physics}, 303(1):31--58, 2003.
+
+\bibitem{fowler2012towardstiming}
+Austin~G Fowler, Adam~C Whiteside, and Lloyd~CL Hollenberg.
+\newblock Towards practical classical processing for the surface code: timing
+  analysis.
+\newblock {\em Physical Review A}, 86(4):042313, 2012.
+
+\end{thebibliography}

@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{l|c|c}
+\hline
+& MuJoCo Gym Environments & Hand Manipulation Suite \\
+\hline
+Actor & $[s,256,256,a]$ & $[s,32,32,a]$ \\ 
+\hline
+Critic & $[s+a,256,256,1]$ & $[s+a,32,32,1]$ \\ 
+\hline
+Batch size & 256 & 16 \\ 
+\hline
+Learning Rate & $3\times 10^{-4}$ & $1\times 10^{-4}$ \\
+\hline
+\end{tabular}
+\vspace{-1ex}
+\caption{Size of the Neural network used in the experiments. 
+$s$ and $a$ represents the dimension of state space and action space respectively.
+}
+\label{tab:supp:net:param}
+\end{table}
+
