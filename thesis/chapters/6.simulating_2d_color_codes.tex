@@ -455,20 +455,17 @@ Sahay and Brown \cite{Sahay_2022} report a $p_{th}=9\%$ threshold for bit-flip e
 \section{Concatenated MWPM Decoder}
 \label{sec:concatenated_mwpm_decoder_simulation}
 
-The Concatenated Minimum Weight Perfect Matching (MWPM) decoder is a heuristic approach designed to decode color codes by projecting the syndrome onto multiple restricted lattices and resolving them using standard MWPM algorithms. For this thesis, we utilized the \texttt{concatmatching} library \ref{Lee_2024_concatmatching} , an existing Python implementation of this decoder.
+The Concatenated Minimum Weight Perfect Matching (MWPM) decoder is a heuristic approach designed to decode color codes by projecting the syndrome onto multiple restricted lattices and resolving them using standard MWPM algorithms. For this thesis, we utilized the \texttt{concatmatching} library \cite{Lee_2024_concatmatching} , an existing Python implementation of this decoder.
 
 \subsection{Implementation and Configuration}
-\notatfm{the authors of the \texttt{concatmatching} library also published a \texttt{stim} wrapper \cite{Lee_2025} \cite{Lee_2025_colorcode}. While this library is designed for their own imlementation of the \texttt{stim} circuit for the color code, it served as a reference to integrate \texttt{concatmatching} in our framework.} Unlike other decoders such as \texttt{Chromobius} or PyMatching, which can directly interface with Stim's Detector Error Model (DEM) and the Sinter framework, the \texttt{concatmatching} library requires the code's parity check matrix ($H$) and prior probabilities. To integrate this external library into our simulation pipeline, we developed a dedicated Sinter wrapper (\texttt{sinter\_concatenated\_decoder.py}).
+\notatfm{The authors of the \texttt{concatmatching} library also published a \texttt{stim} wrapper \cite{Lee_2025} \cite{Lee_2024_color_code_stim}. While this library is designed for their own imlementation of the \texttt{stim} circuit for the color code, it served as a reference to integrate \texttt{concatmatching} in our framework.} Unlike other decoders such as \texttt{Chromobius} or PyMatching, which can directly interface with Stim's Detector Error Model (DEM) and the Sinter framework, the \texttt{concatmatching} library requires the code's parity check matrix ($H$) and and the individual error probabilities for each fault mechanism (priors). To integrate this external library into our simulation pipeline, we developed a dedicated Sinter wrapper (\texttt{sinter\_concatenated\_decoder.py}).
 
-The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. However, parsing the DEM for the color code presented a significant technical challenge regarding $Y$ errors. Under depolarizing noise, a $Y$ error on a bulk data qubit in the 4.8.8 lattice flips both $X$ and $Z$ stabilizers, forming a weight-6 hyperedge (three $X$ detectors and three $Z$ detectors). 
+The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. While there are built-in methods in \texttt{stim}'s DEM to generate the check matrices, it presented a significant technical challenge regarding $Y$ errors, that trigger 6 three $X$ detectors and three $Z$ detectors. 
 
-While Stim provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm only decomposes hyperedges into graphlike components (weight $\le 2$). Since both the $X$ and $Z$ components of the $Y$ error have weight 3 in the bulk, Stim's algorithm fails to find a graphlike decomposition and crashes for distances $d \ge 7$.
-
-To solve this, we implemented a robust, custom DEM parser within our wrapper. We take advantage of the fact that the STIM circuit generation measures $X$ and $Z$ stabilizers in identical spatial locations. By inspecting the space-time coordinates of the detectors directly from the DEM, we can dynamically pair ``twin'' detectors (the $X$ and $Z$ detectors of the same face). This allows us to perfectly split any $Y$ error hyperedge into its independent $X$ and $Z$ components (each of maximum weight 3) without relying on Stim's decomposition engine. The \texttt{concatmatching} decoder natively supports these weight-3 hyperedges and combines the resulting independent probabilities correctly.
+While Stim provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
 
 \subsection{Threshold Evaluation}
 We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow our general Sinter methodology, collecting statistics up to 25 million shots per data point.
-
 
 \begin{figure}[htpb]
     \centering
@@ -487,7 +484,7 @@ We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $
 The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshold_x}. The Concatenated MWPM decoder achieves an estimated threshold of $p_{th} \approx 8.11\%$.
 
 \subsubsection{Published references and preliminary evaluation}
-Reported threshold for the concatenated MWPM decoder is $p_{th} = 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.11\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
+Reported threshold for the concatenated MWPM decoder is $p_{th} \approx 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.11\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
 
 
 \section{Correlated matching decoder}
