@@ -5,7 +5,18 @@ import numpy as np
 import sinter
 import pandas as pd
 import matplotlib.pyplot as plt
+import argparse
 from typing import Dict
+
+plt.rcParams.update({
+    'font.size': 14,
+    'axes.titlesize': 16,
+    'axes.labelsize': 14,
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+    'figure.titlesize': 18
+})
 
 from s1_color_code import ColorCode
 from ldpc import SinterBpOsdDecoder
@@ -16,10 +27,13 @@ def run_comparison(
     max_shots=1000000, 
     max_errors=300,
     output_file="s2b_bposd_comparison.csv",
-    plot_only=False
+    execution_mode="default"
 ):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     csv_path = os.path.join(project_root, "data", "chapter_6", output_file)
+    
+    if execution_mode == 'clean-all' and os.path.exists(csv_path):
+        os.remove(csv_path)
     
     bp_methods = ['ms', 'ps']
     osd_methods = ['osd_0', 'osd_e', 'osd_cs']
@@ -43,51 +57,50 @@ def run_comparison(
                     osd_order=order
                 )
     
-    if not plot_only:
-        if p_rates is None:
-            p_rates = np.linspace(0.01, 0.20, 15)
-            
-        print(f"Generating circuit and DEM for distance {distance}...")
-        cc = ColorCode(distance=distance)
+    if p_rates is None:
+        p_rates = np.linspace(0.01, 0.20, 15)
         
-        tasks = []
-        for p in p_rates:
-            circ = cc.get_stim_circuit(rounds=1, p_data=p, p_meas=0.0, p_gate=0.0)
-            dem = circ.detector_error_model(decompose_errors=False)
-            tasks.append(
-                sinter.Task(
-                    circuit=circ,
-                    detector_error_model=dem,
-                    json_metadata={'d': distance, 'p': p, 'rounds': 1}
-                )
+    print(f"Generating circuit and DEM for distance {distance}...")
+    cc = ColorCode(distance=distance)
+        
+    tasks = []
+    for p in p_rates:
+        circ = cc.get_stim_circuit(rounds=1, p_data=p, p_meas=0.0, p_gate=0.0)
+        dem = circ.detector_error_model(decompose_errors=False)
+        tasks.append(
+            sinter.Task(
+                circuit=circ,
+                detector_error_model=dem,
+                json_metadata={'d': distance, 'p': p, 'rounds': 1}
             )
-            
-        print(f"Starting Sinter collect for {len(custom_decoders)} decoders...")
-        start_time = time.time()
-        
-        stats = sinter.collect(
-            num_workers=os.cpu_count() or 4,
-            tasks=tasks,
-            decoders=list(custom_decoders.keys()),
-            custom_decoders=custom_decoders,
-            max_shots=max_shots,
-            max_errors=max_errors,
-            print_progress=True
         )
-        print(f"Simulation completed in {time.time() - start_time:.2f} seconds.")
         
-        os.makedirs(os.path.dirname(csv_path), exist_ok=True)
-        with open(csv_path, 'w', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(["decoder", "distance", "rounds", "p_physical", "p_logical", "p_logical_err", "shots", "errors", "avg_time_sec"])
-            for s in stats:
-                d = s.json_metadata['d']
-                r = s.json_metadata['rounds']
-                p = s.json_metadata['p']
-                p_logical = s.errors / s.shots if s.shots > 0 else 0.0
-                p_err = np.sqrt(p_logical * (1 - p_logical) / s.shots) if s.shots > 0 else 0.0
-                writer.writerow([s.decoder, d, r, p, p_logical, p_err, s.shots, s.errors, s.seconds / s.shots if s.shots > 0 else 0.0])
-                
+    print(f"Starting Sinter collect for {len(custom_decoders)} decoders...")
+    start_time = time.time()
+    
+    stats = sinter.collect(
+        num_workers=os.cpu_count() or 4,
+        tasks=tasks,
+        decoders=list(custom_decoders.keys()),
+        custom_decoders=custom_decoders,
+        max_shots=max_shots,
+        max_errors=max_errors,
+        print_progress=True
+    )
+    print(f"Simulation completed in {time.time() - start_time:.2f} seconds.")
+    
+    os.makedirs(os.path.dirname(csv_path), exist_ok=True)
+    with open(csv_path, 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["decoder", "distance", "rounds", "p_physical", "p_logical", "p_logical_err", "shots", "errors", "avg_time_sec"])
+        for s in stats:
+            d = s.json_metadata['d']
+            r = s.json_metadata['rounds']
+            p = s.json_metadata['p']
+            p_logical = s.errors / s.shots if s.shots > 0 else 0.0
+            p_err = np.sqrt(p_logical * (1 - p_logical) / s.shots) if s.shots > 0 else 0.0
+            writer.writerow([s.decoder, d, r, p, p_logical, p_err, s.shots, s.errors, s.seconds / s.shots if s.shots > 0 else 0.0])
+            
     plot_results(csv_path)
 
 def plot_results(csv_path):
@@ -184,4 +197,28 @@ def plot_results(csv_path):
     )
 
 if __name__ == '__main__':
-    run_comparison()
+    parser = argparse.ArgumentParser(description="BP+OSD Comparison simulation.")
+    parser.add_argument("command", choices=['simulate', 'plot', 'zoom'], help="The action to perform.")
+    parser.add_argument("--distances", nargs="+", type=int, help="Override distance (script only uses the first one).")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--force-rerun', action='store_true', help="Overwrite data for requested parameters.")
+    group.add_argument('--clean-all', action='store_true', help="Delete the target CSV completely before running.")
+    
+    args = parser.parse_args()
+    
+    execution_mode = 'default'
+    if hasattr(args, 'force_rerun') and args.force_rerun:
+        execution_mode = 'force-rerun'
+    elif hasattr(args, 'clean_all') and args.clean_all:
+        execution_mode = 'clean-all'
+        
+    distance = args.distances[0] if args.distances else 7
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    csv_path = os.path.join(project_root, "data", "chapter_6", "s2b_bposd_comparison.csv")
+    
+    if args.command == 'simulate':
+        run_comparison(distance=distance, execution_mode=execution_mode)
+    elif args.command == 'plot':
+        plot_results(csv_path)
+    elif args.command == 'zoom':
+        print("Zoom not explicitly defined for this comparison script. You can implement if needed.")
