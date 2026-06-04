@@ -28,6 +28,11 @@ try:
 except ImportError:
     ConcatMwpmDecoder = None
 
+try:
+    from sinter_correlated_decoder import CorrelatedDecoder
+except ImportError:
+    CorrelatedDecoder = None
+
 
 def get_projection_decoder() -> sinter.Decoder:
     """
@@ -76,5 +81,7 @@ def get_custom_decoders() -> Dict[str, sinter.Decoder]:
         decoders.update(chromobius.sinter_decoders())
     if ConcatMwpmDecoder is not None:
         decoders['concat_mwpm'] = ConcatMwpmDecoder()
+    if CorrelatedDecoder is not None:
+        decoders['correlated'] = CorrelatedDecoder()
     return decoders
 

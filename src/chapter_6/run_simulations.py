@@ -8,7 +8,8 @@ SCRIPTS = [
     "s3_projection_simulation.py",
     "s4_restriction_simulation.py",
     "s5_mobius_decoder.py",
-    "s6_concatenated_simulation.py"
+    "s6_concatenated_simulation.py",
+    "s7_correlated_simulation.py"
 ]
 
 def main():
