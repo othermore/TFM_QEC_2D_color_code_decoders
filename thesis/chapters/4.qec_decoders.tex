@@ -487,7 +487,7 @@ With these polygons defined, the algorithm performs a final \textit{lifting} ste
 \subsection{The Restriction Step}
 Similar to the Projection Decoder, the algorithm begins by dropping one color of faces from the lattice to form a bipartite syndrome graph. However, the crucial difference lies in the number of required projections. 
 
-When creating a restricted lattice, for instance the Red-Green ($\mathcal{L}_{RG}$) restricted lattice, all Blue faces are removed. In this new graph, the original Red and Green faces become the vertices, and the physical data qubits become the edges connecting a Red vertex to a Green vertex. 
+\notatfm{While the formal description of the restriction graph differs from the one of the projection graph (in the projection, vertices are physical qubits of the lattice and in the restriction vertices are edges in the lattice), the fact that the two physical qubits are merged in the projection graph so MWPM can process them, makes the final graph equivalent: two parallel physical qubits between two faces are equivalent to the edge dividing the two faces.} When creating a restricted lattice, for instance the Red-Green ($\mathcal{L}_{RG}$) restricted lattice, all Blue faces are removed. In this new graph, the original Red and Green faces become the vertices, and the edges between two faces in the lattice become the edges connecting a Red vertex to a Green vertex (which are equivalent to the two merged qubits in the projection graph). 
 
 This transformation is applied to create just \textbf{two} restricted lattices (e.g., $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$), whereas the Projection Decoder required all three. At the decoding phase, the full syndrome is mapped onto these two restricted graphs. The syndromes $s_{RG}$ and $s_{RB}$ are then independently decoded using MWPM to find matchings $p_{RG}$ and $p_{RB}$. 
 
@@ -747,7 +747,42 @@ To do this, the logical operator is mapped onto the unified graph. By combining 
 
 The algorithm computes the parity of $C_0$ (by counting the flipped qubits modulo 2) and the abstract parity of $E_{MWPM}$ (by counting its edges modulo 2). If the parities differ, a logical flip is caused by the trivial correction. The final correction applied to the quantum computer is simply the trivial correction $C_0$, followed by a global logical operator if the parities were different. This elegantly corrects the state without ever needing to map the abstract MWPM paths back to specific physical qubits.
 
-\section{Concatenated MWPM decoder}
-(Lee, Li \& Bartlett, Quantum, 2025)
+\section{Concatenated MWPM}
+\label{sec:concatenated_mwpm}
+
+As we have seen, the core difficulty in decoding color codes is that a single physical error activates three stabilizers, creating a hypergraph problem. While the Projection Decoder tackles this by creating parallel edges and resolving them geometrically, the Concatenated MWPM decoder \cite{Lee} takes a purely algebraic approach. 
+
+\notatfm{Unlike decoders that rely on complex geometric lifting or local algebraic rules to resolve ambiguities, this approach keeps the problem strictly within the domain of graph theory by chaining two bipartite matchings.} Instead of performing a single matching followed by a topological lifting, this decoder circumvents the hypergraph problem entirely by performing two sequential MWPM executions per color. The decoding process is divided into three parallel sub-routines (one for each color), which operate independently to find a valid correction. Once the three sub-routines finish, the decoder compares their results to choose the most optimal one. 
+
+At a high level, the algorithm follows three main steps:
+\begin{enumerate}
+    \item \textbf{First-round MWPM:} A matching is performed on a restricted graph to identify the edges of the original lattice where the error likely occurred.
+    \item \textbf{Second-round MWPM:} A second matching is performed on a new graph to resolve the ambiguity of the edges and identify the exact physical qubits.
+    \item \textbf{Final Selection:} The sub-routine is repeated for all colors, and the most probable physical correction is chosen based on its total weight.
+\end{enumerate}
+
+Let us examine these steps in detail by looking at the Red sub-routine as an example.
+
+\subsection{Step 1: First-round MWPM on the Restricted Lattice}
+The Red sub-routine is designed to find a valid correction by temporarily ignoring the Red stabilizers of the syndrome. To do this, the decoder first constructs a bipartite graph called the \textit{Red-restricted lattice}.
+
+In this graph, the nodes are exclusively the Green and Blue stabilizers. The edges connecting these nodes correspond strictly to the \textit{Red edges} of the primal color code lattice. Because there is exactly one primal Red edge separating any adjacent Green and Blue face, this restricted graph has no parallel edges. 
+
+The algorithm inputs the activated Green and Blue stabilizers from the syndrome as defects and runs a standard MWPM. The output is a set of primal Red edges that are suspected to contain the error. However, since a Red edge simply connects two physical qubits, the algorithm still does not know which of the two specific qubits failed.
+
+\subsection{Step 2: Second-round MWPM on the Monochromatic Lattice}
+To resolve the physical qubit ambiguity left by the first step, the decoder builds a completely new graph called the \textit{Red-only lattice} (or monochromatic lattice).
+
+In this new graph, the nodes are the Red stabilizers (which were completely ignored in the first step) and the Red edges of the primal lattice. The edges of this new graph are the actual physical qubits. Geometrically, this perfectly matches the color code structure, as every physical qubit exclusively connects one Red stabilizer and one Red edge.
+    
+The algorithm marks two types of defects in this graph: the activated Red stabilizers from the original syndrome, and the suspected Red edges returned by the first MWPM. Running a second MWPM on this graph directly yields a set of edges. Since the edges in this graph are the physical qubits themselves, the output is a concrete, unambiguous prediction of the physical errors. By concatenating these two matchings, the Red sub-routine returns a valid set of physical errors that perfectly explains the syndrome.
+
+\subsection{Step 3: Repetition and Final Selection}
+The Red sub-routine alone guarantees a mathematically valid set of physical errors. However, to maximize the accuracy of the decoder, the algorithm repeats the exact same two-step process for the Green and Blue colors. This is done by ignoring the Green stabilizers to run the Green sub-routine, and ignoring the Blue stabilizers to run the Blue sub-routine.
+
+Ultimately, the decoder produces three valid physical correction candidates (one from each color). To make the final decision, the algorithm evaluates the total weight of each predicted error chain. In a basic code-capacity noise model where all errors are equally likely, this is equivalent to simply counting the number of physical qubits in each prediction. However, for circuit-level noise models where errors have different probabilities, the total weight is calculated based on these specific probabilities. 
+
+The decoder compares the three candidates and selects the one with the lowest total weight. This ensures that the algorithm always outputs the most probable physical error configuration to successfully correct the quantum state.
+
 
 \section{Correlated matching decoder (Liu, Wu \& Lao, 2025)}
