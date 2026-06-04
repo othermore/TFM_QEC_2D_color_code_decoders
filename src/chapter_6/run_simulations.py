@@ -7,7 +7,8 @@ SCRIPTS = [
     "s2_bposd_simulation.py",
     "s3_projection_simulation.py",
     "s4_restriction_simulation.py",
-    "s5_mobius_decoder.py"
+    "s5_mobius_decoder.py",
+    "s6_concatenated_simulation.py"
 ]
 
 def main():

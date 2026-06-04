@@ -21,7 +21,8 @@ DECODER_CONFIGS = {
     },
     "projection": {},
     "restriction": {},
-    "chromobius": {} # Möbius decoder
+    "chromobius": {}, # Möbius decoder
+    "concat_mwpm": {} # Concatenated MWPM decoder
 }
 
 def get_config(decoder_name: str, param: str):

@@ -23,6 +23,12 @@ except ImportError:
     chromobius = None
 
 
+try:
+    from sinter_concatenated_decoder import ConcatMwpmDecoder
+except ImportError:
+    ConcatMwpmDecoder = None
+
+
 def get_projection_decoder() -> sinter.Decoder:
     """
     Returns a Sinter Decoder instance for the Projection Decoder.
@@ -68,5 +74,7 @@ def get_custom_decoders() -> Dict[str, sinter.Decoder]:
         decoders['restriction'] = get_restriction_decoder()
     if chromobius is not None:
         decoders.update(chromobius.sinter_decoders())
+    if ConcatMwpmDecoder is not None:
+        decoders['concat_mwpm'] = ConcatMwpmDecoder()
     return decoders
 

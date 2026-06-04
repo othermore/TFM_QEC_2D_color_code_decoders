@@ -5,6 +5,7 @@ This directory contains the simulation pipeline for analyzing the threshold and 
 2. **Projection Decoder** (`s3_projection_simulation.py`)
 3. **Restriction Decoder** (`s4_restriction_simulation.py`)
 4. **Möbius Decoder** (`s5_mobius_decoder.py`)
+5. **Concatenated MWPM** (`s6_concatenated_simulation.py`)
 
 ## Architecture & Data Structure
 

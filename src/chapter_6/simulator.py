@@ -153,7 +153,7 @@ def run_color_code_simulations(
             
     custom_decoders = get_custom_decoders()
     
-    if decoder_name in ['projection', 'restriction'] and decoder_name in custom_decoders:
+    if decoder_name in ['projection', 'restriction', 'concat_mwpm'] and decoder_name in custom_decoders:
         decoder = custom_decoders[decoder_name]
 
         # Build coord to color maps for each distance used
