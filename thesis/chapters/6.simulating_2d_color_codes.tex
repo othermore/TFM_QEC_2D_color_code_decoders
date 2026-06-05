@@ -379,9 +379,7 @@ Similarly, for MWPM to run on this restricted lattice, we need to decompose Y-ty
 
 The Local Lifting step reconciles the 1D paths found in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$ to identify the final 2D correction of physical qubits. Theoretically, this is a strictly local operation: for every Red vertex, the algorithm examines the selected incident edges and finds a subset of neighboring physical qubits whose boundaries match those selected edges. 
 
-While iterating vertex by vertex is possible, it can be slow in a Python-based simulation environment. To optimize this, we leverage \texttt{PyMatching}, natively implemented in C++, to solve the local constraints simultaneously across the entire lattice.
-
-\begin{figure}[hbpt]
+\begin{figure}[!hbpt]
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
         \centering
@@ -412,6 +410,8 @@ While iterating vertex by vertex is possible, it can be slow in a Python-based s
     \label{fig:restriction_lifting_graph_trick}
 \end{figure}
 
+While iterating vertex by vertex is possible, it can be slow in a Python-based simulation environment. To optimize this, we leverage \texttt{PyMatching}, natively implemented in C++, to solve the local constraints simultaneously across the entire lattice.
+
 To achieve this, we construct a secondary, artificial DEM (the Lifting Graph) with the following  structure:
 \begin{itemize}
     \item \textbf{Nodes:} The nodes (DEM detectors) of the Lifting Graph are the virtual edges defined in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
@@ -425,7 +425,7 @@ By running a final MWPM instance on this Lifting Graph, the decoder automaticall
 
 We evaluated the performance of our Restriction Decoder implementation using the same full Monte Carlo methodology, examining lattice distances from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced). The results of this simulation are shown in Figure \ref{fig:restriction_threshold}, alongside a high-resolution zoom plot. The Restriction Decoder achieves a threshold of $p_{th} \approx 8.96\%$ for X-type noise.
 
-\begin{figure}[htpb]
+\begin{figure}[!htpb]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -440,17 +440,15 @@ We evaluated the performance of our Restriction Decoder implementation using the
     \label{fig:restriction_threshold}
 \end{figure}
 
-\begin{figure}[htpb]
+\subsubsection{Published references and preliminary evaluation}
+Kubica and Delfosse \cite{Kubica_2023} report a $p_{th}=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder has a lower threshold. However, our simulation of the restriction decoder yields better threshold estimations than the BP+OSD and the projection decoders. 
+
+\begin{figure}[!htpb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s4_restriction_results_X_time.png}
     \caption[Simulation 4: Restriction decoder execution times.]{Decoding execution time as a function of the distance under a pure X-only noise model.}
     \label{fig:restriction_time}
 \end{figure}
-
-\subsubsection{Published references and preliminary evaluation}
-Kubica and Delfosse \cite{Kubica_2023} report a $p_{th}=10.2\%$ threshold for bit-flip errors on a 4.8.8 lattice. Our implementation of the restriction decoder has a lower threshold. However, our simulation of the restriction decoder yields better threshold estimations than the BP+OSD and the projection decoders. 
-
-
 
 \section{Möbius Decoder}
 \label{sec:mobius_decoder_simulation}
@@ -465,9 +463,8 @@ We incorporated this into our \texttt{ColorCode} circuit generation, and actuall
 Since \texttt{Chromobius} is designed to act directly as a Sinter decoder, its execution within our framework requires no additional post-processing layers.
 
 \subsection{Threshold Evaluation}
-We evaluated the Möbius Decoder with distances from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow the general methodology described in Section \ref{sec:simulation_architecture}. Figure \ref{fig:mobius_threshold_x} presents the logical error curves and a high-resolution zoom plot, exhibiting a threshold of $p_{th} \approx 9.50\%$ for X-type noise.
 
-\begin{figure}[htpb]
+\begin{figure}[!htpb]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -482,16 +479,17 @@ We evaluated the Möbius Decoder with distances from $d=5$ to $d=23$ under an X-
     \label{fig:mobius_threshold_x}
 \end{figure}
 
-\begin{figure}[htpb]
+We evaluated the Möbius Decoder with distances from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow the general methodology described in Section \ref{sec:simulation_architecture}. Figure \ref{fig:mobius_threshold_x} presents the logical error curves and a high-resolution zoom plot, exhibiting a threshold of $p_{th} \approx 9.50\%$ for X-type noise.
+
+\subsubsection{Published references and preliminary evaluation}
+Sahay and Brown \cite{Sahay_2022} report a $p_{th}=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
+
+\begin{figure}[!htpb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s5_mobius_results_X_time.png}
     \caption[Simulation 5: Möbius decoder execution times.]{Decoding execution time as a function of the distance under a pure X-only noise model.}
     \label{fig:mobius_time_x}
 \end{figure}
-
-\subsubsection{Published references and preliminary evaluation}
-Sahay and Brown \cite{Sahay_2022} report a $p_{th}=9\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is in line with our results for the 4.8.8 lattice.
-
 
 \section{Concatenated MWPM Decoder}
 \label{sec:concatenated_mwpm_decoder_simulation}
@@ -508,9 +506,8 @@ While Stim provides a \texttt{decompose\_errors=True} flag to automatically spli
 \subsection{Threshold Evaluation}
 We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow our general Sinter methodology, collecting statistics up to 40 million shots per data point.
 
-The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshold_x}, alongside a high-resolution zoom plot. The Concatenated MWPM decoder achieves an estimated threshold of $p_{th} \approx 8.32\%$ for X-type noise.
 
-\begin{figure}[htpb]
+\begin{figure}[!htpb]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -525,16 +522,17 @@ The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshol
     \label{fig:concat_mwpm_threshold_x}
 \end{figure}
 
-\begin{figure}[htpb]
+The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshold_x}, alongside a high-resolution zoom plot. The Concatenated MWPM decoder achieves an estimated threshold of $p_{th} \approx 8.32\%$ for X-type noise.
+
+\subsubsection{Published references and preliminary evaluation}
+Reported threshold for the concatenated MWPM decoder is $p_{th} \approx 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.32\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
+
+\begin{figure}[!htpb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s6_concatenated_results_X_time.png}
     \caption[Simulation 6: Concatenated MWPM decoder execution times.]{Decoding execution time as a function of the code distance under a pure X-only noise model.}
     \label{fig:concat_mwpm_time_x}
 \end{figure}
-
-\subsubsection{Published references and preliminary evaluation}
-Reported threshold for the concatenated MWPM decoder is $p_{th} \approx 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.32\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
-
 
 \section{Correlated matching decoder}
 \label{sec:correlated_matching_decoder_simulation}
@@ -549,9 +547,7 @@ Rather than explicitly mapping to a surface code with correlated errors, we exec
 \subsection{Threshold Evaluation}
 We evaluated the Correlated Matching Decoder with lattice distances ranging from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow our general Sinter methodology. 
 
-The results of this simulation are shown in Figure \ref{fig:correlated_threshold_x}, alongside a high-resolution zoom plot. The Correlated Matching decoder achieves an empirical threshold of $p_{th} \approx 9.14\%$ for X-type noise.
-
-\begin{figure}[htpb]
+\begin{figure}[!htpb]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -566,7 +562,9 @@ The results of this simulation are shown in Figure \ref{fig:correlated_threshold
     \label{fig:correlated_threshold_x}
 \end{figure}
 
-\begin{figure}[htpb]
+The results of this simulation are shown in Figure \ref{fig:correlated_threshold_x}, alongside a high-resolution zoom plot. The Correlated Matching decoder achieves an empirical threshold of $p_{th} \approx 9.14\%$ for X-type noise.
+
+\begin{figure}[!htpb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s7_correlated_results_X_time.png}
     \caption[Simulation 7: Correlated matching decoder execution times.]{Decoding execution time as a function of the code distance under a pure X-only noise model.}
@@ -575,3 +573,5 @@ The results of this simulation are shown in Figure \ref{fig:correlated_threshold
 
 \subsubsection{Published references and preliminary evaluation}
 The original publication of the Correlated Matching decoder \cite{liu2025correlatedmatchingdecoder488} evaluates its performance for a square-boundary 4.8.8 code under independent bit-flip noise, obtaining a threshold of $p_{th} \approx 10.38\%$. Unfortunately, the square-boundary code can't be directly compared with our triangular one. Nevertheless, by comparing our empirical threshold for X-type noise ($9.14\%$) against our results for the standard Restriction Decoder ($8.96\%$), we  observe the theoretical improvement provided by the correlation logic, effectively increasing the error correction capability of the algorithm. This improvement is in-line with the improvement observed by the authors when comparing to the Restricted MWPM ($10.2\%$ vs $10.38\%$).
+
+
