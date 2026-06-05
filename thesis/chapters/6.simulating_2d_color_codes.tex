@@ -112,6 +112,14 @@ Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a di
 \subsection{X and depolarizing noise types}
 Our circuit generation is parametrized, allowing for two noise types: depolarizing and X. Because we are defining an observable in the computing basis, Z-type errors do not affect the observable. Adding Z and Y noise influences the results. While we want our decoders to be able to handle this type of noise in the DEM, to compare decoders fairly (both between them and with the published results by other researchers), a model with only X-type errors is the most common reference in the published results, and is specially appropriate when the observable is immune to Z errors. In this model, all the Z detectors are removed and the error changes from depolarizing to bit-flip. 
 
+\subsection{The color and detector type dimension}
+
+Inspired by how the Möbius decoder uses the \texttt{stim} annotation's metadata to make detector's face color and type available to the decoder, we incorporated the same solution in our circuit generation, as seen in Listing \ref{lst:stim_color_and_type_dimension}.
+
+\includesnippet[caption={Implementation of the color dimensionality tag for the Möbius Decoder.}, label={lst:stim_color_and_type_dimension}]{S1_SNIPPET_DIMENSION}{../src/chapter_6/s1_color_code.py}
+
+This allows decoders to rely on the type (X or Z) and color of a detector to implement the detection algorithm. This is specifically relevant when performing projections (which is required by many decoders that utilize MWPM internally, as MWPM can't process hypergraphs) and when decomposing the Y-type errors into its X and Z components, which is again a frequent requirement for MWPM to successfully process depolarizing noise.
+
 \section{Simulation Architecture and Evaluation Metrics}
 \label{sec:simulation_architecture}
 
@@ -124,7 +132,7 @@ The architecture is composed of several main intercommunicating modules:
     
     \item \textbf{The decoder interface (\texttt{decoder\_interfaces.py}):} To ensure the simulation pipeline works similarly with any decoding algorithm being tested, all decoders are wrapped into \texttt{sinter.Decoder}, which is an adapter class. This module acts as a plug-and-play interface that standardizes the input (syndrome data) and the output (logical predictions), allowing us to swap the decoder with a single parameter change.
     
-    \item \textbf{Data storage and visualization (\texttt{plotter.py}):} As \texttt{sinter} processes the shots, the raw statistical results (total shots, logical errors observed, and execution time) are systematically appended to a CSV file, so the data can be used and compared later, which will be critical in Chapter \ref{chap:comparative_analysis}. Once the simulation concludes, the CSV data is plotted and stored. At this stage, we also perform an interpolation of the logical error rate curves to determine their crossing points, and average all the crossing points to estimate the threshold $p_{th}$.
+    \item \textbf{Data storage and visualization (\texttt{plotter.py}):} As \texttt{sinter} processes the shots, the raw statistical results (total shots, logical errors observed, and execution time) are systematically appended to a CSV file, so the data can be used and compared later, which will be critical in Chapter \ref{chap:comparative_analysis}. Once the simulation concludes, the CSV data is plotted and stored. At this stage, we also perform an interpolation of the logical error rate curves to determine their crossing points, and average all the crossing points to estimate the threshold $p_{th}$. It is worth noting that for each of our simulations, once we estimate the threshold, we perform a second run of the simulation zooming in in the region where the estimated threshold is. This secondary simulation runs a significantly larger number of shots to perform a more accurate estimation of the threshold.
 
     \item \textbf{General orchestration of simulation runs (\texttt{run\_simulations.py}):} While each simulation can be run independently, this orchestrator allows running simulations and calculation processes for all the implemented decoders with a single command.
 
@@ -284,6 +292,11 @@ Typically, \texttt{PyMatching} takes a syndrome as input and returns a boolean a
 
 To force \texttt{PyMatching} to output this specific internal pathing information, we modify the DEM generation: we assign a unique, virtual logical observable ($L_i$) to every single edge in the projected graph. Consequently, when the MWPM algorithm is executed, the returned "observable flip" tell us all the edges that were identified as flipping in the projection. A value of $1$ at index $i$ indicates that the edge $i$ was flipped (included in the correction path), while a $0$ indicates it was not.
 
+\subsubsection{MWPM under depolarizing noise}
+MWPM's struggle to run the matching on hypergraphs (i.e. when a certain error mechanisms can trigger more than two detectors) has already been exposed. A consequence of that struggle relates to depolarizing noise. Y-type errors cause the activation of both X and Z detectors. Even on a projected lattice, we may still have 4 detectors activated by a Y-type error. 
+
+In order to solve this, we must decompose the Y-type error mechanisms into separate X and Z errors. We achieve this with the \texttt{decompose_errors=True} option of \texttt{stim}'s DEM generation. This adds additional marks in the DEM for error mechanisms that trigger different detector types, effectively separating the two subsets of detectors. An additional step is required for MWPM to process this: each DEM line with both X and Z detectors must be split into two separate DEM lines. With this modification we fully decompose Y-type errors, avoiding hypergraphs that MWPM can't properly handle. However, this prevents the decoding process from leveraging correlations between X, Y and Z errors.
+
 \subsection{The Lifting Step}
 The final stage of the decoder is the "Lifting" process. The three MWPM instances returned a set of edges. When combined, these edges form continuous, closed homological cycles (loops) in the dual graph ($G^*$) of the Color Code. The objective of the lifting step is to find the exact set of physical qubits (which correspond to the triangular faces in $G^*$) that are enclosed within these boundaries.
 
@@ -344,6 +357,8 @@ Since our implementation merges parallel physical qubits into a single virtual e
 Once the two restricted DEMs are generated, we decode them independently using \texttt{PyMatching}. 
 
 As with the Projection Decoder, we need the MWPM algorithm to return the exact path of selected edges rather than a single logical observable prediction. We employ the same technique: assigning a unique virtual observable ($L_i$) to every edge in the restricted graphs. After decoding, the returned boolean array indicates exactly which virtual edges in $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$ were selected to form the matching paths connecting the active detectors.
+
+Similarly, for MWPM to run on this restricted lattice, we need to decompose Y-type errors into X and Z errors, as we already did in the Projection Decoder implementation.
 
 \subsection{The Local Lifting Step}
 \label{subsec:restriction_lifting}
@@ -425,9 +440,7 @@ The Möbius Decoder provides an efficient approach to decoding 2D color codes by
 \subsection{Implementation and Configuration}
 To integrate \texttt{Chromobius} with our simulation pipeline, prepare our \texttt{ColorCode} instances to follow the format expected by the decoder. The only requirement to adapt our generated STIM circuits for this decoder is the addition of a fourth coordinate to the metadata of the detectors. Specifically, each detector in the circuit must include its spatial coordinates and a numeric identifier indicating the color and detector type of the face it corresponds to (i.e., $1,2,3$ for Red, Green and Blue X-type detectors and $3, 4, 5$ for the corresponding Z-type ones). This mapping is required for the decoder to interpret the boundaries and connections of the color code lattice.
 
-We incorporated this into our \texttt{ColorCode} circuit generation as an optional flag, as shown in Listing \ref{lst:chromobius_tags}.
-
-\includesnippet[caption={Implementation of the color dimensionality tag for the Möbius Decoder.}, label={lst:chromobius_tags}]{S5_SNIPPET}{../src/chapter_6/s1_color_code.py}
+We incorporated this into our \texttt{ColorCode} circuit generation, and actually reused it for the implementation of all the decoders, as shown in Listing \ref{lst:stim_color_and_type_dimension}.
 
 Since \texttt{Chromobius} is designed to act directly as a Sinter decoder, its execution within our framework requires no additional post-processing layers.
 
@@ -477,14 +490,14 @@ We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $
         \centering
         \includegraphics[width=\textwidth]{figures/chapter_6/s6_concatenated_results_X_time.png}
     \end{minipage}
-    \caption[Simulation 6: Concatenated MWPM decoder thresholds (X-Noise).]{Threshold evaluation for the Concatenated MWPM Decoder. (Left) Performance under a pure X-only noise model showing an estimated threshold of $p_{th} \approx \text{8.11}\%$. (Right) Decoding execution time as a function of the code distance.}
+    \caption[Simulation 6: Concatenated MWPM decoder thresholds (X-Noise).]{Threshold evaluation for the Concatenated MWPM Decoder. (Left) Performance under a pure X-only noise model showing an estimated threshold of $p_{th} \approx \text{8.38}\%$. (Right) Decoding execution time as a function of the code distance.}
     \label{fig:concat_mwpm_threshold_x}
 \end{figure}
 
-The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshold_x}. The Concatenated MWPM decoder achieves an estimated threshold of $p_{th} \approx 8.11\%$.
+The results of this simulation are shown in Figure \ref{fig:concat_mwpm_threshold_x}. The Concatenated MWPM decoder achieves an estimated threshold of $p_{th} \approx 8.38\%$.
 
 \subsubsection{Published references and preliminary evaluation}
-Reported threshold for the concatenated MWPM decoder is $p_{th} \approx 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.11\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
+Reported threshold for the concatenated MWPM decoder is $p_{th} \approx 8.2\%$ for a 6.6.6 lattice, in line with our estimated threshold of $8.38\%$ for the 4.8.8 lattice. This threshold is below the threshold of other simulated algorithms.
 
 
 \section{Correlated matching decoder}
