@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_struggle_2_a.tex}
+        }
+        \caption{True Error $E$}
+        \label{fig:corr_struggle_2_a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_struggle_2_b.tex}
+        }
+        \caption{Independent matching in $\mathcal{R}_b$}
+        \label{fig:corr_struggle_2_b}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_struggle_2_c.tex}
+        }
+        \caption{Independent matching in $\mathcal{R}_g$}
+        \label{fig:corr_struggle_2_c}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_struggle_2_d.tex}
+        }
+        \caption{Combined lifting creates residual errors}
+        \label{fig:corr_struggle_2_d}
+    \end{subfigure}
+    
+    \caption{Macroscopic degeneracy causing logical failure in the independent decoding of a distance-7 4.8.8 color code. Physical qubits identified as erroneous are represented by yellow triangles. Active detectors are highlighted with an intense color and an orange/yellow background glow. (a) A physical error string triggers a Blue, Green, and Red detector. (b) The $\mathcal{R}_b$ matching correctly connects the Blue and Red active detectors (cost 4). (c) The $\mathcal{R}_g$ matching encounters a macroscopic degeneracy (a tie with the boundaries) and independently matches the Green and Red detectors to their respective boundaries (cost 4), diverging from the true error path. (d) Because the matchings diverge towards different boundaries, the combined lifting algorithm leaves residual physical errors. This overestimates the total weight, causing a logical failure.}
+    \label{fig:correlated_struggle_2}
+\end{figure}
+
+\end{document}

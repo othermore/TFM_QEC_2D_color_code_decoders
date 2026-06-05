@@ -1,0 +1,62 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\begin{figure}[hbtp]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_a.tex}
+        }
+        \caption{Full Lattice}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_b.tex}
+        }
+        \caption{$\mathcal{L}_{RG}$ projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_c.tex}
+        }
+        \caption{$\mathcal{L}_{RB}$ projection}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_d.tex}
+        }
+        \caption{$\mathcal{L}_{GB}$ projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_e.tex}
+        }
+        \caption{Projection Merge (Failure)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{boundary_fail_v2_f.tex}
+        }
+        \caption{Restriction (Failure)}
+    \end{subfigure}
+\end{figure}
+
+\end{document}

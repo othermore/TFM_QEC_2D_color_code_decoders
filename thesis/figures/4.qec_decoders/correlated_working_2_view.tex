@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric}
+\usepackage{subcaption}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+
+\begin{document}
+
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_working_2_a.tex}
+        }
+        \caption{True Error $E$}
+        \label{fig:corr_working_2_a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_working_2_b.tex}
+        }
+        \caption{First matching ($\mathcal{R}_b$) \& node marking}
+        \label{fig:corr_working_2_b}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_working_2_c.tex}
+        }
+        \caption{Edge re-weighting in $\mathcal{R}_g$}
+        \label{fig:corr_working_2_c}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{correlated_working_2_d.tex}
+        }
+        \caption{Combined local lifting flawlessly overlaps $E$}
+        \label{fig:corr_working_2_d}
+    \end{subfigure}
+    
+    \caption{Sequential re-weighting mechanism resolving degeneracy in a distance-7 4.8.8 color code. Physical qubits identified as erroneous are highlighted with yellow triangles. Active detectors are indicated by an intense color and an orange/yellow background glow. Marked detectors are crossed out with a black 'X'. Zero-weight edges are highlighted with a thick yellow background line. (a) A physical error string triggers a Blue, Green, and Red detector. (b) The algorithm first performs MWPM on the $\mathcal{R}_b$ projection, correctly identifying the internal path. The Red faces fully traversed by this path are subsequently marked (indicated by an 'X'). (c) Before decoding the $\mathcal{R}_g$ projection, any edges connected to the marked Red faces have their weights set to zero (yellow glow). Because these edges are now "free", the algorithm is strongly guided to route its correction through the true internal path rather than diverging to the boundaries. (d) By dynamically resolving the macroscopic degeneracy, the joint local lifting flawlessly maps exactly to the original physical error.}
+    \label{fig:correlated_working_2}
+\end{figure}
+
+\end{document}

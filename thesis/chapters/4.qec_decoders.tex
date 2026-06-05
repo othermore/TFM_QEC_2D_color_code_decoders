@@ -583,57 +583,57 @@ As described in previous sections, algorithms like the Projection Decoder divide
 
 \begin{figure}[hbtp]
     \centering
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_a.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_a.tex}
         }
         \caption{Full Lattice}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_b.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_b.tex}
         }
         \caption{$\mathcal{L}_{RG}$ projection}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_c.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_c.tex}
         }
         \caption{$\mathcal{L}_{RB}$ projection}
     \end{subfigure}
     
     \vspace{0.5cm}
     
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_d.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_d.tex}
         }
         \caption{$\mathcal{L}_{GB}$ projection}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_e.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_e.tex}
         }
         \caption{Projection Merge (Success)}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.3\textwidth}
+    \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/non_boundary_ok_f.tex}
+            \input{figures/4.qec_decoders/non_boundary_ok_v2_f.tex}
         }
         \caption{Restriction (Success)}
     \end{subfigure}
 
-    \caption[Successful decoding of Projection and Restriction decoders in the bulk.]{Successful decoding of an error pattern within the bulk of the lattice. \textbf{(a)} The 3-qubit error chain (gray) creates exactly three active detectors. \textbf{(b, c, d)} The MWPM algorithm independently pairs the relevant defects in each of the three projected surface codes. \textbf{(e)} When merging the paths, they perfectly trace the exterior edges of the erroneous qubits, so the lifting step identifies the interior area that matches the failing qubits. \textbf{(f)} The Restriction decoder achieves the same successful result by operating on the combined restricted graph.}
+    \caption[Successful decoding of Projection and Restriction decoders in the bulk.]{Successful decoding of an error pattern within the bulk of the lattice. \textbf{(a)} The disjoint 3-qubit error chain creates exactly three active detectors. \textbf{(b, c, d)} The MWPM algorithm independently pairs the relevant defects in each of the three projected surface codes using the shortest paths. \textbf{(e)} When merging the paths, they form a perfect polygon that exactly traces the exterior edges of the erroneous qubits, unambiguously identifying the failing data qubits. \textbf{(f)} The Restriction decoder achieves the same successful result by matching the combined restriction edges directly onto the correct physical correction.}
     \label{fig:non_boundary_ok}
 \end{figure}
 
@@ -642,7 +642,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_a.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_a.tex}
         }
         \caption{Full Lattice}
     \end{subfigure}
@@ -650,7 +650,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_b.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_b.tex}
         }
         \caption{$\mathcal{L}_{RG}$ projection}
     \end{subfigure}
@@ -658,7 +658,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_c.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_c.tex}
         }
         \caption{$\mathcal{L}_{RB}$ projection}
     \end{subfigure}
@@ -668,7 +668,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_d.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_d.tex}
         }
         \caption{$\mathcal{L}_{GB}$ projection}
     \end{subfigure}
@@ -676,7 +676,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_e.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_e.tex}
         }
         \caption{Projection Merge (Failure)}
     \end{subfigure}
@@ -684,12 +684,12 @@ As described in previous sections, algorithms like the Projection Decoder divide
     \begin{subfigure}[b]{0.32\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
-            \input{figures/6.simulating_2d_color_codes/boundary_fail_f.tex}
+            \input{figures/4.qec_decoders/boundary_fail_v2_f.tex}
         }
         \caption{Restriction (Failure)}
     \end{subfigure}
 
-    \caption[Failure of the Projection and Restriction decoders at the lattice boundary.]{Projection and Restriction decoding failures at the boundary of a Color Code. \textbf{(a)} An error chain (gray) occurs adjacent to the lattice boundary, triggering three active detectors (orange). \textbf{(b, c, d)} In each projection, the Minimum Weight Perfect Matching (MWPM) algorithm finds a path (colored lines) that pairs the active defects, sometimes routing the path to the virtual boundary. \textbf{(e)} When merging the three independent paths onto the global dual graph, the resulting edges, incident to the border (that acts as a massive virtual red detector), result in a closed path containing three qubits in the border, leading to a logical failure. \textbf{(f)} The combined matching in the restricted lattices also results in the two edges connecting in the border, causing the same invalid correction.}
+    \caption[Failure of the Projection and Restriction decoders at the lattice boundary.]{Projection and Restriction decoding failures at the boundary of a Color Code. \textbf{(a)} An error chain (yellow) similar to the one in Figure \ref{fig:non_boundary_ok}, but occurring adjacent to the lattice boundary, creates two active detectors. \textbf{(b, c, d)} In each projection, the Minimum Weight Perfect Matching (MWPM) algorithm finds a path (colored lines) that pairs the active defects, routing the path to the virtual boundary when that's the shortest path. \textbf{(e)} When merging the three independent paths, the resulting edges do not form closed polygons around any physical data qubits, leading to an incorrect logical correction. \textbf{(f)} The Restriction decoder executes a local lifting graph matching to resolve the incompatible projected paths. Forced to pair the inconsistent disjoint edges, it creates a long path along the boundary (yellow), resulting in a logical failure.}
     \label{fig:boundary_fail}
 \end{figure}
 
@@ -863,24 +863,80 @@ The decoder compares the three candidates and selects the one with the lowest to
 
 As detailed in previous sections, many of the established color code decoders---such as the Projection (Section \ref{sec:4:projection_decoder}) and Restriction (Section \ref{sec:restriction_decoder}) decoders---rely on dividing the complex decoding problem into independent sub-lattices. While this strategy provides an efficient framework for executing standard graph matching algorithms, this strict separation discards the underlying physical correlations between the decomposed sub-graphs. 
 
-When a physical error occurs, it generally triggers syndrome defects across multiple colors simultaneously. Because projection-based decoders process each projected graph in isolation, they are vulnerable to error degeneracy. Specifically, on the 4.8.8 lattice, the algorithm struggles to distinguish between degenerate error configurations of weight $O(d/2)$, such as distinguishing a diagonal pair of errors within a red square from an adjacent pair. 
+When a physical error occurs, it generally triggers syndrome defects across multiple colors simultaneously. Because projection-based decoders process each projected graph in isolation, they are vulnerable to error degeneracy. Specifically, on the 4.8.8 lattice, the algorithm struggles to distinguish between degenerate error configurations of weight $O(d/2)$, such as distinguishing a diagonal pair of errors within a red square from an adjacent pair. This is illustrated in Figure \ref{fig:correlated_example}.
 
---ADD IMAGE HERE TO SHOW THE STRUGGLE---
+\begin{figure}[hbt!]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_a.tex}
+        }
+        \caption{Syndrome and Errors}
+        \label{subfig:corr_a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_b.tex}
+        }
+        \caption{Matching in $\mathcal{R}_b$}
+        \label{subfig:corr_b}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_c.tex}
+        }
+        \caption{Matching in $\mathcal{R}_g$ (Restriction)}
+        \label{subfig:corr_c}
+    \end{subfigure}
+
+    \vspace{0.5cm}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_d.tex}
+        }
+        \caption{Logical Error (Restriction)}
+        \label{subfig:corr_d}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_g.tex}
+        }
+        \caption{Matching in $\mathcal{R}_g$ (Correlated)}
+        \label{subfig:corr_g}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \resizebox{\linewidth}{!}{
+            \input{figures/4.qec_decoders/corr_view_h.tex}
+        }
+        \caption{Success (Correlated)}
+        \label{subfig:corr_h}
+    \end{subfigure}
+
+    \caption[Restriction and Correlated Decoding Step-by-step]{Detailed step-by-step comparison showing how the Correlated Decoder corrects a physical error configuration that causes the Restriction Decoder to fail. \textbf{(a)} The true physical errors (yellow faces) generate a syndrome in the lattice. \textbf{(b)} Both decoders first compute a matching in the $\mathcal{R}_b$ projection. For the correlated decoder, any red detector fully traversed by this path is flagged (black cross). \textbf{(c)} The Restriction Decoder computes the $\mathcal{R}_g$ matching independently. \textbf{(d)} The boolean sum of both independent matchings results in a logical error (predicted operations shown in yellow). \textbf{(e)} The Correlated Decoder incorporates the flagged detectors into $\mathcal{R}_g$ by assigning zero-weight to all connected edges (orange glow), which created a lower weight path and thus a new matching. \textbf{(f)} The boolean sum of the correlated matchings successfully mitigates the physical error.}
+    \label{fig:correlated_example}
+\end{figure}
 
 Due to this ambiguity, the independent matchings often select diverging paths, which leads the decoder to overestimate the total weight of the true physical error, resulting in an incorrect correction and a logical failure \cite{Benhemou_2025}.
 
 \notatfm{The concept of decoding over a global manifold to avoid this loss of information was first introduced by the M\"obius decoder (Section \ref{sec:mobius_decoder}), which stitches the sub-lattices of a triangular patch into a M\"obius strip. The Unified decoder \cite{Benhemou_2025}, upon which the Correlated decoder is founded, is a subsequent development that adapts this exact solution to square-boundary patches. While highly accurate, the resulting combined matching graph in both approaches is larger and denser, significantly penalizing the decoding speed, as MWPM does not scale linearly as the number of qubits grows (although with some optimizations, it can scale near-linearly).} To address this widespread limitation, the Correlated matching decoder \cite{liu2025correlatedmatchingdecoder488} introduces a sequential re-weighting mechanism. Instead of decoding the sub-lattices entirely independently and in parallel, the algorithm establishes a strict dependency between the matching instances. The core idea is to use the output of the first matching to dynamically update the edge weights of the second matching. 
 
-To understand the mechanism, consider the decoding of a 4.8.8 lattice using two restricted graphs: $\mathcal{R}_b$ (where all blue checks are removed) and $\mathcal{R}_g$ (where all green checks are removed). The decoding proceeds as follows:
+To understand the mechanism, as illustrated in Figure \ref{fig:correlated_example}, consider the decoding of a 4.8.8 lattice using two restricted graphs: $\mathcal{R}_b$ (where all blue checks are removed) and $\mathcal{R}_g$ (where all green checks are removed). The decoding proceeds as follows:
 
 \begin{enumerate}
     \item \textbf{First Matching and Node Marking:} The algorithm first executes a standard Minimum Weight Perfect Matching on the $\mathcal{R}_b$ lattice. The decoder inspects the resulting error path and identifies the shared nodes (the red checks) that have been completely traversed logically. A completely traversed red check implies the presence of a weight-2 error that did not trigger a defect on the check itself. These specific red checks are internally marked.
     \item \textbf{Graph Re-weighting and Second Matching:} Before executing the matching on the second restricted graph ($\mathcal{R}_g$), the algorithm modifies its structure. Any edges in the $\mathcal{R}_g$ graph that are connected to the marked red checks have their weights set to zero. The MWPM algorithm is then executed on this modified $\mathcal{R}_g$ lattice. By making these paths weight-free, the second matching instance is strongly guided to route its errors through the exact same red checks.
 \end{enumerate}
 
---ADD IMAGE HERE TO SHOW HOW IT WORKS---
-
 While the decoding algorithm is presented as an evolution over the restriction decoder, the authors rely on a different method to resolve the final physical correction. Rather than performing a lifting to map edges back to physical qubits, the authors propose relying on the mathematical equivalence between the color code under bit-flip noise and the surface code under depolarizing noise. In this mapping, the problematic diagonal $X$ errors on the red squares of the color code translate to $Y$ errors (i.e. combined $X$ and $Z$ errors) on single physical qubits of the surface code. Furthermore, because the equivalent surface code lattice does not contain parallel edges between stabilizers, the output of the matchings translates directly to specific physical qubits. The decoder simply uses a translation dictionary to convert the surface code correction back into the exact two-qubit errors on the color code, bypassing the need for a local lifting step.
 
 Through this sequential correlation and surface code mapping, the algorithm successfully corrects the low-weight errors that the standard Projection and Restriction decoders miss.
-
