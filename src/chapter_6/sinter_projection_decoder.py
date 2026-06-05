@@ -13,13 +13,9 @@ class ProjectionDecoder(sinter.Decoder):
        to find the true physical qubits inside the boundary.
     """
     def __init__(self):
-        # Cache for detector colors
-        self.color_maps = {}
         # Cache for compiled objects
         self.compiled_cache = {}
-
-    def register_colors(self, num_detectors: int, colors: dict):
-        self.color_maps[num_detectors] = colors
+        self.detector_colors = {}
 
     def _get_edge(self, dets, c, det_colors):
         """
@@ -33,11 +29,14 @@ class ProjectionDecoder(sinter.Decoder):
     def _extract_projected_edges(self, dem: stim.DetectorErrorModel, det_colors: dict):
         """Extracts and merges parallel edges for the 3 surface code projections."""
         qubits_targets = []
+        seen = set()
         for instr in dem:
             if instr.type == "error":
-                dets = [t.val for t in instr.targets_copy() if t.is_relative_detector_id()]
-                obs = [t.val for t in instr.targets_copy() if t.is_logical_observable_id()]
-                qubits_targets.append((dets, obs))
+                dets = tuple(sorted([t.val for t in instr.targets_copy() if t.is_relative_detector_id()]))
+                obs = tuple(sorted([t.val for t in instr.targets_copy() if t.is_logical_observable_id()]))
+                if (dets, obs) not in seen:
+                    seen.add((dets, obs))
+                    qubits_targets.append((list(dets), list(obs)))
         
         edges_GB = []
         edges_BR = []
@@ -203,13 +202,23 @@ class ProjectionDecoder(sinter.Decoder):
             5. Pre-computes the logical observable matrix (L_matrix).
             6. Saves everything in the cache.
         """
-        if num_dets not in self.color_maps:
-            raise ValueError(f"No color map registered for num_detectors={num_dets}")
-        det_colors = self.color_maps[num_dets]
+        if cache_key in self.compiled_cache:
+            return
+            
+        color_map = {0: 'R', 1: 'G', 2: 'B', 3: 'R', 4: 'G', 5: 'B'}
+        self.detector_colors = {}
+        for instr in dem:
+            if instr.type == "detector":
+                d = instr.targets_copy()[0].val
+                c_idx = int(instr.args_copy()[3])
+                self.detector_colors[d] = color_map[c_idx]
+        
+        import simulator
+        dem = simulator.split_Y_errors_by_coords(dem)
         
         # extract the list of physical qubits and the list of merged edges (virtual qubits) for the 
         # three projections
-        qubits_targets, edges_GB, edges_BR, edges_RG = self._extract_projected_edges(dem, det_colors)
+        qubits_targets, edges_GB, edges_BR, edges_RG = self._extract_projected_edges(dem, self.detector_colors)
         # From the dual_graph, build a spanning tree, a matrix that, if multiplied by the 
         # projected failing edges (pymatching detected failures in the three projections), 
         # will determine which qubits are inside the boundaries
@@ -219,13 +228,13 @@ class ProjectionDecoder(sinter.Decoder):
         # connected to all the external boundaries of the dual graph. It will
         # match the total number of qubits
         T, comp_with_outside, isolated_comps, OUTSIDE, Q = self._build_dual_graph_and_bfs_tree(
-            qubits_targets, edges_GB, edges_BR, edges_RG, det_colors
+            qubits_targets, edges_GB, edges_BR, edges_RG, self.detector_colors
         )
 
         # From the DEM and the edges, we compute the 3 new DEM objects for each projection
         # and create a pymatching Matching object for each DEM
         match_GB, match_BR, match_RG = self._create_matchings(
-            dem, qubits_targets, edges_GB, edges_BR, edges_RG, det_colors
+            dem, qubits_targets, edges_GB, edges_BR, edges_RG, self.detector_colors
         )
         
         E_GB = len(edges_GB)
@@ -242,7 +251,7 @@ class ProjectionDecoder(sinter.Decoder):
             'match_GB': match_GB, 'match_BR': match_BR, 'match_RG': match_RG,
             'T': T, 'comp_with_outside': comp_with_outside, 'isolated_comps': isolated_comps,
             'E_GB': E_GB, 'E_BR': E_BR, 'E_RG': E_RG,
-            'Q': Q, 'OUTSIDE': OUTSIDE, 'L_matrix': L_matrix, 'det_colors': det_colors
+            'Q': Q, 'OUTSIDE': OUTSIDE, 'L_matrix': L_matrix, 'det_colors': self.detector_colors
         }
 
     def _execute_mwpm(self, syndromes_unpacked, compiled_data, num_dets):

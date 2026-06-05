@@ -8,14 +8,14 @@ import config
 
 DECODER_NAME = 'restriction'
 
-def run_simulate(distances, execution_mode):
+def run_simulate(distances, execution_mode, allowed_noise_types):
     p_rates = config.get_config(DECODER_NAME, 'p_rates')
     max_shots = config.get_config(DECODER_NAME, 'max_shots')
     max_errors = config.get_config(DECODER_NAME, 'max_errors')
     
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
-    for noise_type in ['depolarizing', 'X']:
+    for noise_type in allowed_noise_types:
         output_file = f"s4_restriction_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s4_restriction_results.csv"
         
         print(f"\n--- Running SIMULATE for noise type: {noise_type.upper()} ---")
@@ -31,10 +31,10 @@ def run_simulate(distances, execution_mode):
             noise_type=noise_type
         )
 
-def run_plot(distances_filter):
+def run_plot(distances_filter, allowed_noise_types):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
-    for noise_type in ['depolarizing', 'X']:
+    for noise_type in allowed_noise_types:
         output_file = f"s4_restriction_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s4_restriction_results.csv"
         csv_path = os.path.join(project_root, "data", "chapter_6", output_file)
         
@@ -50,7 +50,7 @@ def run_plot(distances_filter):
         print(f"Generating Execution Time Plot for {noise_type}...")
         plot_execution_time(csv_path, title=f"Decoding Complexity - Restriction Decoder{title_suffix}", distances_filter=distances_filter)
         
-def run_zoom(distances, execution_mode):
+def run_zoom(distances, execution_mode, allowed_noise_types):
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
     zoom_max_shots = config.get_config(DECODER_NAME, 'zoom_max_shots')
@@ -58,7 +58,7 @@ def run_zoom(distances, execution_mode):
     zoom_range_factor = config.get_config(DECODER_NAME, 'zoom_range_factor')
     zoom_points = config.get_config(DECODER_NAME, 'zoom_points')
     
-    for noise_type in ['depolarizing', 'X']:
+    for noise_type in allowed_noise_types:
         base_output_file = f"s4_restriction_results_{noise_type}.csv" if noise_type != 'depolarizing' else "s4_restriction_results.csv"
         zoom_output_file = base_output_file.replace('.csv', '_zoom.csv')
         
@@ -109,6 +109,7 @@ if __name__ == "__main__":
     # Common arguments
     def add_common_args(subparser, include_exec_modes=True):
         subparser.add_argument('--distances', nargs='+', type=int, help="Override distances to process.")
+        subparser.add_argument('--noise-type', choices=['all', 'depolarizing', 'X'], default='all', help="Run only for specific noise type.")
         if include_exec_modes:
             group = subparser.add_mutually_exclusive_group()
             group.add_argument('--force-rerun', action='store_true', help="Overwrite data for requested parameters.")
@@ -126,6 +127,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     distances = args.distances if args.distances else config.get_config(DECODER_NAME, 'distances')
+    allowed_noise_types = ['depolarizing', 'X'] if args.noise_type == 'all' else [args.noise_type]
     
     execution_mode = 'default'
     if hasattr(args, 'force_rerun') and args.force_rerun:
@@ -138,8 +140,8 @@ if __name__ == "__main__":
     print("=====================================================")
     
     if args.command == 'simulate':
-        run_simulate(distances, execution_mode)
+        run_simulate(distances, execution_mode, allowed_noise_types)
     elif args.command == 'plot':
-        run_plot(args.distances)
+        run_plot(distances, allowed_noise_types)
     elif args.command == 'zoom':
-        run_zoom(distances, execution_mode)
+        run_zoom(distances, execution_mode, allowed_noise_types)

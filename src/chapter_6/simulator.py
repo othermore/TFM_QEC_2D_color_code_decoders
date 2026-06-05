@@ -2,11 +2,72 @@ import os
 import csv
 import sinter
 import numpy as np
+import stim
 from typing import List, Optional
 import multiprocessing
 
 from s1_color_code import ColorCode
 from decoder_interfaces import get_custom_decoders
+
+def split_Y_errors_by_coords(dem: stim.DetectorErrorModel) -> stim.DetectorErrorModel:
+    """
+    Takes a Stim DetectorErrorModel and returns a new one where all composite 
+    Y errors are robustly split into independent X and Z error mechanisms.
+    
+    Decomposes Y errors into X and Z errors by separating their target detectors.
+    This relies on the 4th coordinate (`c_idx`) which is embedded in the DETECTOR 
+    instruction metadata: c_idx < 3 means X-detector, c_idx >= 3 means Z-detector.
+    """
+    # First, map each detector ID to its c_idx
+    d_to_c_idx = {}
+    for instr in dem:
+        if instr.type == "detector":
+            d = instr.targets_copy()[0].val
+            c_idx = int(instr.args_copy()[3])
+            d_to_c_idx[d] = c_idx
+            
+    new_dem = stim.DetectorErrorModel()
+    
+    # Check if the logical observable belongs to X or Z
+    # If the first error with a logical observable triggers predominantly X-detectors, it's a Z-observable.
+    obs_in_X = False
+    obs_in_Z = False
+    for instr in dem:
+        if instr.type == "error":
+            targets = instr.targets_copy()
+            has_obs = any(t.is_logical_observable_id() for t in targets)
+            if has_obs:
+                has_X = any(d_to_c_idx[t.val] < 3 for t in targets if t.is_relative_detector_id())
+                has_Z = any(d_to_c_idx[t.val] >= 3 for t in targets if t.is_relative_detector_id())
+                if has_X and not has_Z:
+                    obs_in_X = True
+                elif has_Z and not has_X:
+                    obs_in_Z = True
+                    
+    for instr in dem:
+        if instr.type == "error":
+            p = instr.args_copy()[0]
+            targets = instr.targets_copy()
+            
+            t_X = [t for t in targets if t.is_relative_detector_id() and d_to_c_idx[t.val] < 3]
+            t_Z = [t for t in targets if t.is_relative_detector_id() and d_to_c_idx[t.val] >= 3]
+            obs = [t for t in targets if t.is_logical_observable_id()]
+            
+            if len(t_X) == 0 or len(t_Z) == 0:
+                # It is already a pure X or Z error (or weight-0), keep it as is
+                new_dem.append("error", [p], targets)
+            elif len(t_X) > 0 and len(t_Z) > 0:
+                # Y error split! Only attach the logical observable to the correct graph
+                if obs_in_X:
+                    new_dem.append("error", [p], t_X + obs)
+                    new_dem.append("error", [p], t_Z)
+                else:
+                    new_dem.append("error", [p], t_X)
+                    new_dem.append("error", [p], t_Z + obs)
+        else:
+            new_dem.append(instr)
+            
+    return new_dem
 
 def run_color_code_simulations(
     distances: List[int],
@@ -92,13 +153,12 @@ def run_color_code_simulations(
                     continue
 
             # Caching filenames
-            tag_suffix = "_chromobius" if add_chromobius_tags else ""
-            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}{tag_suffix}.stim")
-            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}{tag_suffix}.dem")
+            circ_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.stim")
+            dem_path = os.path.join(cache_dir, f"cc4.8.8_d{d}_r{rounds}_pd{p:.5f}_pm0.00000_{noise_type}.dem")
             
             import stim
             if is_first:
-                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0, noise_type=noise_type, add_chromobius_tags=add_chromobius_tags)
+                stim_circ_new = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=0.0, p_gate=0.0, noise_type=noise_type)
                 dem_new = stim_circ_new.detector_error_model(decompose_errors=False)
                 
                 if os.path.exists(circ_path) and os.path.exists(dem_path):
@@ -138,7 +198,7 @@ def run_color_code_simulations(
                     dem = stim.DetectorErrorModel.from_file(dem_path)
                 else:
                     p_meas_val = p if rounds > 1 else 0.0
-                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0, noise_type=noise_type, add_chromobius_tags=add_chromobius_tags)
+                    stim_circ = cc.get_stim_circuit(rounds=rounds, p_data=p, p_meas=p_meas_val, p_gate=0.0, noise_type=noise_type)
                     dem = stim_circ.detector_error_model(decompose_errors=False)
                     stim_circ.to_file(circ_path)
                     dem.to_file(dem_path)
@@ -155,34 +215,6 @@ def run_color_code_simulations(
     
     if decoder_name in ['projection', 'restriction', 'concat_mwpm', 'correlated'] and decoder_name in custom_decoders:
         decoder = custom_decoders[decoder_name]
-
-        # Build coord to color maps for each distance used
-        coord_to_color_by_d = {}
-        for d in distances:
-            cc = color_codes[d]
-            coord_to_color = {}
-            for face in cc.faces:
-                ax, ay = cc.plot_coords[face['ancilla']]
-                coord_to_color[(ax, ay)] = face['color']
-            coord_to_color_by_d[d] = coord_to_color
-            
-        # Register colors for each task
-        for task in tasks:
-            d = task.json_metadata['d']
-            coord_to_color = coord_to_color_by_d[d]
-            
-            detector_colors = {}
-            det_id = 0
-            for instr in task.circuit:
-                if instr.name == "DETECTOR":
-                    coords = instr.gate_args_copy()
-                    if len(coords) >= 2:
-                        ax, ay = coords[0], coords[1]
-                        color = coord_to_color.get((ax, ay), 'Unknown')
-                        detector_colors[det_id] = color
-                    det_id += 1
-                    
-            decoder.register_colors(task.circuit.num_detectors, detector_colors)
             
     if not tasks:
         print("No tasks left to run (all requested parameters are already completed).")

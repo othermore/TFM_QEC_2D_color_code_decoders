@@ -15,22 +15,29 @@ class CorrelatedDecoder(sinter.Decoder):
     """
 
     def __init__(self):
-        self.color_maps = {}
         self.compiled_cache = {}
-
-    def register_colors(self, num_detectors: int, det_colors: Dict[int, str]):
-        self.color_maps[num_detectors] = det_colors
+        self.detector_colors = {}
 
     def _compile_decoder(self, dem: stim.DetectorErrorModel, num_dets: int, cache_key: str):
-        if num_dets not in self.color_maps:
-            raise ValueError(f"No color map registered for num_detectors={num_dets}")
-        det_colors = self.color_maps[num_dets]
+        if cache_key in self.compiled_cache:
+            return
+
+        color_map = {0: 'R', 1: 'G', 2: 'B', 3: 'R', 4: 'G', 5: 'B'}
+        self.detector_colors = {}
+        for instr in dem:
+            if instr.type == "detector":
+                d = instr.targets_copy()[0].val
+                c_idx = int(instr.args_copy()[3])
+                self.detector_colors[d] = color_map[c_idx]
+        
+        import simulator
+        dem = simulator.split_Y_errors_by_coords(dem)
         
         # Prepare color masks for the detectors
         mask_RG = np.ones(num_dets, dtype=bool)
         mask_RB = np.ones(num_dets, dtype=bool)
         
-        for d_idx, color in det_colors.items():
+        for d_idx, color in self.detector_colors.items():
             if color == 'B':
                 mask_RG[d_idx] = False
             elif color == 'G':
@@ -43,9 +50,7 @@ class CorrelatedDecoder(sinter.Decoder):
             if instr.type == "error":
                 dets = [t.val for t in instr.targets_copy() if t.is_relative_detector_id()]
                 obs = [t.val for t in instr.targets_copy() if t.is_logical_observable_id()]
-                # Strictly operate under X-noise assumption by considering errors up to weight 3
-                if len(dets) <= 3:
-                    true_qubits.append((dets, obs))
+                true_qubits.append((dets, obs))
 
         # Create a list of edges for each color            
         edges_RG = []
@@ -58,18 +63,18 @@ class CorrelatedDecoder(sinter.Decoder):
         rg_edges_by_red = collections.defaultdict(list)
         
         for dets, _ in true_qubits:
-            kept_RG = tuple(sorted([d for d in dets if det_colors.get(d) != 'B']))
+            kept_RG = tuple(sorted([d for d in dets if self.detector_colors.get(d) != 'B']))
             if len(kept_RG) > 0:
                 if kept_RG not in edges_RG:
                     edges_RG.append(kept_RG)
                     e_idx = len(edges_RG) - 1
                     for d in kept_RG:
-                        if det_colors.get(d) == 'R':
+                        if self.detector_colors.get(d) == 'R':
                             rg_edges_by_red[d].append((e_idx, kept_RG))
             
             true_q_to_edge_RG.append(edges_RG.index(kept_RG) if len(kept_RG) > 0 else -1)
             
-            kept_RB = tuple(sorted([d for d in dets if det_colors.get(d) != 'G']))
+            kept_RB = tuple(sorted([d for d in dets if self.detector_colors.get(d) != 'G']))
             if len(kept_RB) > 0 and kept_RB not in edges_RB:
                 edges_RB.append(kept_RB)
             true_q_to_edge_RB.append(edges_RB.index(kept_RB) if len(kept_RB) > 0 else -1)
@@ -119,7 +124,7 @@ class CorrelatedDecoder(sinter.Decoder):
             'match_RB': match_RB,
             'lifting_match': lifting_match,
             'L_matrix': L_matrix,
-            'det_colors': det_colors,
+            'det_colors': self.detector_colors,
             'edges_RB': edges_RB,
             'rg_edges_by_red': rg_edges_by_red
         }

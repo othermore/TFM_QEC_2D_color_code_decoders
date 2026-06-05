@@ -4,12 +4,12 @@ import numpy as np
 DEFAULT_CONFIG = {
     "distances": [5, 7, 9, 11, 13, 15, 17, 19, 21, 23],
     "p_rates": np.linspace(0.02, 0.15, 12),
-    "max_shots": 25000000,
+    "max_shots": 40000000,
     "max_errors": 400,
     
     # Zoom Simulation Defaults
-    "zoom_max_shots": 30000000,
-    "zoom_max_errors": 4000,
+    "zoom_max_shots": 60000000,
+    "zoom_max_errors": 16000,
     "zoom_range_factor": (0.75, 1.25), # Multiplier around the calculated threshold (e.g., 0.75 * th to 1.25 * th)
     "zoom_points": 9                   # Number of points to simulate within the zoom range
 }

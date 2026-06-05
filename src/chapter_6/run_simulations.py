@@ -3,14 +3,14 @@ import subprocess
 import sys
 import os
 
-SCRIPTS = [
-    "s2_bposd_simulation.py",
-    "s3_projection_simulation.py",
-    "s4_restriction_simulation.py",
-    "s5_mobius_decoder.py",
-    "s6_concatenated_simulation.py",
-    "s7_correlated_simulation.py"
-]
+DECODER_SCRIPTS = {
+    "bposd": "s2_bposd_simulation.py",
+    "projection": "s3_projection_simulation.py",
+    "restriction": "s4_restriction_simulation.py",
+    "mobius": "s5_mobius_decoder.py",
+    "concatenated": "s6_concatenated_simulation.py",
+    "correlated": "s7_correlated_simulation.py"
+}
 
 def main():
     parser = argparse.ArgumentParser(description="Orchestrator to run all color code decoder simulations sequentially.")
@@ -18,16 +18,25 @@ def main():
     parser.add_argument("--distances", nargs="+", type=int, help="Override distances to process.")
     parser.add_argument("--force-rerun", action="store_true", help="Force rerun the simulations (overwrite existing params).")
     parser.add_argument("--clean-all", action="store_true", help="Clean all data for the given action before running.")
+    parser.add_argument("--noise-type", choices=['all', 'depolarizing', 'X'], default='all', help="Run only for specific noise type.")
+    parser.add_argument("--decoders", nargs="+", choices=list(DECODER_SCRIPTS.keys()), help="List of decoders to run. If not provided, runs all.")
     
     args = parser.parse_args()
     
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
-    for script in SCRIPTS:
+    scripts_to_run = DECODER_SCRIPTS.values()
+    if args.decoders:
+        scripts_to_run = [DECODER_SCRIPTS[d] for d in args.decoders]
+    
+    for script in scripts_to_run:
         cmd = [sys.executable, os.path.join(script_dir, script), args.command]
         
         if args.distances:
             cmd.extend(["--distances"] + [str(d) for d in args.distances])
+            
+        if args.noise_type != 'all':
+            cmd.extend(["--noise-type", args.noise_type])
             
         if args.command in ['simulate', 'zoom']:
             if args.force_rerun:

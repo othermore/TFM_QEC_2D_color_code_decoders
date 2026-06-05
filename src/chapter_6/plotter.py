@@ -16,10 +16,15 @@ plt.rcParams.update({
     'figure.titlesize': 18
 })
 
-def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: list, df: pd.DataFrame) -> float:
+# Minimum number of errors required to plot a point and use it for threshold calculation.
+# Points with very few errors have a massive relative standard deviation, leading to huge 
+# error bars on a logarithmic scale that compress the entire plot vertically.
+MIN_ERRORS = 2
+
+def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: list, df: pd.DataFrame, summary_filename: str = "thresholds_summary.csv") -> float:
     """
     Estimates the threshold by finding the intersection of p_L curves for different distances.
-    Saves the result to data/chapter_6/thresholds_summary.csv.
+    Saves the result to data/chapter_6/summary_filename.
     """
     intersections = []
     
@@ -28,9 +33,10 @@ def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: li
         df1 = df[df['distance'] == d1].sort_values('p_physical')
         df2 = df[df['distance'] == d2].sort_values('p_physical')
         
-        # Only use points where we have valid probabilities > 0
-        df1_valid = df1[df1['p_logical'] > 0]
-        df2_valid = df2[df2['p_logical'] > 0]
+        # Only use points where we have valid probabilities > 0 and at least MIN_ERRORS errors
+        # (if errors < MIN_ERRORS, the relative std dev is > 70%, which causes massive log-scale error bars)
+        df1_valid = df1[(df1['p_logical'] > 0) & (df1['errors'] >= MIN_ERRORS)]
+        df2_valid = df2[(df2['p_logical'] > 0) & (df2['errors'] >= MIN_ERRORS)]
         
         if len(df1_valid) > 1 and len(df2_valid) > 1:
             
@@ -102,7 +108,7 @@ def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: li
     
     # Save to global thresholds file
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-    summary_path = os.path.join(project_root, "data", "chapter_6", "thresholds_summary.csv")
+    summary_path = os.path.join(project_root, "data", "chapter_6", summary_filename)
     
     file_exists = os.path.isfile(summary_path)
     
@@ -119,8 +125,8 @@ def calculate_and_save_threshold(csv_path: str, decoder_name: str, distances: li
         summary_df = pd.DataFrame({'decoder': [decoder_name], 'threshold': [threshold]})
         
     summary_df.to_csv(summary_path, index=False)
-    
     print(f"--> Estimated Threshold for {decoder_name}: {threshold:.4f} (Saved to {summary_path})")
+    
     return threshold
 
 
@@ -155,8 +161,8 @@ def plot_threshold(csv_path: str, title: str = None, distances_filter: list = No
     for idx, d in enumerate(distances):
         d_df = df[df['distance'] == d].sort_values('p_physical')
         
-        # Filter out points with 0 logical errors
-        d_df = d_df[d_df['p_logical'] > 0]
+        # Filter out points with 0 logical errors or fewer than MIN_ERRORS errors (huge std dev)
+        d_df = d_df[(d_df['p_logical'] > 0) & (d_df['errors'] >= MIN_ERRORS)]
         if d_df.empty:
             continue
         
@@ -243,7 +249,7 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, dist
     zoom_csv_path = csv_path.replace('.csv', '_zoom.csv')
     if os.path.exists(zoom_csv_path):
         df_zoom = pd.read_csv(zoom_csv_path)
-        df = pd.concat([df, df_zoom], ignore_index=True)
+        df = df_zoom  # Use only the zoom data, completely replacing the standard data
         
     if distances_filter is not None:
         df = df[df['distance'].isin(distances_filter)]
@@ -253,6 +259,11 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, dist
         return
         
     decoder_name = df['decoder'].iloc[0].upper()
+    if '_X.csv' in csv_path or '_X_zoom.csv' in csv_path:
+        save_decoder_name = decoder_name + '_X'
+    else:
+        save_decoder_name = decoder_name + '_DEPOLARIZING'
+        
     if title is None:
         title = f'Threshold Zoom - Color Code 4.8.8 - {decoder_name}'
         
@@ -260,6 +271,9 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, dist
     
     plt.figure(figsize=(9, 6))
     colors = plt.cm.viridis(np.linspace(0, 0.9, len(distances)))
+    
+    # Calculate threshold based on combined standard + zoom data and save to a separate zoom summary
+    zoom_threshold = calculate_and_save_threshold(csv_path, save_decoder_name, distances, df, summary_filename="thresholds_summary_zoom.csv")
     
     x_min, x_max = 0.75 * threshold, 1.25 * threshold
     
@@ -270,8 +284,8 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, dist
     for idx, d in enumerate(distances):
         d_df = df[df['distance'] == d].sort_values('p_physical')
         
-        # Filter out points with 0 logical errors
-        d_df = d_df[d_df['p_logical'] > 0]
+        # Filter out points with 0 logical errors or fewer than MIN_ERRORS errors
+        d_df = d_df[(d_df['p_logical'] > 0) & (d_df['errors'] >= MIN_ERRORS)]
         
         # Only plot points roughly within the zoom window to avoid long line stretches outside
         d_df_zoom = d_df[(d_df['p_physical'] >= x_min * 0.9) & (d_df['p_physical'] <= x_max * 1.1)]
@@ -291,6 +305,8 @@ def plot_threshold_zoom(csv_path: str, threshold: float, title: str = None, dist
         )
 
     plt.axvline(x=threshold, color='red', linestyle=':', alpha=0.8, label=f'Est. Threshold ($p_{{th}} \\approx {threshold:.4f}$)')
+    if not np.isnan(zoom_threshold):
+        plt.axvline(x=zoom_threshold, color='green', linestyle='--', alpha=0.8, label=f'Zoom Threshold ($p_{{th}} \\approx {zoom_threshold:.4f}$)')
 
     # Break-even line
     plt.plot([x_min, x_max], [x_min, x_max], color='gray', linestyle='--', alpha=0.6, label='Break-even ($p_L = p$)')

@@ -298,7 +298,7 @@ class ColorCode:
                 'color': face['color']
             })
 
-    def build_clean_circuit(self, rounds: int = 1, noise_type: str = 'depolarizing', add_chromobius_tags: bool = False) -> cirq.Circuit:
+    def build_clean_circuit(self, rounds: int = 1, noise_type: str = 'depolarizing') -> cirq.Circuit:
         """
         Builds the clean Cirq circuit, including STIM annotations for decoding.
         
@@ -349,10 +349,8 @@ class ColorCode:
                     det_ops = []
                     for face in self.faces:
                         ax, ay = self.plot_coords[face['ancilla']]
-                        metadata = (ax, ay, r)
-                        if add_chromobius_tags:
-                            c_idx = {'R': 0, 'G': 1, 'B': 2}[face['color']]
-                            metadata = (ax, ay, r, c_idx)
+                        c_idx = {'R': 0, 'G': 1, 'B': 2}[face['color']]
+                        metadata = (ax, ay, r, c_idx)
                         det_ops.append(stimcirq.DetAnnotation(
                             parity_keys=[f"mX_{r}_{face['ancilla'].row}_{face['ancilla'].col}", f"mX_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}"],
                             coordinate_metadata=metadata
@@ -375,10 +373,8 @@ class ColorCode:
                 keys = [f"mZ_{r}_{face['ancilla'].row}_{face['ancilla'].col}"]
                 if r > 0:
                     keys.append(f"mZ_{r-1}_{face['ancilla'].row}_{face['ancilla'].col}")
-                metadata = (ax, ay, r)
-                if add_chromobius_tags:
-                    c_idx = {'R': 3, 'G': 4, 'B': 5}[face['color']]
-                    metadata = (ax, ay, r, c_idx)
+                c_idx = {'R': 3, 'G': 4, 'B': 5}[face['color']]
+                metadata = (ax, ay, r, c_idx)
                 det_ops_z.append(stimcirq.DetAnnotation(
                     parity_keys=keys,
                     coordinate_metadata=metadata
@@ -390,22 +386,20 @@ class ColorCode:
         meas_d = [cirq.measure(q, key=f'd_{q.row}_{q.col}') for q in self.data_qubits]
         circuit.append(cirq.Moment(meas_d))
         
-        #BEGIN S5_SNIPPET
+        #BEGIN S1_SNIPPET_DIMENSION
         final_dets = []
         for face in self.faces:
             ax, ay = self.plot_coords[face['ancilla']]
             keys = [f"mZ_{rounds}_{face['ancilla'].row}_{face['ancilla'].col}"]
             keys.extend([f'd_{dq.row}_{dq.col}' for dq in face['data']])
-            metadata = (ax, ay, rounds + 1)
-            if add_chromobius_tags:
-                c_idx = {'R': 3, 'G': 4, 'B': 5}[face['color']]
-                metadata = (ax, ay, rounds + 1, c_idx)
+            c_idx = {'R': 3, 'G': 4, 'B': 5}[face['color']]
+            metadata = (ax, ay, rounds + 1, c_idx)
             final_dets.append(stimcirq.DetAnnotation(
                 parity_keys=keys,
                 coordinate_metadata=metadata
             ))
         circuit.append(cirq.Moment(final_dets))
-        #END S5_SNIPPET
+        #END S1_SNIPPET_DIMENSION
                 
         obs_keys = [f'd_{q.row}_{q.col}' for q in self.data_qubits]
         circuit.append(cirq.Moment([stimcirq.CumulativeObservableAnnotation(
@@ -415,18 +409,18 @@ class ColorCode:
         
         return circuit
 
-    def get_noisy_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing', add_chromobius_tags: bool = False) -> cirq.Circuit:
+    def get_noisy_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing') -> cirq.Circuit:
         """
         Builds the circuit and applies the custom NoiseModel.
         Default is Code-Capacity (1:0:0) using p_data.
         """
-        clean_circ = self.build_clean_circuit(rounds, noise_type, add_chromobius_tags)
+        clean_circ = self.build_clean_circuit(rounds, noise_type)
         noise_model = self.NoiseModel(p_data=p_data, p_meas=p_meas, p_gate=p_gate, noise_type=noise_type)
         return clean_circ.with_noise(noise_model)
 
-    def get_stim_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing', add_chromobius_tags: bool = False) -> stim.Circuit:
+    def get_stim_circuit(self, rounds: int = 1, p_data: float = 0.01, p_meas: float = 0.0, p_gate: float = 0.0, noise_type: str = 'depolarizing') -> stim.Circuit:
         """Returns the STIM compiled version of the noisy circuit, ready for Sinter/PyMatching."""
-        noisy_circ = self.get_noisy_circuit(rounds, p_data, p_meas, p_gate, noise_type, add_chromobius_tags)
+        noisy_circ = self.get_noisy_circuit(rounds, p_data, p_meas, p_gate, noise_type)
         return stimcirq.cirq_circuit_to_stim_circuit(noisy_circ)
 
     def draw_circuit(self, rounds: int = 1, noise_type: str = 'depolarizing'):
