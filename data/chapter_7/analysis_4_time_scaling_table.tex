@@ -1,0 +1,17 @@
+\begin{table}[hbt!]
+\centering
+\begin{tabular}{l c c c c}
+\toprule
+Decoder & $C$ (s) & $A$ & $k$ & $R^2$ \\
+\midrule
+BP+OSD & \num{1.86e-05} & \num{6.99e-08} & 1.4604 & 0.9997 \\
+Projection & \num{5.52e-06} & \num{6.97e-09} & 1.5461 & 0.9943 \\
+Restriction & \num{1.03e-05} & \num{1.91e-08} & 1.2719 & 0.9968 \\
+Möbius & \num{1.00e-09} & \num{5.77e-08} & 1.1711 & 0.9941 \\
+Concat & \num{7.36e-05} & \num{1.06e-06} & 1.1256 & 0.9967 \\
+Correlated & \num{1.06e-05} & \num{1.11e-08} & 1.7113 & 0.9901 \\
+\bottomrule
+\end{tabular}
+\caption{Fitted parameters for the empirical time complexity. Model: $T(N) = C + A \cdot N^k$}
+\label{tab:time_scaling_fit}
+\end{table}

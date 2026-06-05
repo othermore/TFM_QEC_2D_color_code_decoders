@@ -1,11 +1,128 @@
 \chapter{Comparative analysis and discussion}
 \label{chap:comparative_analysis}
 
+After detailing the theoretical foundations of the 2D Color Code and implementing a comprehensive simulation pipeline, we now present the results of our empirical evaluation. We have simulated six different decoding algorithms under identical conditions: a 4.8.8 lattice geometry subjected to a code-capacity bit-flip noise model. 
+
+The captured data allows measuring the four key metrics that will drive the comparative analysis:
+
+\begin{itemize}
+    \item \textbf{Determination of error thresholds ($p_{th}$):} Identifying the crossing point in the logical error curves where increasing the code distance begins to suppress errors rather than amplifying them.
+    \item \textbf{Logical failure rate ($p_L$) scaling as a function of physical error rate ($p$) and code distance ($d$):} Analyzing the curves to evaluate the decoder's raw accuracy.
+    \item \textbf{Sub-threshold scaling analysis and theoretical suppression limits:} Evaluating how steeply the logical error drops when operating below the threshold.
+    \item \textbf{Computational complexity and empirical decoding time (Accuracy vs. Speed trade-off):} Analyzing the empirical decoding time to determine if the decoder's complexity is practically scalable.
+\end{itemize}
 
 \section{Determination of error thresholds (\texorpdfstring{$p_{th}$}{pTH}) for 4.8.8 color codes}
 
+The error threshold represents the physical error rate below which the quantum error correction code becomes useful. To determine the threshold for each decoder, we evaluate the logical failure rate across multiple code distances ($d=5$ to $d=23$) and plot the results as a function of the physical error rate. 
+
+\notatfm{As discussed in Chapter 6, the empirical threshold is estimated by finding the crossing point of the logical error curves for different distances. We compute the intersection of all pairs of curves and calculate the median of these crossing points.} Figure \ref{fig:7_thresholds} and Table \ref{tab:thresholds} show the calculated thresholds for all the evaluated decoders. While there are differences in their performing, the results suggest that the threshold will not be the main parameter to evaluate the capacity of a decoder, as they are all within a similar range. 
+
+\input{../data/chapter_7/analysis_1_thresholds_table.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/chapter_7/plot_1_thresholds.png}
+    \caption[Empirical error thresholds for the evaluated decoders.]{Empirical error thresholds ($p_{th}$) for the six evaluated decoders under a pure bit-flip code-capacity noise model on a 4.8.8 color code.}
+    \label{fig:7_thresholds}
+\end{figure}
+
+Seeing this data, we conclude that the capacity of the code to mitigate noise below the threshold (and how that supression scales with the distance), as well as the feasibility of running the decodification process within one cycle of the quantum computer, will be the determining factors to evaluate decoders. 
+
 \section{Logical failure rate (\texorpdfstring{$p_L$}{pL}) scaling as a function of physical error rate (\texorpdfstring{$p$}{p}) and code distance (\texorpdfstring{$d$}{d})}
+
+While the threshold determines the absolute limit of the decoder, quantum computers will be useful when they can operate well below this threshold. It is crucial to evaluate how effectively a decoder suppresses logical errors in this operational regime. 
+
+To visualize this, we introduce the concept of the mitigation ratio, calculated as $p_{phys} / p_L$. A value greater than 1 means the decoder is actively reducing the error compared to a single physical unencoded qubit. A higher ratio indicates a better performance.
+
+Figure \ref{fig:7_mitigation_ratio} displays the mitigation ratio across various physical error rates for two fixed distances, $d=9$ and $d=23$. Additionally, Table \ref{tab:mitigation} summarizes these mitigation ratios for all decoders at a fixed physical error rate of $p=0.02$ (2\%), which is below the threshold of all evaluated algorithms and matches the lowest physical error rate we have been able to simulate.
+
+\input{../data/chapter_7/analysis_2_mitigation_table.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_7/plot_2_mitigation_d9.png}
+        \caption{Distance $d=9$}
+        \label{fig:7_mitigation_d9}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/chapter_7/plot_2_mitigation_d23.png}
+        \caption{Distance $d=23$}
+        \label{fig:7_mitigation_d23}
+    \end{subfigure}
+    \caption[Mitigation ratio comparison at $d=9$ and $d=23$.]{Mitigation ratio ($p_{phys} / p_L$) as a function of the physical error rate for code distances $d=9$ and $d=23$. The logarithmic Y-axes highlight the exponential improvement as physical error decreases.}
+    \label{fig:7_mitigation_ratio}
+\end{figure}
+
+The visualization reveals a critical scaling property. At a smaller distance ($d=9$), the BP+OSD decoder might appear a priori to be the most capable at mitigating noise in the low physical error regime, achieving a mitigation ratio of $\sim 8.2 \times 10^1$ compared to Möbius's $\sim 2.6 \times 10^1$. However, when we increase the topological protection to $d=23$, the Möbius decoder overtakes it and scales significantly better, achieving a mitigation ratio of $\sim 3.6 \times 10^4$ compared to BP+OSD's $\sim 1.6 \times 10^4$. Furthermore, the Projection decoder at the same distance achieves a mitigation ratio of just $\sim 5.2 \times 10^2$. This massive difference highlights that when operating below threshold and scaling the code, decoders that utilize the full topological structure without heuristic limitations (like Möbius) suppress errors exponentially faster.
 
 \section{Sub-threshold scaling analysis and theoretical suppression limits}
 
-\section{Computational complexity and empirical decoding time (Accuracy vs. Speed trade-off)}
+\notatfm{In a log-linear plot (where the Y-axis is in logarithmic scale), this exponential decay manifests as a straight line. The parameter $A$ represents the slope, indicating how much the error is suppressed per unit of code distance, while the constant $C$ captures the baseline error overhead independent of the distance, shifting the line vertically to its correct height.} To predict the resources required to build a fault-tolerant quantum computer, and given that we are unable to run reliable simulations with physical noise levels below $p_{phys} = 2\%$, we must mathematically model how the logical error drops as we increase the size of the code. We modeled the logical error rate using an exponential decay function defined as $\log_{10}(p_L) = A \cdot d + C$. 
+
+Using \texttt{SciPy}'s \texttt{curve_fit} function, we performed a 2D surface regression to fit the empirical data across both variables simultaneously (code distance $d$ and physical error rate $p$). The full surface model equation is $\log_{10}(p_L) = c_0 + c_1 d + c_2 \log_{10} p + c_3 d \log_{10} p$. The parameters resulting from this surface regression for all decoders, as well as their $R^2$ coefficients that indicate the goodness of the fit, are documented in Table \ref{tab:error_scaling_fit}. 
+
+To visualize this fit, Figure \ref{fig:7_error_scaling} shows a one-dimensional "slice" of this 2D mathematical surface. By fixing the physical error rate at $p=0.02$, the complex surface equation simplifies into a straight 1D line ($\log_{10}(p_L) = A \cdot d + C$), which we plot alongside the empirical data points for that specific noise level.
+
+\input{../data/chapter_7/analysis_3_error_scaling_table.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/chapter_7/plot_3_error_scaling.png}
+    \caption[Logical error scaling below threshold.]{Exponential suppression of the logical error as a function of code distance, evaluated at a fixed physical error rate of $p=0.02$. The solid lines represent the mathematical fit.}
+    \label{fig:7_error_scaling}
+\end{figure}
+
+The regressions confirm a strictly exponential suppression of errors. The slope of these lines represents the suppression efficiency of the algorithm. Möbius displays the steepest slope, meaning it requires adding fewer physical qubits to gain an extra order of magnitude in logical protection.
+
+Using these mathematical fits, we extrapolated the data to answer a practical engineering question: What code distance is required to achieve a target logical error rate? We defined a strict target logical error rate of $p_L = 10^{-12}$ (a standard requirement for large-scale algorithm execution), and evaluated the required distance under two different baseline physical error rates: $p = 10^{-3}$ and $p = 10^{-4}$.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/chapter_7/plot_5_required_distances.png}
+    \caption[Extrapolated required distances for target logical error rates.]{Extrapolated code distance required to achieve a target logical error rate of $p_L = 10^{-12}$, evaluated under two different physical error rates ($p=10^{-3}$ and $p=10^{-4}$), based on the 2D regression models. The Y-axis shows exclusively valid odd distances.}
+    \label{fig:7_required_distances}
+\end{figure}
+
+\notatfm{$N = \frac{3}{4}d^2 + \frac{1}{4}$ calculates exclusively the number of \textit{data} qubits in the triangular color code lattice. The total physical hardware footprint will be at least double, as it must also include the ancilla (measurement) qubits interspersed in the lattice to extract the error syndromes.} As shown in Figure \ref{fig:7_required_distances}, the choice of decoder drastically affects the hardware requirements. To achieve $p_L=10^{-12}$ with a base physical error rate of $10^{-3}$, the Möbius decoder only requires a code distance of $d=15$. In stark contrast, the Concatenated MWPM and the Projection decoders require $d=23$ and $d=21$, respectively. Given that the number of physical qubits in a 2D color code scales quadratically with the distance ($N = \frac{3}{4}d^2 + \frac{1}{4}$), moving from $d=15$ (169 qubits) to $d=23$ (397 qubits) more than doubles the size of the required quantum processor, highlighting the immense value of a highly accurate decoder. Furthermore, if the hardware quality improves to a baseline physical error rate of $10^{-4}$, the required distances drop drastically across all decoders, with BP+OSD and Möbius requiring only $d=9$ (61 qubits) and $d=11$ (91 qubits), respectively, to achieve the exact same $10^{-12}$ logical target.
+
+\section{Computational complexity and empirical decoding time}
+
+The final dimension of our comparative analysis focuses on execution time. A decoder can have the necessary accuracy for a given problem, but if it is too slow, errors will accumulate in the quantum processor while the classical computer tries to calculate the correction.
+
+\notatfm{In a log-log plot, a pure polynomial scaling ($A \cdot N^k$) would appear as a straight line. However, we introduced the constant $C$ to capture the fixed software overhead that dominates at small distances, creating the curved shapes seen in the plot.} Using, once again, \texttt{SciPy}'s \texttt{curve_fit} function, we analyzed the average execution time for each decoder. The empirical data was fitted to a complexity model $T(N) = C + A \cdot N^k$, where $N$ is the number of qubits and $k$ is the scaling exponent. The resulting parameters are summarized in Table \ref{tab:time_scaling_fit}.
+
+\input{../data/chapter_7/analysis_4_time_scaling_table.tex}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/chapter_7/plot_4_time_scaling.png}
+    \caption[Empirical decoding time scaling.]{Average execution time per shot as a function of the number of qubits, in a logarithmic scale. The lines represent the non-linear complexity fit.}
+    \label{fig:7_time_scaling}
+\end{figure}
+
+As seen in Figure \ref{fig:7_time_scaling}, all decoders exhibit a polynomial scaling curve, although their absolute execution times vary drastically. 
+
+To provide a realistic hardware context, we tried to extrapolate these times to the required distances calculated in the previous section. Figure \ref{fig:7_required_times} shows the estimated decoding time required to reach the target logical error rates. We have assumed a 100x hardware acceleration factor to simulate the transition from our Python-based simulation environment to a dedicated FPGA or ASIC implementation. While this is possibly a valid assumption for most of the decoders, the Möbius and BP+OSD might require a lower acceleration factor due to their native C++ implementation.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figures/chapter_7/plot_6_required_times.png}
+    \caption[Extrapolated required decoding times with hardware budget.]{Estimated decoding time per shot to reach target logical error rates, assuming a 100x FPGA speedup. The green shaded area represents the target time budget for a superconducting quantum cycle (100 ns to 1 $\mu$s). The decoders are visually separated between natively optimized C++ libraries and Python-wrapped implementations.}
+    \label{fig:7_required_times}
+\end{figure}
+
+The most critical element in Figure \ref{fig:7_required_times} is the green band at the bottom, which represents the typical time budget for a single cycle in a modern superconducting quantum processor (between $100$ ns and $1 \mu s$). If the decoder takes longer than this budget, it will not be able to decode real time, causing error accumulation or forcing the quantum computer to iddle, increasing the chances of errors.
+
+We observe a massive gap between the natively optimized C++ libraries (BP+OSD and Möbius) and the custom Python implementations (Projection, Restriction, Concatenated, and Correlated). The Python wrappers introduce a constant computational overhead per shot that heavily penalizes their absolute times. Furthermore, the Concatenated decoder yields the worst execution times, which is expected: its algorithm requires executing Minimum Weight Perfect Matching (MWPM) twice per cycle, introducing a massive structural penalty.
+
+This analysis validates a fundamental conclusion: while achieving high accuracy is critical to minimizing the number of physical qubits required, computational speed is equally paramount. To build a useful fault-tolerant quantum computer, the industry will require decoders that are both highly accurate and inherently parallelizable or capable of being executed entirely in specialized low-level hardware.
+
+\section{Final evaluation}
+While each decoder has unique characteristics, and the "best" decoder may depend on the specific application, a general assesment can be made. All decoders provide thresholds in the $7\%-9\%$ range, making the threshold itself not the most distinguishing feature. 
+
+Because of its unique error mitigation and decoding time scaling properties, the Möbius decoder stands out as a very promising candidate for fault-tolerant quantum computing, althouhg it seems to require a significant distance to deliver its full potential.

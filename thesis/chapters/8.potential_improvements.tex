@@ -1,12 +1,28 @@
-\chapter{Evaluating potential improvements to projection decoding for 2D color codes}
+\chapter{Potential improvements and future work}
 \label{chap:potential_improvements}
 
+We have concluded our sistematic review of decoders for 2D color codes and are ready to evaluate potential improvements to the existing decoders and new research directions. We also want to highlight some open questions that remained unanswered during the scope of this thesis and may be interesting for future research.
 
+\subsection{Potential improvements}
 
-Nota: para metodología de la investigación hay que buscar una revista en la que tuviese sentido publicar tu TFM.
+While the literature has focused in the threshold at a time when no physical realization of a quantum computing had proven to be able to run below the threshold, now that this milestone has been reached \cite{Google_Willow_2024}, it's crucial to shift the focus to the decoders performance in the sub-threshold regime and it's ability to be executed efficiently.
 
-Esta revista que está bastante especializada y aceptan artículos tipo tutorial, en lo que podría encajar:
-https://tqe.ieee.org/special-section-on-quantum-engineering-education/
+The existing solutions rely on a projection mechanism to reduce the dimension of the color code to a surface code equivalent. While this has proven to be a valid approach, exploring new mechanisms to directly resolve weighted matching in an hypergraph could open the door to a new family of decoders with better performance.
 
-Otras opciones serían:
-PRX Quantum (Sección "Tutorials")
+Similarly, exploring new methods for an algebraic decoding (such as BP+OSD) that can run more efficiently could also bring new opportunities to the field.
+
+We can conclude that the decoding of 2D color codes is still an open problem, and developments in this field would allow a practical implementation of color codes in future quantum computers, a scenario that would be highly desirable due to their unique transversality properties.
+
+\subsection{Future work}
+
+To ensure this research remained constrained and achievable within the limited timeframe of a Master's Thesis, the scope of the project was significantly narrowed. Consequently, many complex and interesting avenues were intentionally left outside the boundaries of this work. Addressing these uncharted areas presents exciting opportunities for future research:
+
+\begin{itemize}
+    \item \textbf{Alternative lattice geometries:} This thesis focused exclusively on the 4.8.8 triangular color code. Future work should analyze the performance of these decoders on other geometric layouts, particularly the 6.6.6 hexagonal lattice and color codes with square boundaries.
+    
+    \item \textbf{Correlated and circuit-level noise models:} While we implemented a depolarizing code-capacity model, our decoders effectively decompose the errors into independent bit-flip ($X$) and phase-flip ($Z$) errors. Future implementations should explore decoders capable of leveraging \textit{a priori} information about correlated noise. Furthermore, extending the simulations to a full circuit-level noise model would allow researchers to analyze the impact of chained errors caused by faulty two-qubit gates during syndrome extraction. This would provide a more realistic benchmark of decoder performance, which would be more directly applicable to the real noise characteristics of quantum hardware.
+    
+    \item \textbf{Software optimization for fair benchmarking:} While our study analyzed the execution time scaling, the absolute time differences were heavily influenced by the programming language. Optimizing the custom Python-based decoders by rewriting them as efficient C++ libraries would guarantee optimal performance. This would eliminate the software overhead and allow for a fair execution time comparison against the natively optimized decoders like Möbius and BP+OSD. It would also offer comparison points to determine the practicality of a given decoder in comparison to the cycle durations of real hardware.
+    
+    \item \textbf{Alternative decoding sub-routines:} The geometric decoders analyzed in this work (Projection, Restriction, Concatenated, and Correlated) rely exclusively on the Minimum Weight Perfect Matching (MWPM) algorithm to pair defects. Future research should evaluate the impact of replacing the underlying MWPM engine with faster, near-linear time algorithms such as Union-Find. Exploring these combinations could significantly reduce the execution time scaling while maintaining highly competitive error mitigation ratios.
+\end{itemize}
