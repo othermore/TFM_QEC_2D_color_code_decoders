@@ -1,9 +1,9 @@
 \chapter{Comparative analysis and discussion}
 \label{chap:comparative_analysis}
 
-After detailing the theoretical foundations of the 2D Color Code and implementing a comprehensive simulation pipeline, we now present the results of our empirical evaluation. We have simulated six different decoding algorithms under identical conditions: a 4.8.8 lattice geometry subjected to a code-capacity bit-flip noise model. 
+After detailing the theoretical foundations of the 2D Color Code and implementing a comprehensive simulation pipeline, we now present the results of our empirical evaluation. In Chapter \ref{chap:simulating_2d_color_codes} we have already anticipated some comparisons  between the different decoders, exclusively in terms of threshold. This has allowed us to validate that the implementation was in line with the theoretical expectations and the existing published references. Now, we will conduct a deeper and wider comparison. 
 
-The captured data allows measuring the four key metrics that will drive the comparative analysis:
+We have simulated six different decoding algorithms under identical conditions: a 4.8.8 lattice geometry subjected to a code-capacity bit-flip noise model. The captured data allows measuring the four key metrics that will drive the comparative analysis:
 
 \begin{itemize}
     \item \textbf{Determination of error thresholds ($p_{th}$):} Identifying the crossing point in the logical error curves where increasing the code distance begins to suppress errors rather than amplifying them.
@@ -64,7 +64,7 @@ The visualization reveals a critical scaling property. At a smaller distance ($d
 
 \notatfm{In a log-linear plot (where the Y-axis is in logarithmic scale), this exponential decay manifests as a straight line. The parameter $A$ represents the slope, indicating how much the error is suppressed per unit of code distance, while the constant $C$ captures the baseline error overhead independent of the distance, shifting the line vertically to its correct height.} To predict the resources required to build a fault-tolerant quantum computer, and given that we are unable to run reliable simulations with physical noise levels below $p_{phys} = 2\%$, we must mathematically model how the logical error drops as we increase the size of the code. We modeled the logical error rate using an exponential decay function defined as $\log_{10}(p_L) = A \cdot d + C$. 
 
-Using \texttt{SciPy}'s \texttt{curve_fit} function, we performed a 2D surface regression to fit the empirical data across both variables simultaneously (code distance $d$ and physical error rate $p$). The full surface model equation is $\log_{10}(p_L) = c_0 + c_1 d + c_2 \log_{10} p + c_3 d \log_{10} p$. The parameters resulting from this surface regression for all decoders, as well as their $R^2$ coefficients that indicate the goodness of the fit, are documented in Table \ref{tab:error_scaling_fit}. 
+Using \texttt{SciPy}'s \texttt{curve\_fit} function, we performed a 2D surface regression to fit the empirical data across both variables simultaneously (code distance $d$ and physical error rate $p$). The full surface model equation is $\log_{10}(p_L) = c_0 + c_1 d + c_2 \log_{10} p + c_3 d \log_{10} p$. The parameters resulting from this surface regression for all decoders, as well as their $R^2$ coefficients that indicate the goodness of the fit, are documented in Table \ref{tab:error_scaling_fit}. 
 
 To visualize this fit, Figure \ref{fig:7_error_scaling} shows a one-dimensional "slice" of this 2D mathematical surface. By fixing the physical error rate at $p=0.02$, the complex surface equation simplifies into a straight 1D line ($\log_{10}(p_L) = A \cdot d + C$), which we plot alongside the empirical data points for that specific noise level.
 
@@ -94,7 +94,7 @@ Using these mathematical fits, we extrapolated the data to answer a practical en
 
 The final dimension of our comparative analysis focuses on execution time. A decoder can have the necessary accuracy for a given problem, but if it is too slow, errors will accumulate in the quantum processor while the classical computer tries to calculate the correction.
 
-\notatfm{In a log-log plot, a pure polynomial scaling ($A \cdot N^k$) would appear as a straight line. However, we introduced the constant $C$ to capture the fixed software overhead that dominates at small distances, creating the curved shapes seen in the plot.} Using, once again, \texttt{SciPy}'s \texttt{curve_fit} function, we analyzed the average execution time for each decoder. The empirical data was fitted to a complexity model $T(N) = C + A \cdot N^k$, where $N$ is the number of qubits and $k$ is the scaling exponent. The resulting parameters are summarized in Table \ref{tab:time_scaling_fit}.
+\notatfm{In a log-log plot, a pure polynomial scaling ($A \cdot N^k$) would appear as a straight line. However, we introduced the constant $C$ to capture the fixed software overhead that dominates at small distances, creating the curved shapes seen in the plot.} Using, once again, \texttt{SciPy}'s \texttt{curve\_fit} function, we analyzed the average execution time for each decoder. The empirical data was fitted to a complexity model $T(N) = C + A \cdot N^k$, where $N$ is the number of qubits and $k$ is the scaling exponent. The resulting parameters are summarized in Table \ref{tab:time_scaling_fit}.
 
 \input{../data/chapter_7/analysis_4_time_scaling_table.tex}
 
