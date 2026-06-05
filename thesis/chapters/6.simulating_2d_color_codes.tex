@@ -248,11 +248,7 @@ Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ fro
 \subsection{Threshold Evaluation}
 \label{subsec:bposd_threshold}
 
-With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=5$ to $d=23$. 
-
-\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision. Finally, we determine the continuous mode of all the crossing points.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. A high-resolution zoom plot is also provided to further illustrate the threshold calculation. The logical error rate curves cross at an empirical threshold of $p_{th} \approx 8.36\%$ under a pure bit-flip noise model. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
-
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -267,7 +263,11 @@ With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Met
     \label{fig:bposd_threshold}
 \end{figure}
 
-\begin{figure}[htbp]
+With the optimal parameters established (\textbf{BP Method:} MS, \textbf{OSD Method:} \texttt{osd\_cs}, \textbf{Order:} 10), we conducted a full Monte Carlo simulation to evaluate the algorithm's threshold on the 4.8.8 color code lattice. We evaluated distances from $d=5$ to $d=23$. 
+
+\notatfm{The threshold is calculated by interpolating the logical error curves for all pairs of distances and finding their crossing point, in a logarithmic representation. If the curves cross multiple times (which can happen because of the error margins of the Monte Carlo simulations), the minimum is selected (as, at higher noise levels, when logical error approaches the maximum theoretical limit (50\%), the curves are packed together and more likely to cross due to limited precision. Finally, we determine the continuous mode of all the crossing points.} The results of this simulation are presented in Figure \ref{fig:bposd_threshold}. A high-resolution zoom plot is also provided to further illustrate the threshold calculation. The logical error rate curves cross at an empirical threshold of $p_{th} \approx 8.36\%$ under a pure bit-flip noise model. Below this crossing point, we observe a clear exponential suppression of the logical failure rate as the code distance increases, empirically proving the capability of the BP+OSD algorithm to effectively decode 2D Color Codes under a code-capacity noise model.
+
+\begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s2_bposd_results_X_time.png}
     \caption[Simulation 2: BP+OSD decoder execution times.]{Average execution times per shot for the BP+OSD decoder under a pure X-noise model, confirming the polynomial scaling of the algorithm.}
@@ -302,7 +302,7 @@ To force \texttt{PyMatching} to output this specific internal pathing informatio
 \subsubsection{MWPM under depolarizing noise}
 MWPM's struggle to run the matching on hypergraphs (i.e. when a certain error mechanisms can trigger more than two detectors) has already been exposed. A consequence of that struggle relates to depolarizing noise. Y-type errors cause the activation of both X and Z detectors. Even on a projected lattice, we may still have 4 detectors activated by a Y-type error. 
 
-In order to solve this, we must decompose the Y-type error mechanisms into separate X and Z errors. We achieve this with the \texttt{decompose_errors=True} option of \texttt{stim}'s DEM generation. This adds additional marks in the DEM for error mechanisms that trigger different detector types, effectively separating the two subsets of detectors. An additional step is required for MWPM to process this: each DEM line with both X and Z detectors must be split into two separate DEM lines. With this modification we fully decompose Y-type errors, avoiding hypergraphs that MWPM can't properly handle. However, this prevents the decoding process from leveraging correlations between X, Y and Z errors.
+In order to solve this, we must decompose the Y-type error mechanisms into separate X and Z errors. We achieve this with the \texttt{decompose\_errors=True} option of \texttt{stim}'s DEM generation. This adds additional marks in the DEM for error mechanisms that trigger different detector types, effectively separating the two subsets of detectors. An additional step is required for MWPM to process this: each DEM line with both X and Z detectors must be split into two separate DEM lines. With this modification we fully decompose Y-type errors, avoiding hypergraphs that MWPM can't properly handle. However, this prevents the decoding process from leveraging correlations between X, Y and Z errors.
 
 \subsection{The Lifting Step}
 The final stage of the decoder is the "Lifting" process. The three MWPM instances returned a set of edges. When combined, these edges form continuous, closed homological cycles (loops) in the dual graph ($G^*$) of the Color Code. The objective of the lifting step is to find the exact set of physical qubits (which correspond to the triangular faces in $G^*$) that are enclosed within these boundaries.
@@ -319,11 +319,7 @@ Finally, the algorithm checks the logical observables of the Color Code (from it
 \subsection{Threshold Evaluation}
 \label{subsec:projection_threshold}
 
-We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=5$ up to $d=23$ and the same ranges and number of shots used in prior simulations. Once again, while we've run simulations for both depolarizing and X-type noise, we present here the results of the latter. The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. A high-resolution zoom plot is provided to further illustrate the threshold calculation. We observe an empirical threshold of $p_{th} \approx 7.50\%$ under a pure bit-flip noise model. 
-
-Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances.
-
-\begin{figure}[htpb]
+\begin{figure}[!htpb]
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
@@ -338,7 +334,12 @@ Below this crossover point, the logical error curves exhibit a robust exponentia
     \label{fig:projection_threshold}
 \end{figure}
 
-\begin{figure}[htpb]
+We have conducted a full Monte Carlo simulation to evaluate the threshold of the Projection Decoder, with the selected lattice and noise model, at distances from $d=5$ up to $d=23$ and the same ranges and number of shots used in prior simulations. Once again, while we've run simulations for both depolarizing and X-type noise, we present here the results of the latter. The results of this evaluation are presented in Figure \ref{fig:projection_threshold}. A high-resolution zoom plot is provided to further illustrate the threshold calculation. We observe an empirical threshold of $p_{th} \approx 7.50\%$ under a pure bit-flip noise model. 
+
+
+Below this crossover point, the logical error curves exhibit a robust exponential suppression across all distances.
+
+\begin{figure}[!htpb]
     \centering
     \includegraphics[width=0.5\textwidth]{figures/chapter_6/s3_projection_results_X_time.png}
     \caption[Simulation 3: Projection decoder execution times.]{Decoding execution time as a function of the distance under a pure X-only noise model.}
@@ -498,11 +499,11 @@ Sahay and Brown \cite{Sahay_2022} report a $p_{th}=9\%$ threshold for bit-flip e
 The Concatenated Minimum Weight Perfect Matching (MWPM) decoder is a heuristic approach designed to decode color codes by projecting the syndrome onto multiple restricted lattices and resolving them using standard MWPM algorithms. For this thesis, we utilized the \texttt{concatmatching} library \cite{Lee_2024_concatmatching} , an existing Python implementation of this decoder.
 
 \subsection{Implementation and Configuration}
-\notatfm{The authors of the \texttt{concatmatching} library also published a \texttt{stim} wrapper \cite{Lee_2025} \cite{Lee_2024_color_code_stim}. While this library is designed for their own imlementation of the \texttt{stim} circuit for the color code, it served as a reference to integrate \texttt{concatmatching} in our framework.} Unlike other decoders such as \texttt{Chromobius} or PyMatching, which can directly interface with Stim's Detector Error Model (DEM) and the Sinter framework, the \texttt{concatmatching} library requires the code's parity check matrix ($H$) and and the individual error probabilities for each fault mechanism (priors). To integrate this external library into our simulation pipeline, we developed a dedicated Sinter wrapper (\texttt{sinter\_concatenated\_decoder.py}).
+\notatfm{The authors of the \texttt{concatmatching} library also published a \texttt{stim} wrapper \cite{Lee_2025} \cite{Lee_2024_color_code_stim}. While this library is designed for their own implementation of the \texttt{stim} circuit for the color code, it served as a reference to integrate \texttt{concatmatching} in our framework.} Unlike other decoders such as \texttt{Chromobius} or PyMatching, which can directly interface with Stim's Detector Error Model (DEM) and the Sinter framework, the \texttt{concatmatching} library requires the code's parity check matrix ($H$) and and the individual error probabilities for each fault mechanism (priors). To integrate this external library into our simulation pipeline, we developed a dedicated Sinter wrapper (\texttt{sinter\_concatenated\_decoder.py}).
 
 The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. While there are built-in methods in \texttt{stim}'s DEM to generate the check matrices, it presented a significant technical challenge regarding $Y$ errors, that trigger 6 three $X$ detectors and three $Z$ detectors. 
 
-While Stim provides a \texttt{decompose_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
+While Stim provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
 
 \subsection{Threshold Evaluation}
 We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow our general Sinter methodology, collecting statistics up to 40 million shots per data point.
