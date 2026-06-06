@@ -153,7 +153,7 @@ def plot_time_scaling():
     plt.figure(figsize=(9, 6))
     
     d_range_line = np.linspace(3, 25, 100)
-    n_range = (3 * d_range_line**2 + 1) / 4
+    n_range = (d_range_line**2 + 2*d_range_line - 1) / 2
     
     for decoder in config.DECODERS:
         row_fit = df_fit[df_fit['decoder'] == decoder]
@@ -167,8 +167,8 @@ def plot_time_scaling():
         if os.path.exists(path):
             df_real = pd.read_csv(path)
             avg_times = df_real.groupby('distance')['avg_time_sec'].mean().reset_index()
-            # N = (3d^2+1)/4
-            qubits = (3 * avg_times['distance']**2 + 1) / 4
+            # N = (d^2+2d-1)/2
+            qubits = (avg_times['distance']**2 + 2*avg_times['distance'] - 1) / 2
             
             plt.scatter(qubits, avg_times['avg_time_sec'], color=config.COLORS[decoder], s=50, zorder=5)
             
@@ -186,7 +186,7 @@ def plot_time_scaling():
     
     # Custom X-axis labels for specific distances
     d_ticks = np.arange(5, 25, 2)
-    n_ticks = (3 * d_ticks**2 + 1) / 4
+    n_ticks = (d_ticks**2 + 2*d_ticks - 1) / 2
     ax = plt.gca()
     ax.set_xticks(n_ticks)
     import matplotlib.ticker as ticker

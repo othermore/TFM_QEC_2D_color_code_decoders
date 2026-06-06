@@ -8,7 +8,7 @@ import config
 
 def get_number_of_qubits(d):
     """Calculates the number of physical qubits N for the 4.8.8 color code of distance d."""
-    return (3 * d**2 + 1) / 4
+    return (d**2 + 2*d - 1) / 2
 
 def process_thresholds():
     """Generates consolidated dataset of thresholds."""
