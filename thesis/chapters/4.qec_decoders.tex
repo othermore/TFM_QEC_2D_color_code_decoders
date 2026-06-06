@@ -553,7 +553,7 @@ Because the maximum number of physical qubits touching a single vertex is small 
 
 The Möbius decoder was proposed by Sahay and Brown in 2022 \cite{Sahay_2022} as a topological approach to decode the triangular color code. This decoder solves the fundamental limitations of projection-based algorithms at the boundaries of the lattice, by unifying the restricted graphs into a single global structure rather than treating them in isolation.
 
-\begin{figure}[ht]
+\begin{figure}[!hbpt]
     \centering
     \begin{subfigure}{0.32\textwidth}
         \centering
@@ -581,9 +581,9 @@ The Möbius decoder was proposed by Sahay and Brown in 2022 \cite{Sahay_2022} as
 
 As described in previous sections, algorithms like the Projection Decoder divide the color code into three independent restricted graphs ($\mathcal{L}_{RG}$, $\mathcal{L}_{RB}$, and $\mathcal{L}_{GB}$). While this successfully reduces hyperedges to simple edges compatible with Minimum Weight Perfect Matching (MWPM), running it independently on each subgraph causes a loss of information near the boundaries. Since boundaries act as virtual nodes in MWPM to absorb errors that exit the lattice, the algorithm might incorrectly pair the defect to the boundary instead. When the decoder attempts to merge these 1D strings back into 2D physical qubits, these boundary inconsistencies often lead to logical failures. Figures \ref{fig:non_boundary_ok} and \ref{fig:boundary_fail} illustrate how Projection and Restriction decoders succeed in errors in the bulk of the Color Code but fail near the borders.
 
-\begin{figure}[hbtp]
+\begin{figure}[!hbtp]
     \centering
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_a.tex}
@@ -591,7 +591,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{Full Lattice}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_b.tex}
@@ -599,7 +599,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{$\mathcal{L}_{RG}$ projection}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_c.tex}
@@ -609,7 +609,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
     
     \vspace{0.5cm}
     
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_d.tex}
@@ -617,7 +617,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{$\mathcal{L}_{GB}$ projection}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_e.tex}
@@ -625,7 +625,7 @@ As described in previous sections, algorithms like the Projection Decoder divide
         \caption{Projection Merge (Success)}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[b]{0.32\textwidth}
+    \begin{subfigure}[b]{0.29\textwidth}
         \centering
         \resizebox{\linewidth}{!}{
             \input{figures/4.qec_decoders/non_boundary_ok_v2_f.tex}

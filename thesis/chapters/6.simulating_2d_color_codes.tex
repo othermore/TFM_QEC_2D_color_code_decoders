@@ -501,7 +501,7 @@ The Concatenated Minimum Weight Perfect Matching (MWPM) decoder is a heuristic a
 
 The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. While there are built-in methods in \texttt{stim}'s DEM to generate the check matrices, it presented a significant technical challenge regarding $Y$ errors, that trigger 6 three $X$ detectors and three $Z$ detectors. 
 
-While Stim provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
+While \texttt{stim} provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
 
 \subsection{Threshold Evaluation}
 We evaluated the Concatenated MWPM Decoder with lattice distances ranging from $d=5$ to $d=23$ under an X-only code-capacity noise model (depolarizing code-capacity noise results have also been produced and are available in the repository). The simulation parameters follow our general Sinter methodology, collecting statistics up to 40 million shots per data point.
