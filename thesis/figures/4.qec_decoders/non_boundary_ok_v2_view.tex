@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_a.tex}}
+        \caption{Full Lattice}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_b.tex}}
+        \caption{$\mathcal{L}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_c.tex}}
+        \caption{$\mathcal{L}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_d.tex}}
+        \caption{$\mathcal{L}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_e.tex}}
+        \caption{Projection Merge (Success)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{non_boundary_ok_v2_f.tex}}
+        \caption{Restriction (Success)}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{Full Lattice}
+\end{figure}
+
+\end{document}

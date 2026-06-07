@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{dual_merge_step_a.tex}}
+        \caption{MWPM on RG Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{dual_merge_step_b.tex}}
+        \caption{MWPM on GB Projection}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{dual_merge_step_c.tex}}
+        \caption{MWPM on BR Projection}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{dual_merge_step_d.tex}}
+        \caption{Lifting in Dual Graph}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{MWPM on RG Projection}
+\end{figure}
+
+\end{document}

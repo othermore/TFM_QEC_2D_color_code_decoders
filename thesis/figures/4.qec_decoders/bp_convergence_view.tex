@@ -1,0 +1,27 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.475\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{bp_convergence_a.tex}}
+        \caption{Variable to Check}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.475\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{bp_convergence_b.tex}}
+        \caption{Check to Variable}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{Initialization}
+\end{figure}
+
+\end{document}

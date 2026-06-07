@@ -1,0 +1,51 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_a.tex}}
+        \caption{Syndrome and Errors}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_b.tex}}
+        \caption{Matching in $\mathcal{R}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_c.tex}}
+        \caption{Matching in $\mathcal{R}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_d.tex}}
+        \caption{Logical Error (Restriction)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_g.tex}}
+        \caption{Matching in $\mathcal{R}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{corr_view_h.tex}}
+        \caption{Success (Correlated)}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{Syndrome and Errors}
+\end{figure}
+
+\end{document}

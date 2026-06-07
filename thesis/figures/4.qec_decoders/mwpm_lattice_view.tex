@@ -1,0 +1,22 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.475\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{mwpm_lattice_a.tex}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.475\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{mwpm_lattice_b.tex}}
+    \end{subfigure}
+\end{figure}
+
+\end{document}

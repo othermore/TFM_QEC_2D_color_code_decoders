@@ -1,0 +1,39 @@
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{patterns}
+\usepackage{subcaption}
+\usepackage[margin=0.5in]{geometry}
+
+\begin{document}
+
+\begin{figure}[ht]
+    \centering
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{restriction_graphs_a.tex}}
+        \caption{Full syndrome graph}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{restriction_graphs_b.tex}}
+        \caption{Red-Green Projection ($\mathcal{L}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{restriction_graphs_c.tex}}
+        \caption{Red-Blue Projection ($\mathcal{L}
+    \end{subfigure}
+    \vspace{0.5cm}
+    \begin{subfigure}{0.2375\textwidth}
+        \centering
+        \resizebox{\textwidth}{!}{\input{restriction_graphs_d.tex}}
+        \caption{Local Lifting}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+    \caption{Full syndrome graph}
+\end{figure}
+
+\end{document}
