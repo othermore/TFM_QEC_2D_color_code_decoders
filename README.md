@@ -45,7 +45,13 @@ Here is how you can set up the environment using Conda:
    python src/chapter_7/analyzer.py
    ```
 
+### Jupyter Notebooks
+
+For an easier and more interactive experience, the `src/` directory includes Jupyter Notebooks for the main chapters (e.g., `src/chapter_6/chapter_6.ipynb` and `src/chapter_7/chapter_7.ipynb`). 
+
+These notebooks act as visual dashboards: they do not regenerate data by default if the data already exists, making them perfect for quickly visualizing the results, checking the summary dataframes, and viewing the generated plots without launching the heavy simulation scripts.
+
 > [!WARNING]
-> Please note that executing the Python scripts in `src/` will overwrite and **re-generate the data and images** that are currently saved in the `data/` and `figures/` directories of this repository.
+> Please note that executing the Python simulation scripts from the terminal will overwrite and **re-generate the data and images** that are currently saved in the `data/` and `figures/` directories of this repository.
 
 For detailed instructions on how to use each of the simulation and analysis scripts, please refer to the dedicated **`src/README.md`** file.
