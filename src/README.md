@@ -1,1 +1,79 @@
-In this directory we will place all the code for the Thesis
+# Source Code & Simulation Scripts
+
+This `src/` directory contains all the Python source code and Jupyter Notebooks necessary to run the simulations, evaluate the decoders, and analyze the data for the thesis.
+
+The code is organized sequentially by chapter to match the thesis narrative.
+
+## Chapter 2: State of the Art
+- **`chapter_2.ipynb`**: An interactive notebook used to generate diagrams and visualizations (e.g., Bloch sphere, generic code examples) for the introductory and state-of-the-art sections of the thesis.
+
+## Chapter 5: Implementation and Simulation Frameworks
+This chapter introduces the tools (`stim`, `sinter`, `pymatching`) using a simple repetition code before scaling up to color codes.
+- **Python Scripts (`s1_*` to `s9_*`)**: A series of progressive scripts demonstrating different features of the simulation stack. They cover:
+  - Generating repetition and Shor codes.
+  - Creating manual majority vote decoders vs. MWPM decoders.
+  - Analyzing threshold theorems.
+  - Exploring external noise models using Qiskit (`s9_qiskit_noise_model.py`).
+- **`chapter_5.ipynb`**: A Jupyter Notebook that ties together these examples, allowing you to run them interactively and visualize the results.
+
+## Chapter 6: Simulating 2D Color Code Decoders
+This directory contains the core simulation pipeline for benchmarking four different decoders on the 4.8.8 Color Code geometry:
+1. **BP+OSD** (`s2_bposd_simulation.py`)
+2. **Projection Decoder** (`s3_projection_simulation.py`)
+3. **Restriction Decoder** (`s4_restriction_simulation.py`)
+4. **Möbius Decoder** (`s5_mobius_decoder.py`)
+5. **Concatenated MWPM** (`s6_concatenated_simulation.py`)
+6. **Correlated MWPM** (`s7_correlated_simulation.py`)
+
+### Execution Commands (Chapter 6)
+Each simulation script is powered by a central configuration file (`config.py`) and a shared simulation engine (`simulator.py`). They expose three main sub-commands:
+
+1. **`simulate`**: Runs the standard simulation over the default broad range of physical error rates.
+   ```bash
+   python src/chapter_6/s5_mobius_decoder.py simulate --distances 9 11 13
+   ```
+2. **`zoom`**: Runs a high-resolution simulation tightly focused around the theoretical threshold point to precisely identify the crossing.
+   ```bash
+   python src/chapter_6/s5_mobius_decoder.py zoom
+   ```
+3. **`plot`**: Generates and saves the threshold and time-scaling plots using the data from `data/chapter_6/`.
+   ```bash
+   python src/chapter_6/s5_mobius_decoder.py plot
+   ```
+
+### Execution Flags
+When running the `simulate` or `zoom` commands, you can customize the execution using several generic flags:
+- `--distances <d1> <d2> ...`: Overrides the default distances defined in the configuration and only runs the specified ones.
+- `--noise-type <all|depolarizing|X>`: Restricts the simulation to only one type of noise model (defaults to `all`).
+- `--force-rerun`: Forces the simulator to re-run and overwrite the specific points (distances and physical error rates) that it would normally skip if they already existed in the CSV.
+- `--clean-all`: Deletes the target CSV file entirely before starting the simulation from scratch.
+
+### Running all decoders (`run_simulations.py`)
+If you want to run an action across multiple (or all) decoders without manually launching each script, you can use the `run_simulations.py` orchestrator. It acts as a wrapper and accepts the exact same sub-commands (`simulate`, `zoom`, `plot`) and flags.
+
+By default, it will run the action sequentially for all decoders:
+```bash
+python src/chapter_6/run_simulations.py simulate --force-rerun
+```
+
+You can limit which decoders to run by using the `--decoders` flag, passing their internal names (e.g., `bposd`, `projection`, `restriction`, `mobius`, `concat_mwpm`, `correlated`):
+```bash
+python src/chapter_6/run_simulations.py plot --decoders mobius concat_mwpm
+```
+
+- **`chapter_6.ipynb`**: An interactive dashboard to quickly view all the generated plots and summary tables for the decoders without rerunning the heavy simulations.
+
+## Chapter 7: Comparative Analysis
+This directory contains the tools to aggregate the raw results from Chapter 6, extrapolate performance, and generate the final comparative plots.
+
+- **`analyzer.py`**: The main CLI script to process the data and generate plots.
+  - **Process Data**: Parses the Chapter 6 results, performs curve fitting (time and error scaling), and generates the final extrapolated `.csv` files and LaTeX tables.
+    ```bash
+    python src/chapter_7/analyzer.py process
+    ```
+  - **Generate Plots**: Uses the processed data to create the final comparative graphs (Thresholds, Mitigation, Scaling, etc.).
+    ```bash
+    python src/chapter_7/analyzer.py plot
+    ```
+
+- **`chapter_7.ipynb`**: A visualization dashboard that cleanly displays the dataframes and comparative plots generated by the analyzer.
