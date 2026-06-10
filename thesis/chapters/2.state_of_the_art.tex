@@ -122,9 +122,9 @@ This overlapping check structure is mathematically robust due to the inherent ge
 \notatfm{While there are only three uniform tilings, an infinite number of 3-valent, 3-coloreable lattices can be defined if uniformity is not required. These are rarely studied in the literature because they are more difficult to scale and fit on a quantum chip with a regular pattern and because their error correction properties are less predictable.} Because of the strict mathematical requirement that the lattice must be 3-valent and 3-colorable, there is only a finite number of uniform tilings (Archimedean tilings) in the 2D plane that can support a color code, see \cite{landahl2011fault}. Specifically, there are exactly three configurations, shown in Figure \ref{fig:2:color_code_lattices}:
 
 \begin{itemize}
-    \item \textbf{6.6.6 Lattice:} A regular lattice composed entirely of hexagons.
-    \item \textbf{4.8.8 Lattice:} A semi-regular lattice where each vertex connects a square and two octagons.
-    \item \textbf{4.6.12 Lattice:} A more complex semi-regular lattice composed of squares, hexagons, and dodecagons. While theoretically interesting, its extremely high-weight stabilizers (weight-12) make it practically nonviable for current hardware.
+    \item \textbf{6.6.6 Lattice:} A regular lattice composed entirely of hexagons. This lattice can be characterized as $\left[\left[ \frac{3d^2 + 1}{4}, 1, d \right]\right]$.
+    \item \textbf{4.8.8 Lattice:} A semi-regular lattice where each vertex connects a square and two octagons. It can be characterized as $\left[\left[ \frac{d^2 + 2d - 1}{2}, 1, d \right]\right]$.
+    \item \textbf{4.6.12 Lattice:} A more complex semi-regular lattice composed of squares, hexagons, and dodecagons, characterized as $\left[\left[ \frac{3d^2 - 6d + 5}{2}, 1, d \right]\right]$. While theoretically interesting, its extremely high-weight stabilizers (weight-12) make it practically nonviable for current hardware.
 \end{itemize}
 
 \begin{figure}[htbp]
