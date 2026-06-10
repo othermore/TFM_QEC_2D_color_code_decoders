@@ -105,7 +105,7 @@ Figure \ref{fig:6:circuit_d3} illustrates the resulting quantum circuit for a di
             \includegraphics{figures/chapter_6/circuit_d3.pdf}
         \end{adjustbox}
     \end{subfigure}
-    \caption[Complete quantum circuit for the 4.8.8 Color Code.]{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been dynamically split into two halves for readability. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
+    \caption[Complete quantum circuit for the 4.8.8 Color Code.]{Complete quantum circuit for the 4.8.8 Color Code ($d=3$, 1 round). The data qubits have been labeled as $D(x,y)$ and the ancilla qubits for the stabilizers as $S(x,y)$, so they are grouped to ease the visualization. Due to its significant width, the image has been split into two halves for readability. High resolution versions of these images are available in the github repository (see Page \pageref{sec:source_code_repository})}
     \label{fig:6:circuit_d3}
 \end{figure}
 
@@ -116,9 +116,9 @@ Our circuit generation is parametrized, allowing for two noise types: depolarizi
 
 Inspired by how the Möbius decoder uses the \texttt{stim} annotation's metadata to make detector's face color and type available to the decoder, we incorporated the same solution in our circuit generation, as seen in Listing \ref{lst:stim_color_and_type_dimension}.
 
-\includesnippet[caption={Implementation of the color dimensionality tag for the Möbius Decoder.}, label={lst:stim_color_and_type_dimension}]{S1_SNIPPET_DIMENSION}{../src/chapter_6/s1_color_code.py}
+\includesnippet[caption={Implementation of the color dimensionality tag for the Möbius Decoder. The values $[0-2]$ represent X detectors of each color, and the values $[3-5]$ represent Z detectors of each color}, label={lst:stim_color_and_type_dimension}]{S1_SNIPPET_DIMENSION}{../src/chapter_6/s1_color_code.py}
 
-This allows decoders to rely on the type (X or Z) and color of a detector to implement the detection algorithm. This is specifically relevant when performing projections (which is required by many decoders that utilize MWPM internally, as MWPM can't process hypergraphs) and when decomposing the Y-type errors into its X and Z components, which is again a frequent requirement for MWPM to successfully process depolarizing noise.
+This allows decoders to rely on the type (X or Z) and color of a detector to implement the detection algorithm. This is specifically relevant when performing projections (which is required by many decoders that utilize MWPM internally, as MWPM can't process hypergraphs) and when decomposing the Y-type errors into its X and Z components, which is again a frequent requirement for decoders to successfully process depolarizing noise.
 
 \section{Simulation Architecture and Evaluation Metrics}
 \label{sec:simulation_architecture}
@@ -228,7 +228,7 @@ When BP fails to converge, the OSD post-processing phase forces a valid solution
 \subsubsection{OSD Search Order Analysis}
 Having selected \texttt{osd\_cs}, we must define its search order $k$. A higher order allows the decoder to explore more alternative hypotheses, improving accuracy but heavily penalizing execution time due to the combinatorial explosion.
 
-Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ from 5 to 10 yields a notable improvement in the logical error rate. However, pushing $k$ to 20 provides highly diminishing returns while severely impacting the execution speed. To maintain computational feasibility without significantly sacrificing the decoding threshold, we fix the OSD order at $k=10$.
+Figure \ref{fig:bposd_osd_orders} illustrates this trade-off. Increasing $k$ from 5 to 10 yields some improvement in the logical error rate without significant impact to the execution speed. However, pushing $k$ to 20 provides similar small improvements while severely impacting the execution speed. To maintain computational feasibility without significantly sacrificing the decoding threshold, we fix the OSD order at $k=10$.
 
 \begin{figure}[htbp]
     \centering
@@ -286,7 +286,7 @@ Our implementation is divided into three stages: the Projection step (where the 
 \subsection{The Projection Step and DEM Generation}
 The first step of the algorithm consists of transforming the original 2D Color Code Detector Error Model (DEM) into three independent Surface Code DEMs (representing the $RG$, $GB$, and $BR$ projections). 
 
-We iterate through all the independent error mechanisms defined in the original DEM. For a specific projection (e.g., $RG$), any error that triggers a Blue detector is modified to ignore that detector. If an error mechanism triggers exactly two detectors of the remaining colors (one Red and one Green), it forms a valid 1-dimensional edge in the projected graph.
+We iterate through all the independent error mechanisms defined in the original DEM. For a specific projection (e.g., $RG$), any error that triggers a removed detector (Blue in the example) is modified to ignore that detector. If an error mechanism triggers exactly two detectors of the remaining colors (one Red and one Green), it forms a valid 1-dimensional edge in the projected graph.
 
 \notatfm{In this chapter, we often refer to physical qubits in the graph. This is a simplification, as the DEM and the corresponding graph actually contains possible errors causing the syndrome. Therefore, rather than physical qubits, the graph contains possible errors (e.g. X, Y and Z errors) affecting the physical qubit. For each physical qubit, in a depolarizing noise model, there are three possible errors} Because multiple physical qubits in the Color Code can collapse into the same parallel edge in the projected graph, we mathematically merge these parallel edges into a single virtual edge, keeping a map to identify the original physical qubits. In a full circuit-level noise simulation, the probability of this new merged edge would be calculated as a weighted sum of the independent error probabilities of its physical qubits. However, since our evaluation focuses on the code-capacity noise model, we implemented a simplified unweighted approach. Every edge is assigned the same error probability (e.g., $p=0.01$).
 
@@ -347,7 +347,7 @@ Below this crossover point, the logical error curves exhibit a robust exponentia
 \end{figure}
 
 \subsubsection{Published references and preliminary evaluation}
-Delfosse (\cite{Delfosse_2014}) reports a $p_{th}=8.7\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is better than our results. Our implementation of the projection decoder performs below the BP+OSD decoder presented before. 
+Delfosse (\cite{Delfosse_2014}) reports a $p_{th}=8.7\%$ threshold for bit-flip errors on a 6.6.6 lattice, which is better than our results. Our implementation of the projection decoder performs below the BP+OSD decoder presented before (i.e. lower threshold). 
 
 \section{Restriction Decoder}
 \label{sec:restriction_decoder_simulation}
@@ -363,7 +363,7 @@ The first step translates the 2D Color Code Detector Error Model (DEM) into two 
 
 The Restriction Decoder operates by simply deleting vertices of a specific color. To form $\mathcal{L}_{RG}$, we ignore all Blue detectors. Any physical error that previously triggered a Blue detector is modified to only register its Red and Green syndrome. If it triggers exactly one Red and one Green detector, it forms a valid 1D edge in the $\mathcal{L}_{RG}$ lattice. We apply the same logic to form $\mathcal{L}_{RB}$ by dropping the Green detectors.
 
-Since our implementation merges parallel physical qubits into a single virtual edge in the restricted DEM. We keep an internal mapping that associates each physical qubit to its corresponding virtual edge in both $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
+Since our implementation merges parallel physical qubits into a single virtual edge in the restricted DEM, we keep an internal mapping that associates each physical qubit to its corresponding virtual edge in both $\mathcal{L}_{RG}$ and $\mathcal{L}_{RB}$.
 
 \subsection{Running MWPM on the restricted lattices}
 \label{subsec:restriction_mwpm}
@@ -499,7 +499,7 @@ The Concatenated Minimum Weight Perfect Matching (MWPM) decoder is a heuristic a
 \subsection{Implementation and Configuration}
 \notatfm{The authors of the \texttt{concatmatching} library also published a \texttt{stim} wrapper \cite{Lee_2025} \cite{Lee_2024_color_code_stim}. While this library is designed for their own implementation of the \texttt{stim} circuit for the color code, it served as a reference to integrate \texttt{concatmatching} in our framework.} Unlike other decoders such as \texttt{Chromobius} or PyMatching, which can directly interface with Stim's Detector Error Model (DEM) and the Sinter framework, the \texttt{concatmatching} library requires the code's parity check matrix ($H$) and and the individual error probabilities for each fault mechanism (priors). To integrate this external library into our simulation pipeline, we developed a dedicated Sinter wrapper (\texttt{sinter\_concatenated\_decoder.py}).
 
-The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. While there are built-in methods in \texttt{stim}'s DEM to generate the check matrices, it presented a significant technical challenge regarding $Y$ errors, that trigger 6 three $X$ detectors and three $Z$ detectors. 
+The main responsibility of this wrapper is to translate the instructions from the Stim DEM into the sparse check matrices expected by the decoder. There are built-in methods in \texttt{stim}'s DEM to generate the check matrices, but they presented a significant technical challenge regarding $Y$ errors that trigger 6 three $X$ detectors and three $Z$ detectors. 
 
 While \texttt{stim} provides a \texttt{decompose\_errors=True} flag to automatically split independent fault mechanisms, this algorithm was not sufficient, so we had to manually split the DEM error mechanisms corresponding to $Y$ errors into two independent $X$ and $Z$ error mechanisms.
 

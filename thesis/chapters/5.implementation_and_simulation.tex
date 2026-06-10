@@ -132,7 +132,7 @@ In our previous simulations, we relied on \texttt{stim}'s built-in circuit gener
     \label{fig:5:simulation_6_shor}
 \end{figure}
 
-Finally, to evaluate the code under realistic conditions, noise must be integrated into the circuit. Unlike the automated generator, building a circuit from scratch requires manually injecting specific noise channels-such as gate depolarization, measurement flips, or idle decoherence-at the exact coordinates where they occur (Listings \ref{lst:stim_noisy_gate}, \ref{lst:stim_noisy_measurement}, and \ref{lst:stim_noisy_round}).
+Finally, to evaluate the code under realistic conditions, noise must be integrated into the circuit. Unlike the automated generator, building a circuit from scratch requires manually injecting specific noise channels---such as gate depolarization, measurement flips, or idle decoherence---at the exact coordinates where they occur (Listings \ref{lst:stim_noisy_gate}, \ref{lst:stim_noisy_measurement}, and \ref{lst:stim_noisy_round}).
 
 To illustrate the impact of different noise models, our initial analysis compares the performance of the Shor code under code-capacity, phenomenological, and circuit-level noise. The results demonstrate how it is highly vulnerable to error from noisy gates and faulty measurements, degrading its error-correcting capabilities.
 
