@@ -13,6 +13,9 @@ Before deciding where errors occur in a circuit, we must define the probability 
 \subsection{Biased noise}
 Real quantum hardware rarely exhibits perfectly symmetric noise. In many physical qubit implementations, such as superconducting transmons, the quantum state is far more susceptible to losing its phase information than to losing its energy. This results in \textbf{biased noise}, where one type of error (typically $Z$ phase-flips) is significantly more probable than the others.
 
+\subsubsection{Bit-flip noise}
+A special type of biased noise is one where only X-type errors can occur. This is specially relevant in our case as bit-flip only, code capacity models are the standard in the literature to compare across different decoders. The bit-flip noise model is specially adequate when only X-type errors can affect the observable (i.e. the final observable is measured in the computational basis).
+
 \notatfm{The XZZX surface code has stabilizers that combine Z and X detectors and is therefore not a CSS code.} When the noise is highly biased, standard CSS codes may not be optimal. Instead, tailored codes (like the XZZX Surface Code) or tailored decoders can exploit this asymmetry by assigning lower weights to $Z$ errors, vastly improving the threshold for that specific hardware.
 
 \subsection{Correlated noise}
@@ -25,7 +28,7 @@ While the \textit{type} of noise defines the probability distribution of the Pau
 \subsection{Code-capacity noise}
 \notatfm{While physically unrealistic, the code-capacity model is an essential theoretical tool. It isolates the raw error-correcting capability of the code's geometry and the base performance of the spatial decoder, without the confounding effects of faulty syndrome extraction circuits.} The \textbf{code-capacity model} is the simplest and most abstract error model. It assumes that all quantum gates, measurements, and state preparations are perfectly flawless. Errors are only injected into the data qubits while they are "idle".
 
-Under this model, the syndrome extracted by the ancilla qubits is always 100\% reliable. Because measurements never fail, the decoder only needs to solve a 2D spatial problem (matching the errors on the lattice). 
+Under this model, the syndrome extracted by the ancilla qubits is always 100\% reliable. Because measurements never fail, multiple rounds of the simulation process (i.e. analyzing the error caused through multiple idle cycles of the quantum computer) are equivalent to one single round at a higher physical noise level. Therefore, ubder this model the decoder only needs to solve a 2D spatial problem (i.e. matching the errors on the lattice, with no time dimension). 
 
 \subsection{Phenomenological noise}
 In reality, the classical measurement hardware and the ancilla qubits used to extract the syndrome are also susceptible to noise. The \textbf{phenomenological noise model} builds upon the code-capacity model by adding \textbf{readout errors}. 
