@@ -401,9 +401,7 @@ def run_cli_pipeline(decoder_name: str, file_prefix: str, plot_title: str):
     elif hasattr(args, 'clean_all') and args.clean_all:
         execution_mode = 'clean-all'
         
-    print("=====================================================")
-    print(f"      {plot_title} Simulation - 4.8.8 Color Code   ")
-    print("=====================================================")
+    print(f" ---> {plot_title} Simulation - 4.8.8 Color Code  <---- ")
     
     if args.command == 'simulate':
         run_simulate(distances, execution_mode, allowed_noise_types)

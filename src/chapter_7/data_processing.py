@@ -246,7 +246,7 @@ def process_extrapolations():
 def generate_latex_tables():
     """Generates LaTeX tables for the fitted mathematical models."""
     
-    # 1. Thresholds table
+    #Thresholds
     df_thresh = pd.read_csv(os.path.join(config.DATA_CH7_DIR, 'analysis_1_thresholds.csv'))
     
     latex_1 = "\\begin{table}[hbt!]\n\\centering\n"
@@ -265,7 +265,7 @@ def generate_latex_tables():
     with open(out_1, 'w') as f: f.write(latex_1)
     print(f"✓ Generado {out_1}")
     
-    # 2. Mitigation table
+    #Mitigation
     df_mit = pd.read_csv(os.path.join(config.DATA_CH7_DIR, 'analysis_2_mitigation.csv'))
     
     latex_2 = "\\begin{table}[hbt!]\n\\centering\n"
@@ -287,7 +287,7 @@ def generate_latex_tables():
     with open(out_2, 'w') as f: f.write(latex_2)
     print(f"✓ Generado {out_2}")
 
-    # 3. Error scaling table
+    #Error scaling
     df_error = pd.read_csv(os.path.join(config.DATA_CH7_DIR, 'analysis_3_error_scaling.csv'))
     
     latex_3 = "\\begin{table}[hbt!]\n\\centering\n"
@@ -305,7 +305,7 @@ def generate_latex_tables():
     with open(out_3, 'w') as f: f.write(latex_3)
     print(f"✓ Generado {out_3}")
     
-    # 4. Time scaling table
+    #Time scaling
     df_time = pd.read_csv(os.path.join(config.DATA_CH7_DIR, 'analysis_4_time_scaling.csv'))
     
     latex_4 = "\\begin{table}[hbt!]\n\\centering\n"

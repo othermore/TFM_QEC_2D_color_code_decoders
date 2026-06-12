@@ -146,7 +146,7 @@ def run_shor_simulations(shots: int = 2000):
     print("Executing Shor 9-qubit comprehensive simulations...")
     p_rates = np.linspace(0.01, 0.12, 8)
 
-    # 1. Noise Model Comparison
+    #Compare Noise Model
     print("\n--- Simulation: Noise Models (1 Round, State |0>) ---")
     models = {
         "L1: $E_{data}$": (1, 0, 0),
@@ -158,14 +158,14 @@ def run_shor_simulations(shots: int = 2000):
         mean_pl = np.mean(l_rates)
         print(f"{label:25} | Mean pL: {mean_pl:.4f} | Max pL: {max(l_rates):.4f}")
 
-    # 2. Rounds Comparison
+    #Compare Rounds
     print("\n--- Simulation: Rounds Comparison (Code Capacity, State |0>) ---")
     for r in [1, 3, 5]:
         _, l_rates = sample_shor_code_mwpm(shots=shots, rounds=r, states=["0"], p_rates=p_rates, noise_ratios=(1, 0, 0))
         mean_pl = np.mean(l_rates)
         print(f"{r} Rounds                  | Mean pL: {mean_pl:.4f} | Max pL: {max(l_rates):.4f}")
 
-    # 3. Cardinal States Comparison
+    #Compare initial state
     print("\n--- Simulation: Cardinal States (Code Capacity, 1 Round) ---")
     states_list = ["0", "1", "+", "-", "+i", "-i"]
     for state in states_list:

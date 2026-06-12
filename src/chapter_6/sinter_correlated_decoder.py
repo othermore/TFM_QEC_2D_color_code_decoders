@@ -151,10 +151,10 @@ class CorrelatedDecoder(sinter.Decoder):
             syn_RG = syn & mask_RG
             syn_RB = syn & mask_RB
             
-            # Step 1: Decode RB graph
+            #Decode RB graph
             p_RB = match_RB.decode(syn_RB)
             
-            # Identify completely traversed red checks
+            #Identify red checks with two edges
             red_counts = collections.Counter()
             for e_idx in np.where(p_RB)[0]:
                 for d in edges_RB[e_idx]:
@@ -163,7 +163,7 @@ class CorrelatedDecoder(sinter.Decoder):
             
             marked_reds = {d for d, count in red_counts.items() if count >= 2}
             
-            # Step 2: Mutate RG graph
+            #Modify RG weights
             modified_edges = []
             for red in marked_reds:
                 for e_idx, dets in rg_edges_by_red[red]:
@@ -175,17 +175,17 @@ class CorrelatedDecoder(sinter.Decoder):
                         match_RG.add_boundary_edge(n1, fault_ids=e_idx, weight=0.0, merge_strategy='replace')
                     modified_edges.append((n1, n2, e_idx))
                     
-            # Step 3: Decode RG graph
+            #Decode RG graph again
             p_RG = match_RG.decode(syn_RG)
             
-            # Restore weights in RG graph
+            #Restore weights
             for n1, n2, e_idx in modified_edges:
                 if n2 is not None:
                     match_RG.add_edge(n1, n2, fault_ids=e_idx, weight=default_weight, merge_strategy='replace')
                 else:
                     match_RG.add_boundary_edge(n1, fault_ids=e_idx, weight=default_weight, merge_strategy='replace')
             
-            # Step 4: Execute local lifting
+            #Local lifting
             lifting_syn = np.concatenate([p_RG, p_RB])
             try:
                 correction = lifting_match.decode(lifting_syn)
