@@ -79,13 +79,13 @@
         \end{scope}
 
         \newcommand{\drawLedges}[3]{
-            \pgfmathtruncatemacro{\Xtx}{mod(##1+1, 3)}
-            \pgfmathtruncatemacro{\Xty}{mod(##2+2, 3)} 
-            \draw[very thick, red, dashed, opacity=##3, bend left=25] (G1-L-##1-##2) to (G1-X-\Xtx-\Xty);
+            \pgfmathtruncatemacro{\Xtx}{mod(#1+1, 3)}
+            \pgfmathtruncatemacro{\Xty}{mod(#2+2, 3)} 
+            \draw[very thick, red, dashed, opacity=#3, bend left=25] (G1-L-#1-#2) to (G1-X-\Xtx-\Xty);
             
-            \pgfmathtruncatemacro{\Ztx}{mod(##1+2, 3)} 
-            \pgfmathtruncatemacro{\Zty}{mod(##2+1, 3)}
-            \draw[very thick, green!70!black, dashed, opacity=##3, bend right=25] (G1-L-##1-##2) to (G1-Z-\Ztx-\Zty);
+            \pgfmathtruncatemacro{\Ztx}{mod(#1+2, 3)} 
+            \pgfmathtruncatemacro{\Zty}{mod(#2+1, 3)}
+            \draw[very thick, green!70!black, dashed, opacity=#3, bend right=25] (G1-L-#1-#2) to (G1-Z-\Ztx-\Zty);
         }
 
         \begin{scope}[on background layer]
@@ -106,13 +106,13 @@
         \end{scope}
 
         \newcommand{\drawRedges}[3]{
-            \pgfmathtruncatemacro{\Xtx}{mod(##1+2, 3)} 
-            \pgfmathtruncatemacro{\Xty}{mod(##2+2, 3)} 
-            \draw[very thick, red, dashed, opacity=##3, bend right=25] (G2-R-##1-##2) to (G2-X-\Xtx-\Xty);
+            \pgfmathtruncatemacro{\Xtx}{mod(#1+2, 3)} 
+            \pgfmathtruncatemacro{\Xty}{mod(#2+2, 3)} 
+            \draw[very thick, red, dashed, opacity=#3, bend right=25] (G2-R-#1-#2) to (G2-X-\Xtx-\Xty);
             
-            \pgfmathtruncatemacro{\Ztx}{mod(##1+1, 3)} 
-            \pgfmathtruncatemacro{\Zty}{mod(##2+1, 3)}
-            \draw[very thick, green!70!black, dashed, opacity=##3, bend left=25] (G2-R-##1-##2) to (G2-Z-\Ztx-\Zty);
+            \pgfmathtruncatemacro{\Ztx}{mod(#1+1, 3)} 
+            \pgfmathtruncatemacro{\Zty}{mod(#2+1, 3)}
+            \draw[very thick, green!70!black, dashed, opacity=#3, bend left=25] (G2-R-#1-#2) to (G2-Z-\Ztx-\Zty);
         }
 
         \begin{scope}[on background layer]
