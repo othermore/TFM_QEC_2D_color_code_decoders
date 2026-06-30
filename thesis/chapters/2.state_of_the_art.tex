@@ -259,7 +259,7 @@ By keeping these "wiring instructions" very short (e.g., using exactly three ter
 \begin{figure}[htpb]
     \centering
     \input{figures/2.state_of_the_art/2-bbc_construction.tex}
-    \caption[Construction of Bivariate Bicycle Codes.]{Construction of Bivariate Bicycle Codes. The data qubits are divided into two identical blocks (Left and Right). The $X$-checks are constructed by connecting to qubits in the Left block according to polynomial $A$ and in the Right block according to polynomial $B$. The $Z$-checks mirror this connectivity but transposed, ensuring that the intersection between any $X$ and $Z$ check is always an even number of qubits, thus guaranteeing they commute while maintaining a strictly bounded weight (LDPC).}
+    \caption[Construction of Bivariate Bicycle Codes.]{Construction of Bivariate Bicycle Codes. The lattice is composed of two identical blocks of data qubits (Left and Right), which are shown side-by-side to independently illustrate their long-range connections. To visualize this periodic connectivity clearly, a central ``principal'' data qubit is highlighted in each block: its long-range connections to the $X$ and $Z$ checks are drawn with full opacity. The connections for its surrounding neighbors are drawn with a fading gradient (progressively lighter), creating a visual halo that demonstrates the periodic boundary conditions of the code while maintaining a strictly bounded weight (qLDPC property).}
     \label{fig:2:bbc_construction}
 \end{figure}
 

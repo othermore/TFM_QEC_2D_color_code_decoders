@@ -1,112 +1,133 @@
-\begin{tikzpicture}[scale=1.3, every node/.style={font=\sffamily}]
+\begin{tikzpicture}[scale=0.75, every node/.style={font=\sffamily}]
     % Define colors
     \colorlet{colL}{blue!40}
     \colorlet{colR}{orange!50}
     \colorlet{colX}{red!50}
     \colorlet{colZ}{green!50}
 
-    % Grid dimensions
     \def\Nx{3}
     \def\Ny{3}
 
-    % Draw Nodes
-    \foreach \x in {0,...,\Nx} {
-        \foreach \y in {0,...,\Ny} {
-            % Left block data qubits (Blue)
-            \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] 
-                (L-\x-\y) at (2*\x, 2*\y) {};
-            
-            % Right block data qubits (Orange)
-            \ifnum\x<\Nx
-            \ifnum\y<\Ny
-                \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] 
-                    (R-\x-\y) at (2*\x+1, 2*\y+1) {};
-            \fi\fi
+    % Macro to draw grid nodes
+    \newcommand{\drawGridNodes}[1]{
+        \foreach \x in {0,...,\Nx} {
+            \foreach \y in {0,...,\Ny} {
+                \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] 
+                    (#1-L-\x-\y) at (2*\x, 2*\y) {};
                 
-            % X Checks (Red squares) - horizontally between L qubits
-            \ifnum\x<\Nx
-                \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
-                    (X-\x-\y) at (2*\x+1, 2*\y) {};
-            \fi
-            
-            % Z Checks (Green squares) - vertically between L qubits
-            \ifnum\y<\Ny
-                \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
-                    (Z-\x-\y) at (2*\x, 2*\y+1) {};
-            \fi
+                \ifnum\x<\Nx \ifnum\y<\Ny
+                    \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] 
+                        (#1-R-\x-\y) at (2*\x+1, 2*\y+1) {};
+                \fi\fi
+                    
+                \ifnum\x<\Nx
+                    \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
+                        (#1-X-\x-\y) at (2*\x+1, 2*\y) {};
+                \fi
+                
+                \ifnum\y<\Ny
+                    \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
+                        (#1-Z-\x-\y) at (2*\x, 2*\y+1) {};
+                \fi
+            }
         }
     }
 
-    % Draw local connections (underneath)
-    \begin{scope}[on background layer]
+    % Macro to draw local edges
+    \newcommand{\drawLocalEdges}[1]{
         \foreach \x in {0,...,\Nx} {
             \foreach \y in {0,...,\Ny} {
-                % X check connections
                 \ifnum\x<\Nx
-                    \draw[thick, gray!70] (X-\x-\y) -- (L-\x-\y);
+                    \draw[thick, gray!50] (#1-X-\x-\y) -- (#1-L-\x-\y);
                     \pgfmathtruncatemacro{\xplusone}{\x+1}
-                    \draw[thick, gray!70] (X-\x-\y) -- (L-\xplusone-\y);
+                    \draw[thick, gray!50] (#1-X-\x-\y) -- (#1-L-\xplusone-\y);
                     
                     \ifnum\y<\Ny
-                        \draw[thick, gray!70] (X-\x-\y) -- (R-\x-\y);
+                        \draw[thick, gray!50] (#1-X-\x-\y) -- (#1-R-\x-\y);
                     \fi
                     \ifnum\y>0
                         \pgfmathtruncatemacro{\yminusone}{\y-1}
-                        \draw[thick, gray!70] (X-\x-\y) -- (R-\x-\yminusone);
+                        \draw[thick, gray!50] (#1-X-\x-\y) -- (#1-R-\x-\yminusone);
                     \fi
                 \fi
                 
-                % Z check connections
                 \ifnum\y<\Ny
-                    \draw[thick, gray!70] (Z-\x-\y) -- (L-\x-\y);
+                    \draw[thick, gray!50] (#1-Z-\x-\y) -- (#1-L-\x-\y);
                     \pgfmathtruncatemacro{\yplusone}{\y+1}
-                    \draw[thick, gray!70] (Z-\x-\y) -- (L-\x-\yplusone);
+                    \draw[thick, gray!50] (#1-Z-\x-\y) -- (#1-L-\x-\yplusone);
                     
                     \ifnum\x<\Nx
-                        \draw[thick, gray!70] (Z-\x-\y) -- (R-\x-\y);
+                        \draw[thick, gray!50] (#1-Z-\x-\y) -- (#1-R-\x-\y);
                     \fi
                     \ifnum\x>0
                         \pgfmathtruncatemacro{\xminusone}{\x-1}
-                        \draw[thick, gray!70] (Z-\x-\y) -- (R-\xminusone-\y);
+                        \draw[thick, gray!50] (#1-Z-\x-\y) -- (#1-R-\xminusone-\y);
                     \fi
                 \fi
             }
         }
+    }
+
+    % ---------------------------------------------------------
+    % SCOPE 1: Left Block Long-Range
+    % ---------------------------------------------------------
+    \begin{scope}[shift={(0, 0)}]
+        \node[anchor=south, font=\bfseries\large] at (3.5, 6.8) {Left Block Periodic Connections};
+        \drawGridNodes{G1}
+        \begin{scope}[on background layer]
+            \drawLocalEdges{G1}
+        \end{scope}
+
+        \newcommand{\drawLedges}[3]{
+            \pgfmathtruncatemacro{\Xtx}{mod(##1+1, 3)}
+            \pgfmathtruncatemacro{\Xty}{mod(##2+2, 3)} 
+            \draw[very thick, red, dashed, opacity=##3, bend left=25] (G1-L-##1-##2) to (G1-X-\Xtx-\Xty);
+            
+            \pgfmathtruncatemacro{\Ztx}{mod(##1+2, 3)} 
+            \pgfmathtruncatemacro{\Zty}{mod(##2+1, 3)}
+            \draw[very thick, green!70!black, dashed, opacity=##3, bend right=25] (G1-L-##1-##2) to (G1-Z-\Ztx-\Zty);
+        }
+
+        \begin{scope}[on background layer]
+            \drawLedges{0}{0}{0.15} \drawLedges{0}{2}{0.15} \drawLedges{2}{0}{0.15} \drawLedges{2}{2}{0.15}
+            \drawLedges{1}{2}{0.4} \drawLedges{1}{0}{0.4} \drawLedges{0}{1}{0.4} \drawLedges{2}{1}{0.4}
+            \drawLedges{1}{1}{1.0}
+        \end{scope}
     \end{scope}
 
-    % Draw Long-Range Edges (qLDPC property) to distant qubits
-    \begin{scope}[on background layer]
-        % Background/faint long-range edges to show density/periodicity
-        % X-type long range (red)
-        \draw[thick, red!40, dashed, bend left=20] (X-0-0) to (R-2-1);
-        \draw[thick, red!40, dashed, bend right=25] (X-1-0) to (L-0-2);
-        \draw[thick, red!40, dashed, bend left=15] (X-2-0) to (R-0-2);
-        \draw[thick, red!40, dashed, bend right=20] (X-0-1) to (L-2-2);
-        \draw[thick, red!40, dashed, bend left=30] (X-2-1) to (L-0-0);
-        \draw[thick, red!40, dashed, bend right=15] (X-1-2) to (R-2-0);
-        \draw[thick, red!40, dashed, bend left=20] (X-2-2) to (R-0-1);
-        
-        % Z-type long range (green)
-        \draw[thick, green!40, dashed, bend right=20] (Z-0-0) to (L-2-1);
-        \draw[thick, green!40, dashed, bend left=25] (Z-1-0) to (R-0-2);
-        \draw[thick, green!40, dashed, bend right=15] (Z-2-0) to (L-0-2);
-        \draw[thick, green!40, dashed, bend left=20] (Z-0-1) to (R-2-2);
-        \draw[thick, green!40, dashed, bend right=30] (Z-2-1) to (R-0-0);
-        \draw[thick, green!40, dashed, bend left=15] (Z-1-2) to (L-2-0);
-        \draw[thick, green!40, dashed, bend right=20] (Z-2-2) to (L-0-1);
+    % ---------------------------------------------------------
+    % SCOPE 2: Right Block Long-Range
+    % ---------------------------------------------------------
+    \begin{scope}[shift={(10, 0)}]
+        \node[anchor=south, font=\bfseries\large] at (3.5, 6.8) {Right Block Periodic Connections};
+        \drawGridNodes{G2}
+        \begin{scope}[on background layer]
+            \drawLocalEdges{G2}
+        \end{scope}
+
+        \newcommand{\drawRedges}[3]{
+            \pgfmathtruncatemacro{\Xtx}{mod(##1+2, 3)} 
+            \pgfmathtruncatemacro{\Xty}{mod(##2+2, 3)} 
+            \draw[very thick, red, dashed, opacity=##3, bend right=25] (G2-R-##1-##2) to (G2-X-\Xtx-\Xty);
+            
+            \pgfmathtruncatemacro{\Ztx}{mod(##1+1, 3)} 
+            \pgfmathtruncatemacro{\Zty}{mod(##2+1, 3)}
+            \draw[very thick, green!70!black, dashed, opacity=##3, bend left=25] (G2-R-##1-##2) to (G2-Z-\Ztx-\Zty);
+        }
+
+        \begin{scope}[on background layer]
+            \drawRedges{0}{0}{0.15} \drawRedges{0}{2}{0.15} \drawRedges{2}{0}{0.15} \drawRedges{2}{2}{0.15}
+            \drawRedges{1}{2}{0.4} \drawRedges{1}{0}{0.4} \drawRedges{0}{1}{0.4} \drawRedges{2}{1}{0.4}
+            \drawRedges{1}{1}{1.0}
+        \end{scope}
     \end{scope}
 
-    % Highlighted Long-Range Edges (more visible, no text labels)
-    \draw[very thick, red, dashed, bend left=45] (X-0-2) to (L-3-0);
-    \draw[very thick, green!70!black, dashed, bend right=30] (Z-1-0) to (R-2-2);
-    \draw[very thick, red, dashed, bend left=25] (X-1-1) to (R-0-0);
-    \draw[very thick, green!70!black, dashed, bend right=40] (Z-2-2) to (L-0-1);
-
-    % Legend (Horizontal, placed at the bottom)
-    \begin{scope}[shift={(-0.5, -1.5)}]
+    % ---------------------------------------------------------
+    % Legend (Horizontal, placed at the bottom center)
+    % ---------------------------------------------------------
+    \begin{scope}[shift={(4.25, -2.5)}]
         \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (8.5, -1.5);
         
-        % First row
         \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -0.5) {};
         \node[anchor=west] at (0.8, -0.5) {Left Data Qubit};
         
@@ -116,11 +137,11 @@
         \draw[very thick, black, dashed] (6.5, -0.5) -- (6.9, -0.5);
         \node[anchor=west] at (7.0, -0.5) {Long-range};
         
-        % Second row
         \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -1.0) {};
         \node[anchor=west] at (0.8, -1.0) {$X$-type Check};
         
         \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (3.5, -1.0) {};
         \node[anchor=west] at (3.8, -1.0) {$Z$-type Check};
     \end{scope}
+
 \end{tikzpicture}
