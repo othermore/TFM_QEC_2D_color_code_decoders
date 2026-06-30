@@ -1,0 +1,51 @@
+\begin{tikzpicture}[scale=0.9, every node/.style={font=\sffamily}]
+    % Define colors
+    \colorlet{colLeft}{blue!10}
+    \colorlet{colRight}{orange!10}
+    \colorlet{colX}{red!20}
+    \colorlet{colZ}{green!20}
+
+    % Bicycles (Left and Right blocks)
+    \draw[fill=colLeft, draw=blue!50, rounded corners, thick] (0, 0) rectangle (3, 5);
+    \node[anchor=north, text=blue!70!black] at (1.5, 4.8) {\textbf{Left Block}};
+    \node[anchor=north, text=blue!70!black] at (1.5, 4.3) {Data Qubits};
+
+    \draw[fill=colRight, draw=orange!50, rounded corners, thick] (6, 0) rectangle (9, 5);
+    \node[anchor=north, text=orange!70!black] at (7.5, 4.8) {\textbf{Right Block}};
+    \node[anchor=north, text=orange!70!black] at (7.5, 4.3) {Data Qubits};
+
+    % Check operators
+    \node[draw=red!80!black, fill=colX, circle, thick, minimum size=0.8cm] (X) at (4.5, 3.5) {$X$};
+    \node[draw=green!80!black, fill=colZ, circle, thick, minimum size=0.8cm] (Z) at (4.5, 1.5) {$Z$};
+
+    % Connections from X
+    \draw[thick, red!80!black] (X) -- (3.5, 3.5) node[midway, above, font=\small, text=black] {$A$};
+    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.9);
+    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.5);
+    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.1);
+
+    \draw[thick, red!80!black] (X) -- (5.5, 3.5) node[midway, above, font=\small, text=black] {$B$};
+    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.9);
+    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.5);
+    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.1);
+
+    % Connections from Z
+    \draw[thick, green!80!black] (Z) -- (3.5, 1.5) node[midway, above, font=\small, text=black] {$B^T$};
+    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.9);
+    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.5);
+    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.1);
+
+    \draw[thick, green!80!black] (Z) -- (5.5, 1.5) node[midway, above, font=\small, text=black] {$A^T$};
+    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.9);
+    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.5);
+    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.1);
+
+    % Matrix representation below
+    \node[anchor=north] at (4.5, -0.5) {
+        $H^X = \begin{bmatrix} A & B \end{bmatrix}$
+        \hspace{1.5cm}
+        $H^Z = \begin{bmatrix} B^T & A^T \end{bmatrix}$
+    };
+    
+    \node[anchor=north] at (4.5, -1.5) {Commutation condition: $H^X (H^Z)^T = AB + BA \equiv 0 \pmod 2$};
+\end{tikzpicture}
