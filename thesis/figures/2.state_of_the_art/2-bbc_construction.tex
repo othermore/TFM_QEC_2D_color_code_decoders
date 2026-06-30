@@ -102,24 +102,25 @@
     \draw[very thick, red, dashed, bend left=25] (X-1-1) to (R-0-0);
     \draw[very thick, green!70!black, dashed, bend right=40] (Z-2-2) to (L-0-1);
 
-    % Legend
-    \begin{scope}[shift={(6.5, 3)}]
-        \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (4.5, -4.5);
-        \node[anchor=north, font=\bfseries] at (2.25, -0.2) {Tanner Graph Legend};
+    % Legend (Horizontal, placed at the bottom)
+    \begin{scope}[shift={(-0.5, -1.5)}]
+        \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (8.5, -1.5);
         
-        \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -1) {};
-        \node[anchor=west] at (0.8, -1) {Left Data Qubit};
+        % First row
+        \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -0.5) {};
+        \node[anchor=west] at (0.8, -0.5) {Left Data Qubit};
         
-        \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -1.7) {};
-        \node[anchor=west] at (0.8, -1.7) {Right Data Qubit};
+        \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] at (3.5, -0.5) {};
+        \node[anchor=west] at (3.8, -0.5) {Right Data Qubit};
         
-        \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -2.4) {};
-        \node[anchor=west] at (0.8, -2.4) {$X$-type Check};
+        \draw[very thick, black, dashed] (6.5, -0.5) -- (6.9, -0.5);
+        \node[anchor=west] at (7.0, -0.5) {Long-range};
         
-        \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -3.1) {};
-        \node[anchor=west] at (0.8, -3.1) {$Z$-type Check};
+        % Second row
+        \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -1.0) {};
+        \node[anchor=west] at (0.8, -1.0) {$X$-type Check};
         
-        \draw[very thick, black, dashed] (0.3, -3.8) -- (0.7, -3.8);
-        \node[anchor=west] at (0.8, -3.8) {Long-range edges};
+        \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (3.5, -1.0) {};
+        \node[anchor=west] at (3.8, -1.0) {$Z$-type Check};
     \end{scope}
 \end{tikzpicture}
