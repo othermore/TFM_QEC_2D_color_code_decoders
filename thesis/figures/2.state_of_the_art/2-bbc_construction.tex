@@ -1,51 +1,103 @@
-\begin{tikzpicture}[scale=0.9, every node/.style={font=\sffamily}]
+\begin{tikzpicture}[scale=1.3, every node/.style={font=\sffamily}]
     % Define colors
-    \colorlet{colLeft}{blue!10}
-    \colorlet{colRight}{orange!10}
-    \colorlet{colX}{red!20}
-    \colorlet{colZ}{green!20}
+    \colorlet{colL}{blue!40}
+    \colorlet{colR}{orange!50}
+    \colorlet{colX}{red!50}
+    \colorlet{colZ}{green!50}
 
-    % Bicycles (Left and Right blocks)
-    \draw[fill=colLeft, draw=blue!50, rounded corners, thick] (0, 0) rectangle (3, 5);
-    \node[anchor=north, text=blue!70!black] at (1.5, 4.8) {\textbf{Left Block}};
-    \node[anchor=north, text=blue!70!black] at (1.5, 4.3) {Data Qubits};
+    % Grid dimensions
+    \def\Nx{3}
+    \def\Ny{3}
 
-    \draw[fill=colRight, draw=orange!50, rounded corners, thick] (6, 0) rectangle (9, 5);
-    \node[anchor=north, text=orange!70!black] at (7.5, 4.8) {\textbf{Right Block}};
-    \node[anchor=north, text=orange!70!black] at (7.5, 4.3) {Data Qubits};
+    % Draw Nodes
+    \foreach \x in {0,...,\Nx} {
+        \foreach \y in {0,...,\Ny} {
+            % Left block data qubits (Blue)
+            \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] 
+                (L-\x-\y) at (2*\x, 2*\y) {};
+            
+            % Right block data qubits (Orange)
+            \ifnum\x<\Nx
+            \ifnum\y<\Ny
+                \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] 
+                    (R-\x-\y) at (2*\x+1, 2*\y+1) {};
+            \fi\fi
+                
+            % X Checks (Red squares) - horizontally between L qubits
+            \ifnum\x<\Nx
+                \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
+                    (X-\x-\y) at (2*\x+1, 2*\y) {};
+            \fi
+            
+            % Z Checks (Green squares) - vertically between L qubits
+            \ifnum\y<\Ny
+                \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] 
+                    (Z-\x-\y) at (2*\x, 2*\y+1) {};
+            \fi
+        }
+    }
 
-    % Check operators
-    \node[draw=red!80!black, fill=colX, circle, thick, minimum size=0.8cm] (X) at (4.5, 3.5) {$X$};
-    \node[draw=green!80!black, fill=colZ, circle, thick, minimum size=0.8cm] (Z) at (4.5, 1.5) {$Z$};
+    % Draw local connections (underneath)
+    \begin{scope}[on background layer]
+        \foreach \x in {0,...,\Nx} {
+            \foreach \y in {0,...,\Ny} {
+                % X check connections
+                \ifnum\x<\Nx
+                    \draw[thick, gray!70] (X-\x-\y) -- (L-\x-\y);
+                    \pgfmathtruncatemacro{\xplusone}{\x+1}
+                    \draw[thick, gray!70] (X-\x-\y) -- (L-\xplusone-\y);
+                    
+                    \ifnum\y<\Ny
+                        \draw[thick, gray!70] (X-\x-\y) -- (R-\x-\y);
+                    \fi
+                    \ifnum\y>0
+                        \pgfmathtruncatemacro{\yminusone}{\y-1}
+                        \draw[thick, gray!70] (X-\x-\y) -- (R-\x-\yminusone);
+                    \fi
+                \fi
+                
+                % Z check connections
+                \ifnum\y<\Ny
+                    \draw[thick, gray!70] (Z-\x-\y) -- (L-\x-\y);
+                    \pgfmathtruncatemacro{\yplusone}{\y+1}
+                    \draw[thick, gray!70] (Z-\x-\y) -- (L-\x-\yplusone);
+                    
+                    \ifnum\x<\Nx
+                        \draw[thick, gray!70] (Z-\x-\y) -- (R-\x-\y);
+                    \fi
+                    \ifnum\x>0
+                        \pgfmathtruncatemacro{\xminusone}{\x-1}
+                        \draw[thick, gray!70] (Z-\x-\y) -- (R-\xminusone-\y);
+                    \fi
+                \fi
+            }
+        }
+    \end{scope}
 
-    % Connections from X
-    \draw[thick, red!80!black] (X) -- (3.5, 3.5) node[midway, above, font=\small, text=black] {$A$};
-    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.9);
-    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.5);
-    \draw[->, thick, red!80!black] (3.5, 3.5) -- (3, 3.1);
+    % Draw Long-Range Edges (qLDPC property) to distant qubits
+    \draw[very thick, red, dashed, bend left=45] (X-0-2) to node[midway, above, sloped, text=black, font=\small] {Long-range periodic} (L-3-0);
+    \draw[very thick, green!70!black, dashed, bend right=30] (Z-1-0) to node[midway, below, sloped, text=black, font=\small] {Long-range ($A^T$)} (R-2-2);
+    \draw[very thick, red, dashed, bend left=25] (X-1-1) to node[midway, above, sloped, text=black, font=\small] {Long-range ($B$)} (R-0-0);
+    \draw[very thick, green!70!black, dashed, bend right=40] (Z-2-2) to node[midway, below, sloped, text=black, font=\small] {Long-range periodic} (L-0-1);
 
-    \draw[thick, red!80!black] (X) -- (5.5, 3.5) node[midway, above, font=\small, text=black] {$B$};
-    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.9);
-    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.5);
-    \draw[->, thick, red!80!black] (5.5, 3.5) -- (6, 3.1);
-
-    % Connections from Z
-    \draw[thick, green!80!black] (Z) -- (3.5, 1.5) node[midway, above, font=\small, text=black] {$B^T$};
-    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.9);
-    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.5);
-    \draw[->, thick, green!80!black] (3.5, 1.5) -- (3, 1.1);
-
-    \draw[thick, green!80!black] (Z) -- (5.5, 1.5) node[midway, above, font=\small, text=black] {$A^T$};
-    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.9);
-    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.5);
-    \draw[->, thick, green!80!black] (5.5, 1.5) -- (6, 1.1);
-
-    % Matrix representation below
-    \node[anchor=north] at (4.5, -0.5) {
-        $H^X = \begin{bmatrix} A & B \end{bmatrix}$
-        \hspace{1.5cm}
-        $H^Z = \begin{bmatrix} B^T & A^T \end{bmatrix}$
-    };
-    
-    \node[anchor=north] at (4.5, -1.5) {Commutation condition: $H^X (H^Z)^T = AB + BA \equiv 0 \pmod 2$};
+    % Legend
+    \begin{scope}[shift={(6.5, 3)}]
+        \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (4.5, -4.5);
+        \node[anchor=north, font=\bfseries] at (2.25, -0.2) {Tanner Graph Legend};
+        
+        \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -1) {};
+        \node[anchor=west] at (0.8, -1) {Left Data Qubit};
+        
+        \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -1.7) {};
+        \node[anchor=west] at (0.8, -1.7) {Right Data Qubit};
+        
+        \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -2.4) {};
+        \node[anchor=west] at (0.8, -2.4) {$X$-type Check};
+        
+        \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -3.1) {};
+        \node[anchor=west] at (0.8, -3.1) {$Z$-type Check};
+        
+        \draw[very thick, black, dashed] (0.3, -3.8) -- (0.7, -3.8);
+        \node[anchor=west] at (0.8, -3.8) {Long-range edges};
+    \end{scope}
 \end{tikzpicture}
