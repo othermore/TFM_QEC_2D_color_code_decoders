@@ -24,7 +24,7 @@ jobs:
         id: check
         run: |
           if [ "${{ github.event_name }}" == "schedule" ]; then
-            commits=$(git log --since="24 hours" --oneline)
+            commits=$(git log --since="24 hours" --oneline | grep -v "chore: update compiled PDFs" || true)
             if [ -z "$commits" ]; then
               echo "No changes in 24h. Canceling build."
               echo "run_build=false" >> "$GITHUB_OUTPUT"
