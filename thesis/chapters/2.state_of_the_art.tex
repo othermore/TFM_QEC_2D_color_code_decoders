@@ -256,10 +256,12 @@ Physically, the variables $x$ and $y$ in the polynomials simply represent cyclic
 
 By keeping these "wiring instructions" very short (e.g., using exactly three terms for $A$ and three terms for $B$), the total weight of every parity check is strictly bounded to exactly $3+3=6$ qubits, regardless of how large the total code (the grid) becomes. This naturally fulfills the Low-Density Parity-Check (LDPC) requirement, which is essential to prevent error propagation during syndrome measurements.
 
-\begin{figure}[htpb]
+\begin{figure}[htpb!]
     \centering
-    \input{figures/2.state_of_the_art/2-bbc_construction.tex}
-    \caption[Construction of Bivariate Bicycle Codes.]{Construction of Bivariate Bicycle Codes. The lattice is composed of two identical blocks of data qubits (Left and Right), which are shown side-by-side to independently illustrate their long-range connections. To visualize this periodic connectivity clearly, a central ``principal'' data qubit is highlighted in each block: its long-range connections to the $X$ and $Z$ checks are drawn with full opacity. The connections for its surrounding neighbors are drawn with a fading gradient (progressively lighter), creating a visual halo that demonstrates the periodic boundary conditions of the code while maintaining a strictly bounded weight (qLDPC property).}
+    \resizebox{0.8\textwidth}{!}{
+        \input{figures/2.state_of_the_art/2-bbc_construction.tex}
+    }
+    \caption[Construction of Bivariate Bicycle Codes.]{Construction of Bivariate Bicycle Codes. The lattice is composed of two identical blocks of data qubits (Left and Right), which are shown side-by-side to independently illustrate their long-range connections. To visualize this periodic connectivity clearly, a central ``principal'' data qubit is highlighted in each block: its long-range connections to the $X$ and $Z$ checks are drawn with full opacity. The connections for its surrounding neighbors are drawn with a fading gradient (progressively lighter) to help visualize the periodic structure.}
     \label{fig:2:bbc_construction}
 \end{figure}
 
