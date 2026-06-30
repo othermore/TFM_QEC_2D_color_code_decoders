@@ -75,10 +75,32 @@
     \end{scope}
 
     % Draw Long-Range Edges (qLDPC property) to distant qubits
-    \draw[very thick, red, dashed, bend left=45] (X-0-2) to node[midway, above, sloped, text=black, font=\small] {Long-range periodic} (L-3-0);
-    \draw[very thick, green!70!black, dashed, bend right=30] (Z-1-0) to node[midway, below, sloped, text=black, font=\small] {Long-range ($A^T$)} (R-2-2);
-    \draw[very thick, red, dashed, bend left=25] (X-1-1) to node[midway, above, sloped, text=black, font=\small] {Long-range ($B$)} (R-0-0);
-    \draw[very thick, green!70!black, dashed, bend right=40] (Z-2-2) to node[midway, below, sloped, text=black, font=\small] {Long-range periodic} (L-0-1);
+    \begin{scope}[on background layer]
+        % Background/faint long-range edges to show density/periodicity
+        % X-type long range (red)
+        \draw[thick, red!40, dashed, bend left=20] (X-0-0) to (R-2-1);
+        \draw[thick, red!40, dashed, bend right=25] (X-1-0) to (L-0-2);
+        \draw[thick, red!40, dashed, bend left=15] (X-2-0) to (R-0-2);
+        \draw[thick, red!40, dashed, bend right=20] (X-0-1) to (L-2-2);
+        \draw[thick, red!40, dashed, bend left=30] (X-2-1) to (L-0-0);
+        \draw[thick, red!40, dashed, bend right=15] (X-1-2) to (R-2-0);
+        \draw[thick, red!40, dashed, bend left=20] (X-2-2) to (R-0-1);
+        
+        % Z-type long range (green)
+        \draw[thick, green!40, dashed, bend right=20] (Z-0-0) to (L-2-1);
+        \draw[thick, green!40, dashed, bend left=25] (Z-1-0) to (R-0-2);
+        \draw[thick, green!40, dashed, bend right=15] (Z-2-0) to (L-0-2);
+        \draw[thick, green!40, dashed, bend left=20] (Z-0-1) to (R-2-2);
+        \draw[thick, green!40, dashed, bend right=30] (Z-2-1) to (R-0-0);
+        \draw[thick, green!40, dashed, bend left=15] (Z-1-2) to (L-2-0);
+        \draw[thick, green!40, dashed, bend right=20] (Z-2-2) to (L-0-1);
+    \end{scope}
+
+    % Highlighted Long-Range Edges (more visible, no text labels)
+    \draw[very thick, red, dashed, bend left=45] (X-0-2) to (L-3-0);
+    \draw[very thick, green!70!black, dashed, bend right=30] (Z-1-0) to (R-2-2);
+    \draw[very thick, red, dashed, bend left=25] (X-1-1) to (R-0-0);
+    \draw[very thick, green!70!black, dashed, bend right=40] (Z-2-2) to (L-0-1);
 
     % Legend
     \begin{scope}[shift={(6.5, 3)}]
