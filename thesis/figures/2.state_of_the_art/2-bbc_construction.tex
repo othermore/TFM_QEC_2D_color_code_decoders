@@ -4,19 +4,21 @@
     \colorlet{colR}{orange!50}
     \colorlet{colX}{red!50}
     \colorlet{colZ}{green!50}
+    \colorlet{colGrayFill}{gray!20}
+    \colorlet{colGrayDraw}{gray!50}
 
     \def\Nx{3}
     \def\Ny{3}
 
-    % Macro to draw grid nodes
+    % Macro to draw grid nodes (ALL data qubits in gray by default)
     \newcommand{\drawGridNodes}[1]{
         \foreach \x in {0,...,\Nx} {
             \foreach \y in {0,...,\Ny} {
-                \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] 
+                \node[draw=colGrayDraw, fill=colGrayFill, circle, minimum size=0.45cm, inner sep=0pt] 
                     (#1-L-\x-\y) at (2*\x, 2*\y) {};
                 
                 \ifnum\x<\Nx \ifnum\y<\Ny
-                    \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] 
+                    \node[draw=colGrayDraw, fill=colGrayFill, circle, minimum size=0.45cm, inner sep=0pt] 
                         (#1-R-\x-\y) at (2*\x+1, 2*\y+1) {};
                 \fi\fi
                     
@@ -81,17 +83,21 @@
         \newcommand{\drawLedges}[3]{
             \pgfmathtruncatemacro{\Xtx}{mod(#1+1, 3)}
             \pgfmathtruncatemacro{\Xty}{mod(#2+2, 3)} 
-            \draw[very thick, red, dashed, opacity=#3, bend left=25] (G1-L-#1-#2) to (G1-X-\Xtx-\Xty);
+            \draw[very thick, red, dashed, opacity=#3/100, bend left=25] (G1-L-#1-#2) to (G1-X-\Xtx-\Xty);
             
             \pgfmathtruncatemacro{\Ztx}{mod(#1+2, 3)} 
             \pgfmathtruncatemacro{\Zty}{mod(#2+1, 3)}
-            \draw[very thick, green!70!black, dashed, opacity=#3, bend right=25] (G1-L-#1-#2) to (G1-Z-\Ztx-\Zty);
+            \draw[very thick, green!70!black, dashed, opacity=#3/100, bend right=25] (G1-L-#1-#2) to (G1-Z-\Ztx-\Zty);
+
+            % Draw the faded node
+            \node[draw=blue!80!black!#3!colGrayDraw, fill=colL!#3!colGrayFill, circle, minimum size=0.45cm, inner sep=0pt] 
+                at (G1-L-#1-#2) {};
         }
 
         \begin{scope}[on background layer]
-            \drawLedges{0}{0}{0.15} \drawLedges{0}{2}{0.15} \drawLedges{2}{0}{0.15} \drawLedges{2}{2}{0.15}
-            \drawLedges{1}{2}{0.4} \drawLedges{1}{0}{0.4} \drawLedges{0}{1}{0.4} \drawLedges{2}{1}{0.4}
-            \drawLedges{1}{1}{1.0}
+            \drawLedges{0}{0}{15} \drawLedges{0}{2}{15} \drawLedges{2}{0}{15} \drawLedges{2}{2}{15}
+            \drawLedges{1}{2}{40} \drawLedges{1}{0}{40} \drawLedges{0}{1}{40} \drawLedges{2}{1}{40}
+            \drawLedges{1}{1}{100}
         \end{scope}
     \end{scope}
 
@@ -108,40 +114,44 @@
         \newcommand{\drawRedges}[3]{
             \pgfmathtruncatemacro{\Xtx}{mod(#1+2, 3)} 
             \pgfmathtruncatemacro{\Xty}{mod(#2+2, 3)} 
-            \draw[very thick, red, dashed, opacity=#3, bend right=25] (G2-R-#1-#2) to (G2-X-\Xtx-\Xty);
+            \draw[very thick, red, dashed, opacity=#3/100, bend right=25] (G2-R-#1-#2) to (G2-X-\Xtx-\Xty);
             
             \pgfmathtruncatemacro{\Ztx}{mod(#1+1, 3)} 
             \pgfmathtruncatemacro{\Zty}{mod(#2+1, 3)}
-            \draw[very thick, green!70!black, dashed, opacity=#3, bend left=25] (G2-R-#1-#2) to (G2-Z-\Ztx-\Zty);
+            \draw[very thick, green!70!black, dashed, opacity=#3/100, bend left=25] (G2-R-#1-#2) to (G2-Z-\Ztx-\Zty);
+
+            % Draw the faded node
+            \node[draw=orange!80!black!#3!colGrayDraw, fill=colR!#3!colGrayFill, circle, minimum size=0.45cm, inner sep=0pt] 
+                at (G2-R-#1-#2) {};
         }
 
         \begin{scope}[on background layer]
-            \drawRedges{0}{0}{0.15} \drawRedges{0}{2}{0.15} \drawRedges{2}{0}{0.15} \drawRedges{2}{2}{0.15}
-            \drawRedges{1}{2}{0.4} \drawRedges{1}{0}{0.4} \drawRedges{0}{1}{0.4} \drawRedges{2}{1}{0.4}
-            \drawRedges{1}{1}{1.0}
+            \drawRedges{0}{0}{15} \drawRedges{0}{2}{15} \drawRedges{2}{0}{15} \drawRedges{2}{2}{15}
+            \drawRedges{1}{2}{40} \drawRedges{1}{0}{40} \drawRedges{0}{1}{40} \drawRedges{2}{1}{40}
+            \drawRedges{1}{1}{100}
         \end{scope}
     \end{scope}
 
     % ---------------------------------------------------------
     % Legend (Horizontal, placed at the bottom center)
     % ---------------------------------------------------------
-    \begin{scope}[shift={(4.25, -2.5)}]
-        \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (8.5, -1.5);
+    \begin{scope}[shift={(3.5, -2.5)}]
+        \draw[fill=white, rounded corners, thick, draw=black!50] (0, 0) rectangle (10, -1.5);
         
         \node[draw=blue!80!black, fill=colL, circle, minimum size=0.45cm, inner sep=0pt] at (0.5, -0.5) {};
         \node[anchor=west] at (0.8, -0.5) {Left Data Qubit};
         
-        \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] at (3.5, -0.5) {};
-        \node[anchor=west] at (3.8, -0.5) {Right Data Qubit};
+        \node[draw=orange!80!black, fill=colR, circle, minimum size=0.45cm, inner sep=0pt] at (4.0, -0.5) {};
+        \node[anchor=west] at (4.3, -0.5) {Right Data Qubit};
         
-        \draw[very thick, black, dashed] (6.5, -0.5) -- (6.9, -0.5);
-        \node[anchor=west] at (7.0, -0.5) {Long-range};
+        \draw[very thick, black, dashed] (7.5, -0.5) -- (7.9, -0.5);
+        \node[anchor=west] at (8.0, -0.5) {Long-range};
         
         \node[draw=red!80!black, fill=colX, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (0.5, -1.0) {};
         \node[anchor=west] at (0.8, -1.0) {$X$-type Check};
         
-        \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (3.5, -1.0) {};
-        \node[anchor=west] at (3.8, -1.0) {$Z$-type Check};
+        \node[draw=green!80!black, fill=colZ, regular polygon, regular polygon sides=4, minimum size=0.55cm, inner sep=0pt] at (4.0, -1.0) {};
+        \node[anchor=west] at (4.3, -1.0) {$Z$-type Check};
     \end{scope}
 
 \end{tikzpicture}
