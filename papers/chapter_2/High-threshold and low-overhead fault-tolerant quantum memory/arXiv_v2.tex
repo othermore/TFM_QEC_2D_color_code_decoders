@@ -1,0 +1,1369 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{color}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{stmaryrd}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{verbatim}
+%\usepackage{biblatex}
+\usepackage{float}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+
+
+\textwidth=18cm
+\oddsidemargin=-7mm
+\topmargin=-2cm
+\setlength{\textheight}{52\baselineskip}
+% DM: changed from \setlength{\textheight}{46\baselineskip} in the original arxiv submission
+\setlength{\textheight}{\baselinestretch\textheight}
+\addtolength{\textheight}{\topskip}
+
+
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+\newcommand{\bea}{\begin{eqnarray}}
+\newcommand{\eea}{\end{eqnarray}}
+
+\DeclareMathOperator{\tr}{Tr}
+\newcommand{\ra}{\rangle}
+\newcommand{\la}{\langle}
+
+\newcommand{\calA}{{\cal A }}
+\newcommand{\calB}{{\cal B }}
+\newcommand{\calH}{{\cal H }}
+\newcommand{\calL}{{\cal L }}
+\newcommand{\calN}{{\cal N }}
+\newcommand{\calD}{{\cal D }}
+\newcommand{\calF}{{\cal F }}
+\newcommand{\calG}{{\cal G }}
+\newcommand{\calV}{{\cal V }}
+\newcommand{\calE}{{\cal E }}
+\newcommand{\calC}{{\cal C }}
+\newcommand{\calS}{{\cal S }}
+\newcommand{\calT}{{\cal T }}
+\newcommand{\calO}{{\cal O }}
+\newcommand{\calP}{{\cal P }}
+\newcommand{\calR}{{\cal R }}
+\newcommand{\calM}{{\cal M }}
+\newcommand{\calU}{{\cal U }}
+\newcommand{\calZ}{{\cal Z }}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\DD}{\mathbb{D}}
+\newcommand{\RR}{\mathbb{R}}
+
+\newcommand{\rs}[1]{\mathsf{rs}{(#1)}}
+\newcommand{\cs}[1]{\mathsf{cs}{(#1)}}
+\renewcommand{\ker}[1]{\mathsf{ker}{(#1)}}
+\newcommand{\rk}[1]{\mathsf{rk}{(#1)}}
+
+\newcommand{\ord}[1]{\mathrm{ord}(#1)}
+
+\newcommand{\qc}{\mathsf{QC}(A,B)}
+\newcommand{\cnot}[2]{\mathsf{CNOT}\quad {#1} \quad {#2}}
+\newcommand{\initX}[1]{\mathsf{InitX} \quad {#1}}
+\newcommand{\initZ}[1]{\mathsf{InitZ} \quad {#1}}
+\newcommand{\measX}[1]{\mathsf{MeasX} \quad {#1}}
+\newcommand{\measZ}[1]{\mathsf{MeasZ} \quad {#1}}
+\newcommand{\idle}[1]{\mathsf{Idle} \quad {#1}}
+
+\newtheorem{dfn}{Definition}
+\newtheorem{prop}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{fact}{Fact}
+\newtheorem{conj}{Conjecture}
+\newtheorem{theorem}{Theorem}
+\newtheorem{problem}{Problem}
+
+\newcommand{\Gate}[1]{\mathsf{#1}}
+\newcommand{\idgate}{\Gate{ID}}
+\newcommand{\cnotgate}{\Gate{CNOT}} 
+\newcommand{\czgate}{\Gate{CZ}}
+\newcommand{\swapgate}{\Gate{SWAP}} 
+\newcommand{\hgate}{\Gate{H}}
+\newcommand{\xgate}{\Gate{X}}
+\newcommand{\ygate}{\Gate{Y}}
+\newcommand{\zgate}{\Gate{Z}}
+\newcommand{\pgate}{\Gate{P}} 
+\newcommand{\pdgate}{\Gate{Pd}}
+\newcommand{\tgate}{\Gate{T}} 
+\newcommand{\tdgate}{\Gate{Td}} 
+
+\newcommand{\dcirc}{d_{\mathsf{circ}}}
+
+\newcommand{\eq}[1]{Eq.~(\ref{eq:#1})}
+\renewcommand{\sec}[1]{\hyperref[sec:#1]{Section~\ref*{sec:#1}}}
+\newcommand{\ssec}[1]{\hyperref[ssec:#1]{Subsection~\ref*{ssec:#1}}}
+\newcommand{\fig}[1]{\hyperref[fig:#1]{Figure~\ref*{fig:#1}}}
+\newcommand{\tab}[1]{\hyperref[table:#1]{Table~\ref*{table:#1}}}
+\newcommand{\lem}[1]{\hyperref[lem:#1]{Lemma~\ref*{lem:#1}}}
+\newcommand{\propos}[1]{\hyperref[propos:#1]{Proposition~\ref*{propos:#1}}}
+\newcommand{\thm}[1]{\hyperref[thm:#1]{Theorem~\ref*{thm:#1}}}
+\newcommand{\alg}[1]{\hyperref[alg:#1]{Algorithm~\ref*{alg:#1}}}
+
+
+\setlength{\affilsep}{2em}
+
+
+\newcommand{\edit}[1]{{\color{black}{#1}}}
+
+
+\title{High-threshold and low-overhead fault-tolerant quantum memory}
+
+ \author[1]{Sergey~Bravyi}
+ \author[1]{Andrew~W.~Cross}
+ \author[1]{Jay~M.~Gambetta}
+  \author[1]{Dmitri~Maslov}
+ \author[2]{Patrick~Rall}
+ \author[1]{Theodore~J.~Yoder} 
+ \affil[1]{\large{IBM Quantum, IBM T.J. Watson Research Center, Yorktown Heights, NY 10598 (USA)}}
+ \affil[2]{IBM Quantum, MIT-IBM Watson AI Lab, Cambridge, MA 02142 (USA)}
+
+
+
+
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Quantum error correction becomes a practical possibility
+only if the physical error rate is below a threshold value that depends 
+on a particular quantum code, syndrome measurement circuit, and decoding algorithm.
+Here we present an end-to-end quantum error correction
+protocol that implements fault-tolerant memory based on a family of LDPC codes with a high encoding rate
+that achieves an error threshold of $0.8\%$ for the standard
+circuit-based noise model. This is on par with the surface code which has remained an uncontested leader
+in terms of its high error threshold for nearly 20 years.
+The full syndrome measurement cycle for a length-$n$ code
+in our family 
+requires $n$ ancillary qubits
+and a depth-7 circuit composed of nearest-neighbor CNOT gates. 
+The required qubit connectivity is a degree-6 graph
+that consists of two edge-disjoint planar subgraphs. 
+%We also show that certain non-Pauli logical gates can be realized fault-tolerantly
+%without requiring any extra qubit connectivity.
+As a concrete example, we
+show that 12 logical qubits can be preserved for \edit{nearly one million} syndrome cycles
+using 288 physical qubits in total, assuming the physical error rate of $0.1\%$.
+We argue that achieving the same level of error suppression on 12 logical qubits with the surface code would require
+\edit{nearly  3000 physical qubits}.
+Our findings bring demonstrations of
+a low-overhead fault-tolerant quantum memory within the reach of near-term quantum processors. 
+\end{abstract}
+
+
+
+\section{Introduction}
+
+% 1st paragraph: general intro into QC 
+Quantum computing attracted attention due to its ability to offer asymptotically faster solutions to a set of computational problems compared to the best known classical algorithms \cite{nielsen2002quantum}.  It is believed that a scalable functioning quantum computer may help solve computational problems in such areas as scientific discovery, materials research, chemistry, and drug design, to name a few \cite{lloyd1996universal,wang2008quantum,reiher2017elucidating,alexeev2021quantum}.  
+
+% 2nd paragraph: a statement that QEC is needed
+The main obstacle to building a quantum computer is the fragility of quantum information, owing to various sources of noise affecting it.  Since isolating a quantum computer from external effects and controlling it to induce a desired computation are in conflict with each other, noise appears to be inevitable.  The sources of noise include imperfections in qubits, materials used, controlling apparatus, State Preparation and Measurement (SPAM) errors, and a variety of external factors ranging from local man-made, such as stray electromagnetic fields, to those inherent to the Universe, such as cosmic rays. See Ref. \cite{gambetta2017building} for a summary.  While some sources of noise can be eliminated with better control \cite{mundada2023experimental}, materials \cite{de2021materials}, and shielding \cite{10.1063/1.3658630, vepsalainen2020impact, PRXQuantum.4.020356}, a number of other sources appear to be difficult if at all possible to remove.  The latter kind can include spontaneous and stimulated emission in trapped ions \cite{wu2018noise,boguslawski2023raman}, and the interaction with the bath (Purcell Effect) \cite{Houck2008} in superconducting circuits---covering both leading quantum technologies.  
+%In both cases, it is estimated that the strength of the noise in practical implementations may limit the two-qubit gate fidelity to about $10^{-4}$ \cite{TBA}.  
+Thus, error correction becomes a key requirement for building a functioning scalable quantum computer.
+
+% 3rd paragraph: a short history of QEC putting LDPC into perspective
+The possibility of quantum fault tolerance was established earlier~\cite{shor1995scheme}.  Encoding a logical qubit redundantly into many physical qubits enables one to diagnose and correct errors by repeatedly measuring syndromes of parity check operators.  However, error correction is only beneficial if the hardware  error rate is below a certain threshold value that depends on a particular error correction protocol.  The first proposals for quantum error correction, such as concatenated codes~\cite{aharonov1997fault,kitaev1997quantum,aliferis2005quantum}, focused on demonstrating the theoretical possibility of error suppression. As understanding of quantum error correction and the capabilities of quantum technologies matured, the focus shifted to finding practical quantum error correction protocols. This resulted in the development of the surface code \cite{2003faulkitaevt,bravyi1998quantum,dennis2002topological,fowler2009high} that offers a high error threshold close to $1\%$, fast decoding algorithms, and compatibility with the existing quantum processors relying on 2-dimensional (2D) square lattice qubit connectivity.  Small examples of the surface code with a single logical qubit have been already demonstrated experimentally by several groups~\cite{takita2016demonstration,marques2022logical,krinner2022realizing,zhao2022realization,google2023suppressing}.  However, scaling up the surface code to a hundred or more logical qubits would be prohibitively expensive due to its poor encoding efficiency.  This spurred interest in more general quantum codes known as Low-Density Parity-Check (LDPC) codes~\cite{gottesman2013fault}.  Recent progress in the study of LDPC codes suggests that they can achieve quantum fault-tolerance with a much higher encoding efficiency~\cite{tremblay2022constant}. Here, we focus on the study of LDPC codes, as our goal is to find quantum error correction codes and protocols that are both efficient and possible to demonstrate in practice, given the limitations of quantum computing technologies. 
+
+% 4th paragraph: discuss LDPC
+A quantum error correcting code is of LDPC type if each check operator of the code acts only on a few qubits and each qubit participates only in a few checks.   Multiple variants of the LDPC codes have been proposed recently including hyperbolic surface codes~\cite{breuckmann2016constructions,higgott2021subsystem,higgott2023constructions}, hypergraph product~\cite{tillich2013quantum}, balanced product codes~\cite{breuckmann2021balanced}, two-block codes based on finite groups~\cite{kovalev2013quantum,panteleev2021degenerate,lin2023quantum,wang2023abelian}, and quantum Tanner codes~\cite{panteleev2022asymptotically,leverrier2022quantum}.  The latter were shown~\cite{panteleev2022asymptotically,leverrier2022quantum} to be asymptotically ``good'' in the sense of offering a constant encoding rate and linear distance -- a parameter quantifying the number of correctable errors. In contrast, the surface code has an asymptotically zero encoding rate and only square-root distance. Replacing the surface code with a high-rate, high-distance LDPC code could have major practical implications. First, fault-tolerance overhead (the ratio between the number of physical and logical qubits) could be reduced dramatically. Secondly, high-distance codes exhibit a very sharp decrease in the logical error rate: as the physical error probability crosses the threshold value, the amount of error suppression achieved by the code can increase by orders of magnitude even with a small reduction of the physical error rate. This feature makes high-distance LDPC codes attractive for near-term demonstrations which are likely to operate in the near-threshold regime.  
+\edit{However, it was previously believed that outperforming the surface code for realistic noise models 
+ including memory, gate, and SPAM errors may require very large LDPC codes with more than 10,000 physical qubits~\cite{higgott2021subsystem}.}
+
+
+% 6th paragraph: discuss contributions
+Here we present several concrete examples of high-rate LDPC codes with a few hundred physical qubits equipped with a low-depth syndrome measurement circuit, an efficient decoding algorithm, and a fault-tolerant protocol for addressing individual logical qubits.  These codes exhibit an error threshold close to 1\%, show excellent performance in the near-threshold regime, and offer \edit{more than 10X reduction} of the encoding overhead compared with the surface code.  Hardware requirements for realizing our error correction protocols are relatively mild, as each physical qubit is coupled by two-qubit gates with only six other qubits. Although the qubit connectivity graph is not locally embeddable into a 2D grid, it can be decomposed into two planar degree-3 subgraphs.  As we argue below, such qubit connectivity is well-suited for architectures based on superconducting qubits.  Before stating our results, let us describe several must-have  features for a quantum error-correcting code to be suitable for near-term experimental demonstrations
+and formally pose the problem addressed in this work.
+
+ 
+% 5th paragraph: address physical reality of manufacturing suitable hw 
+% hw discussion is deferred to the next section and  Conclusions 
+
+
+
+
+\section{Code selection criteria}
+
+In this work, we study the problem of realizing a fault-tolerant quantum memory with a small qubit overhead and a large code distance.  Our goal is to construct a combination of the LDPC code, syndrome measurement circuitry, and the decoding (error correction) algorithms, suitable for a near-term demonstration, but also offering long-term utility, while taking into account the capabilities and limitations of the superconducting circuits quantum hardware.  In other words, we seek to develop a practical error correction protocol.  Our selection criteria reflect this goal.
+
+We focus on encoding $k\gg 1$ logical qubits into  
+$n$ data qubits and use $c$ ancillary check qubits to measure the error syndrome.
+In total, the code relies on $n\,{+}\,c$ physical qubits. The net encoding rate 
+ is therefore
+\[
+r=\frac{k}{n+c}.
+\]
+For example, the standard surface code architecture encodes $k\,{=}\,1$ logical qubit into $n\,{=}\,d^2$ data qubits for a distance-$d$ code and uses $c\,{=}\,n{-}1$ check qubits for syndrome measurements.
+The net encoding rate is $r\approx 1/(2d^2)$, which quickly becomes impractical as one is forced to choose a large code distance, due to, for instance, the physical errors being close to the threshold value.  In contrast, we seek a high-rate LDPC code with $r\gg 1/d^2$.
+
+%SBB: new stuff
+To prevent the accumulation of errors one must be able to  measure the 
+error syndrome   frequently enough. This is accomplished by a syndrome measurement (SM) circuit that couples data qubits in the support of each check operator with the respective ancillary qubit by a sequence of $\cnotgate$ gates.
+Check qubits are then measured revealing the value of the error syndrome.
+The time it takes to implement the SM circuit is proportional to its depth
+— the number of gate layers composed of non-overlapping $\cnotgate$s.
+Since new errors continue to occur while the SM circuit is executed, its depth
+should be minimized.
+Thus we seek an LDPC code with a high rate $r$ and low-depth SM circuit.
+
+A noisy version of the SM circuit may include 
+several types of faulty operations such as
+memory errors
+on  data or check qubits, faulty $\cnotgate$ gates, qubit initializations
+and measurements. 
+We consider the circuit-based noise model~\cite{fowler2009high}
+where each operation 
+fails  with the probability $p$.
+Faults on different operations are independent.
+A logical error occurs when the final error-corrected state of $k$ logical qubits differs from the initial encoded state. 
+The probability of a logical error $p_L$ depends on the  error rate $p$,
+details of the SM circuits, and a decoding algorithm.
+A pseudo-threshold $p_0$ of an error correction protocol is defined
+as a solution of  the break-even equation $p_L(p)=kp$.
+Here $kp$ is an estimate of the probability that at least one of $k$ unencoded qubits suffers from an error.
+ To achieve a significant error suppression in the regime $p\,{\sim}\,10^{-3}$, which is relevant for near-term demonstrations, it is desirable to have pseudo-threshold 
+close to 1\% or higher.
+For example, the surface code architecture achieves  pseudo-threshold $p_0\approx 1\%$ for a large enough code distance~\cite{fowler2009high}.
+We seek a high-rate LDPC code with a low-depth %distance-preserving 
+SM circuit and a high pseudo-threshold.
+
+A logical error is undetectable if it can be generated without
+triggering any syndromes.  Such errors 
+span at least $d$ data qubits for a distance-$d$ code.
+Let us say that a SM circuit has distance $\dcirc$ if
+it takes at least $\dcirc$ faulty operations in the circuit to generate an undetectable logical error.
+By definition, $\dcirc\,{\le}\,d$ for any distance-$d$ code
+and typically $\dcirc\,{<}\,d$ since a few faulty operations in the SM circuit may create a high-weight error on the data qubits. 
+We say that a SM circuit is  distance-preserving
+if $\dcirc\,{=}\,d$ meaning the  circuit is designed so as to avoid accumulating high-weight errors, which is the best one can hope for. 
+It is preferred (but not required)  that the SM circuit is distance-preserving.
+
+
+Another criterion is dictated by the limited qubit connectivity of near-term quantum devices.
+Each quantum code can be described by a Tanner graph $G$ such that 
+each vertex of $G$ represents either a data qubit or a check operator. 
+A check vertex  $i$
+and a data vertex $j$ are connected by an edge if the $i$-th check operator
+acts non-trivially  
+on the $j$-th data qubit (by applying Pauli $X$ or $Z$). \fig{2Dlayout}~A) shows the Tanner graph describing a distance-3 surface code. 
+To keep the SM circuit depth small, it is desirable that two-qubit gates such as $\cnotgate$ can be applied along every edge of the Tanner graph. By construction, the Tanner graph of any LDPC code
+has a small degree. 
+One drawback of high-rate LDPC codes is that their Tanner graphs may not be locally embeddable 
+into the 2D grid~\cite{baspin2022quantifying,bravyi2010tradeoffs}. This poses a challenge
+for hardware implementation with superconducting qubits
+coupled by   microwave resonators.
+A useful VLSI design concept is graph {\em thickness},  see~\cite{mutzel1998thickness,tremblay2022constant} for details.
+A graph $G\,{=}\,(V,E)$ is said to have thickness $\theta$ if one can partition its set of edges $E$ into disjoint union of $\theta$ sets 
+$E_1\sqcup E_2\sqcup\ldots \sqcup E_\theta\,{=}\,E$ such that each subgraph $(V,E_i)$ is planar.
+Informally, a graph with thickness $\theta$ can be viewed as a vertical stack of $\theta$ planar graphs.
+Qubit connectivity described by a planar graph (thickness $\theta\,{=}\,1$) is the simplest one from hardware
+perspective since the couplers do not cross. Graphs with thickness $\theta\,{=}\,2$ might still be implementable since two planar layers of couplers and their control lines can be attached to the top and the bottom side of the chip hosting qubits, and the two sides mated (see \sec{conclusions} for a detailed discussion).
+% A reference to the possibility of doing this is required
+Graphs with thickness $\theta\,{\ge}\, 3$ are much harder to implement. Thus we seek a high-rate LDPC code with a low-depth %distance-preserving 
+SM circuit, high pseudo-threshold, and a low-degree Tanner graph with thickness $\theta\le 2$.
+
+Finally, the code must perform a useful function within a larger architecture for quantum computation, the simplest of which is a quantum memory. In a quantum memory it must be possible to measure every logical qubit in at least one Pauli basis, permitting initialization and readout of individual qubits. Furthermore it should be possible to connect the code to another error correction code and facilitate Pauli product measurements between their logical qubits. This enables load-store operations that transfer quantum data out of and into the code via quantum teleportation. For the purpose of the shorter-term goal of demonstrating the code in practice, the code should also feature enough logical operations to facilitate experiments to verify correct operation.
+
+
+Our code selection criteria are summarized below.
+\begin{enumerate}
+\item We desire a code with a large distance $d$ and
+a high encoding rate $r\,{\gg}\, 1/d^2$, 
+\item that is complemented by a short-depth syndrome measurement circuit, 
+%that is both
+%\begin{itemize}
+%    \item short-depth, and
+%     \item %\end{itemize}
+\item offers a pseudo-threshold close to 1\% (or higher) for the circuit-based noise model,
+\item is constructed over thickness-2 or less Tanner graph,
+\item and possesses fault-tolerant load-store operations as well as readout and initialization of individual qubits. 
+\end{enumerate}
+
+
+
+
+
+\section{Main results}
+\label{sec:results}
+
+
+Here we give concrete examples of LDPC codes equipped with syndrome
+measurement circuits and efficient decoding algorithms that 
+meet all above conditions.
+Our examples fall into the family of  tensor product generalized bicycle codes
+proposed by Kovalev and  Pryadko~\cite{kovalev2013quantum}.
+\edit{We named our codes Bivariate Bicycle (BB) since they are based on bivariate polynomials, as detailed below.}
+These are stabilizer codes of CSS-type~\cite{steane1996multiple,calderbank1996good} 
+that can be described by a collection of few-qubit check (stabilizer) operators
+composed of Pauli $X$ and $Z$.
+At a high level, a BB code is similar to the two-dimensional toric code~\cite{2003faulkitaevt}.
+In particular, physical qubits of a BB code can be laid out on a two-dimensional  grid
+with periodic boundary conditions such that all check operators are obtained from a single pair of $X$- and $Z$-checks  by applying horizontal and vertical shifts of the grid. However, in contrast to the plaquette and vertex stabilizers
+describing the toric code, check operators of a BB code are not geometrically local.
+Furthermore, each check acts on six qubits rather than four qubits.  See \fig{2Dlayout}~B) an example Tanner graph of a BB code.
+We give a formal definition of BB codes in \sec{codedefinition}.
+The Tanner graph of any BB code has vertex degree six. 
+Although this graph  may not be locally embeddable into a 2D grid, we show that it has thickness $\theta\,{=}\,2$, as desired. 
+This result may be surprising since it is known that 
+a general degree-$6$ graph can have thickness $\theta \,{=}\, 3$, see~\cite{mutzel1998thickness}.
+
+
+\begin{figure}[ht]
+  \centering
+    \includegraphics[height=9cm]{fig1.pdf}
+         \caption{A) Tanner graph of a surface code, for comparison. 
+         C) Tanner graph of a Bivariate Bicycle code with parameters $[[144,12,12]]$  embedded into a torus.
+     Any edge of the Tanner graph connects a data and a check vertex.
+      Data qubits associated with the registers $q(L)$ and $q(R)$ are shown by bLue and oRange circles. 
+     Each vertex has six incident edges including four short-range edges (pointing north, south, east, and west) and two long-range edges. There are also several long-range edges, of which we only show a few to to avoid clutter.  Dashed and solid edges indicate two planar subgraphs spanning the Tanner graph, see \sec{codedefinition}.     
+      B) Sketch of a Tanner graph extension for measuring $\bar Z$ and $\bar X$ following \cite{cohen2022lowoverhead}.
+         The ancilla corresponding to the $\bar X$ measurement can be connected to a surface code, enabling load-store operations for all logical qubits via quantum teleportation and some logical unitaries. This extended Tanner graph has a thickness-2 implementation, see \sec{logicals}.
+         }
+  \label{fig:2Dlayout}
+\end{figure}
+
+
+
+Below we use the standard notation $[[n,k,d]]$ for code parameters.
+Here $n$ is the code length (the number of data qubits), $k$ is the number of logical  qubits,
+and $d$ is the code distance. \tab{codes_intro} shows small examples
+of BB codes along with several metrics of the error suppression 
+achieved by each codes. 
+ The distance-12 code $[[144,12,12]]$ may be the most promising for near-term demonstrations, as it combines large distance and high net encoding rate $r\,{=}\,1/24$.
+For comparison, the distance-13 surface code has net encoding rate $r\,{=}\,1/338$.
+Below we show that the distance-12
+BB code  outperforms the distance-13 surface code for the experimentally relevant range of error rates, see \fig{numerics} B).
+To the best of our knowledge, all codes shown in \tab{codes_intro} are new.
+
+
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+& & & &    \\
+$[[n,k,d]]$ & \parbox{3cm}{\centering Net Encoding \\ Rate $r$}  & 
+\parbox{3cm}{\centering Circuit-level\\ distance $\dcirc$} &
+Pseudo-threshold $p_{0}$ & 
+$p_L(0.001)$ & $p_L(0.0001)$ \\
+& & & & \\
+\hline
+\hline
+$[[72,12,6]]$ &  1/12 & $\le 6$ &  $0.0048$ & $7\times 10^{-5}$ & $7 \times 10^{-8}$    \\
+\hline 
+$[[90,8,10]]$ & $1/23$ & $\le 8$ &   $0.0053$  & $5\times 10^{-6}$ & $4 \times 10^{-10}$ \\
+\hline
+$[[108,8,10]]$ &  1/27 & $\le 8$ & $0.0058$  & 
+$3\times 10^{-6}$ & $1\times 10^{-10}$ \\
+\hline
+$[[144,12,12]]$ & $1/24$ & $\le 10$ & $0.0065$  & $2\times 10^{-7}$ & $8\times 10^{-13}$ \\
+\hline
+$[[288,12,18]]$ & $1/48$ & $\le 18$ &  $0.0069$  & $2\times 10^{-12}$ & $1\times 10^{-22}$ \\
+\end{tabular}
+\end{center}
+\caption{Small examples of Bivariate Bicycle LDPC codes and their 
+performance for the circuit-based noise model.
+All codes have weight-6 checks, thickness-2 Tanner graph, and a  depth-$7$ syndrome measurement circuit. A code with parameters $[[n,k,d]]$
+requires $2n$ physical qubits in total
+and achieves the net encoding rate $r=k/2n$
+(we round $r$ down to the nearest inverse integer).
+Circuit-level distance $\dcirc$
+is the minimum number of faulty operations in the syndrome measurement circuit required to generate an undetectable logical error.
+The pseudo-threshold $p_{0}$ is
+a solution of the  break-even equation $p_L(p)=kp$,
+where $p$ and $p_L$ are the physical and logical error rates
+respectively. The logical error rate $p_L$ was computed numerically for $p\ge 10^{-3}$
+and extrapolated to lower error rates.
+}
+\label{table:codes_intro}
+\end{table}
+
+
+
+To quantify the level of error suppression achieved by a code
+we introduce 
+%error correction 
+SM circuits that repeatedly measure
+the syndrome of each check operator. The full cycle of syndrome measurement for
+a length-$n$ BB code requires $n$ ancillary check qubits
+to store the measured syndromes.
+According, the net encoding rate is $r=k/(2n)$.
+Check qubits are coupled with the data qubits
+by applying a sequence of $\cnotgate$ gates. The full cycle of syndrome measurement
+requires only $7$ layers of $\cnotgate$s regardless of the code length.
+The check qubits are initialized and measured at the beginning and at the end of the syndrome cycle respectively, see \sec{syndrome_circuit} for details.
+We emphasize that our SM circuit applies to any BB code beyond those listed in \tab{codes_intro}.
+The circuit respects the cyclic shift symmetry of the underlying code.
+Assuming that the physical qubits (data or check) are located at vertices
+of the Tanner graph, all $\cnotgate$ gates in the SM circuit act on nearest-neighbor
+qubits. Thus the required qubit connectivity is described by a degree-6 thickness-2
+graph, as desired. 
+We conjecture, based on the numerical simulations, that our SM circuit is distance-preserving for the code $[[72,12,6]]$, see \tab{codes_intro} for the upper bounds on $\dcirc$ (the upper bound $\dcirc\le 18$ for the 288-qubit code is unlikely to be tight \edit{and this affects the fit and extrapolations}).
+
+The full error correction protocol performs $N_c\gg 1$ syndrome measurement
+cycles  and calls a decoder — a classical algorithm
+that takes as input the measured syndromes and outputs a guess of the final
+error on the data qubits. 
+Error correction succeeds if the guessed and the actual error coincide modulo a product of check operators. In this case the two errors have the same action on any encoded (logical) state.
+Thus applying the inverse of the guessed error would return data qubits to the initial logical sate.
+Otherwise, if the guessed and the actual error differ by a non-trivial logical operator, error correction fails resulting in a logical error.
+Our numerical experiments are based on the Belief Propagation with an Ordered Statistics Decoder (BP-OSD)
+proposed by Panteleev and Kalachev~\cite{panteleev2021degenerate}.
+The original work~\cite{panteleev2021degenerate} described BP-OSD in the context of a toy noise model with memory errors only.
+Here we show how to extend BP-OSD to the circuit-based noise model.
+\edit{Our approach closely follows Refs.~\cite{ delfosse2023spacetime,mcewen2023relaxing,higgott2023improved,geher2023tangling}.}
+We also show that BP-OSD can be applied to other problems in quantum fault-tolerance such as estimating the distance of a quantum LDPC code, see \sec{decoder} for details. 
+These tasks can be accomplished with a relatively minor extension of the publicly available BP-OSD software developed by Roffe et al.~\cite{roffe2020decoding}
+
+
+Let $P_L(N_c)$ be the logical error probability after performing
+$N_c$ syndrome cycles.
+Define the logical error rate as $p_L=1 - (1-P_L(N_c))^{1/N_c}\approx P_L(N_c)/N_c$.
+Informally, $p_L$ can be viewed
+as the logical error probability per syndrome cycle. 
+Following common practice, we choose $N_c=d$ for a distance-$d$ code.
+\fig{numerics} A) shows the logical error rate  achieved by codes from \tab{codes_intro}.
+The logical error rate was computed numerically for $p\ge 10^{-3}$ and extrapolated to lower error rates
+using  a fitting formula $p_L=p^{\dcirc'/2} e^{c_0 + c_1 p + c_2p^2}$,
+where $c_0,c_1,c_2$ are fitting parameters and $\dcirc'$ is an upper bound on $\dcirc$ from \tab{codes_intro}. The observed pseudo-threshold  \edit{for the $144$-qubit and $288$-qubit codes is close to $0.007$}, which is nearly the same as the error threshold of the surface code~\cite{groszkowski2009high}.
+To the best of our knowledge, this provides the first example of high-rate, large-distance LDPC codes achieving the pseudo-threshold close to 1$\%$ under the circuit-based noise model. 
+
+
+
+
+\begin{figure}[h]
+%\centering
+%\includegraphics[width=\textwidth]{figures_colorblind/noise_performance.pdf}\begin{subfigure}{0.5\textwidth}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=7cm]{small_ldpc.pdf}
+ \caption{A subfigure}
+\label{fig:sub1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=7cm]{ldpc_vs_surface.pdf}
+\caption{A subfigure}
+\label{fig:sub2}
+\end{subfigure}
+     \caption{A) Logical vs physical error rate for small examples
+     of Bivariate Bicycle  LDPC codes. A numerical estimate of $p_L$ (diamonds) was
+     obtained by simulating $d$ syndrome cycles for a distance-$d$ code.
+     Most of the data points have error bars $\approx p_L/10$ due to sampling errors.
+     B) Comparison between the Bivariate Bicycle LDPC code  $[[144,12,12]]$
+     and surface codes with $12$ logical qubits and distance \edit{$d\in \{9,11,13,15\}$}.
+     The distance-$d$ surface code with $12$ logical qubits has length $n=12d^2$
+     since each logical qubit is encoded into a separate $d{\times}d$ patch of the surface code
+     lattice.
+     }
+  \label{fig:numerics}
+\end{figure}
+
+
+
+For example, suppose that the physical error rate is $p=10^{-3}$, which is a realistic goal for near-term demonstrations. 
+Encoding $12$ logical qubits using the distance-$12$ code from \tab{codes_intro} would offer the logical error rate \edit{$2\times 10^{-7}$} which is enough to preserve $12$ logical qubits for
+\edit{nearly one million syndrome cycles}.
+The total number of physical qubits required
+for this encoding is  $288$.
+The distance-$18$ code from \tab{codes_intro} would require $576$ physical qubits while suppressing the error rate from $10^{-3}$ to \edit{$2\times 10^{-12}$}
+enabling roughly hundred billion syndrome cycles.
+For comparison, encoding  $12$ logical qubits into separate patches of the surface code
+would require \edit{nearly $3000$} physical qubits to suppress the error rate from $10^{-3}$ to $10^{-6}$,
+see \fig{numerics}~B).
+In this example the distance-$12$ BB  code offers \edit{more than $10$X} saving in the number of  physical qubits compared with the surface code. 
+
+
+We also find that BB LDPC codes admit extensions that allow them to function as a logical memory with load-store operations. In \sec{logicals} we show how to use methods from \cite{cohen2022lowoverhead} to attach two ancilla systems to the code that permit logical measurement of all logical qubits in the $X$ and $Z$ bases. Which logical qubit is being measured can be controlled via a set of fault tolerant unitary operations. The extended Tanner graph is not only thickness-2, but the extension from the $X$ ancilla system is ``effectively planar'' (in a sense we define later) facilitating interconnection with other codes on the same chip. 
+
+
+Our findings bring experimental demonstration of high-rate LDPC codes within the reach of near-term quantum processors which are expected to offer a few hundred physical qubits, gate error rates close to $10^{-3}$, and long range qubit connectivity~\cite{bravyi2022future}. 
+
+The rest of this paper is organized as follows. \sec{codedefinition} formally defines BB LDPC codes and proves their basic properties.  The construction of the syndrome measurement circuit is detailed in \sec{syndrome_circuit}.  The circuit-based noise model and BP-OSD decoder for this noise model are discussed in \sec{decoder} with some implementation details deferred to \sec{numerics}. We describe fault tolerant memory capabilities in \sec{logicals}.  A summary of our findings and some open questions can be found in \sec{conclusions}.
+
+
+
+\section{Bivariate Bicycle quantum LDPC codes}\label{sec:codedefinition}
+
+Let $I_\ell$ and $S_\ell$ be the identity matrix and the cyclic shift matrix of size $\ell \times \ell$
+respectively.
+The $i$-th row of $S_\ell$ has a single nonzero entry equal to one at the column $i\,{+}\,1{\pmod \ell}$.
+For example,
+\[
+S_2=\left[\ba{cc} 0 & 1 \\ 1 & 0 \\ \ea\right] \quad \mbox{and} \quad
+S_3= \left[\ba{ccc} 0 & 1 & 0 \\ 0 & 0 & 1 \\ 1 & 0 & 0 \\ \ea \right].
+\]
+Consider matrices
+\[
+x=S_\ell \otimes I_m \quad \mbox{and} \quad y = I_\ell \otimes S_m.
+\]
+Note that $xy=yx$ and $x^\ell = y^m =I_{\ell m}$.
+A BB code is defined by a pair of matrices
+\be
+\label{AB}
+A = A_1 + A_2 + A_3  \quad \mbox{and} \quad B = B_1+B_2+B_3
+\ee
+where each matrix $A_i$ and $B_j$ is a power of $x$ or $y$. Here and below the addition and multiplication of binary matrices is performed modulo two, unless stated otherwise. Thus, we also assume the $A_i$ are distinct and the $B_j$ are distinct to avoid cancellation of terms. For example,
+one could choose $A=x^3+y+y^2$ and $B=y^3+x+x^2$.
+Note that $A$ and $B$ have exactly three non-zero entries in each row and each column. Furthermore, $AB\,{=}\,BA$ since $xy\,{=}\,yx$.
+The above data defines a
+BB LDPC code denoted $\qc$ with 
+length $n\,{=}\,2\ell m$  and 
+ check matrices
+\be
+\label{HXHZ}
+H^X = \left[A | B\right] \quad \mbox{and} \quad  H^Z=\left[B^T | A^T\right].
+\ee
+Here the vertical bar indicates stacking matrices
+horizontally and $T$ stands for the matrix transposition. 
+Both matrices $H^X$ and $H^Z$ have size $(n/2){\times} n$.
+Each row $v\,{\in}\, \FF_2^n$ of $H^X$ defines an $X$-type check operator $X(v)=\prod_{j=1}^n X_j^{v_j}$.
+Each row $v\,{\in}\, \FF_2^n$ of $H^Z$ defines a $Z$-type check operator $Z(v)=\prod_{j=1}^n Z_j^{v_j}$.
+Any X-check and Z-check commute since they overlap on even number of qubits (note that $H^X (H^Z)^T = AB+BA=0 {\pmod 2}$).
+To describe the code parameters we use certain linear subspaces associated with the check matrices, see Table~1 for our notations.
+Then the code $\qc$ has parameters $[[n,k,d]]$ with 
+\be
+n=2\ell m,\quad 
+k = 2\cdot\mathrm{dim}\left(\ker{A} \cap \ker{B}\right)
+\quad \mbox{and} \quad
+d= \min\bigl\{ |v|{:} \,\, v\in \ker{H^X}{\setminus} \rs{H^Z} \bigr\},
+\ee
+see \lem{kd}.
+Here $|v|=\sum_{i=1}^n v_i$ is the Hamming weight of a vector $v\in \FF_2^n$.
+We note that the code $\qc$ can be viewed as a special case of the Lifted Product construction~\cite{panteleev2021quantum}
+based on the abelian group $\ZZ_\ell \times \ZZ_m$.
+Here $\ZZ_j$ denotes the cyclic group of order $j$.
+
+
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{c|c|c}
+\hline
+Notation & Name & Definition \\
+\hline
+\hline
+$\rs{H}$ & row space & Linear span of rows of $H$ \\
+\hline
+$\cs{H}$ & column space & Linear span of columns of $H$\\
+\hline
+$\ker{H}$ & nullspace & Vectors orthogonal to each row of $H$\\
+\hline
+$\rk{H}$ & rank &  $\rk{H}=\mathrm{dim}(\rs{H})=\mathrm{dim}(\cs{H})$ \\
+\hline
+\end{tabular}
+\caption{Notations for  linear spaces associated with a binary matrix $H$.
+Here the linear span, orthogonality, and dimension are computed over the binary field
+$\FF_2=\{0,1\}$.
+If $H$ has size $s\,{\times}\, n$ then $\rs{H}\subseteq \FF_2^n$,
+$\cs{H}\subseteq \FF_2^s$, and $\ker{H}\subseteq \FF_2^n$.
+}
+\end{center}
+\end{table}
+
+
+\begin{table}[t]
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+& & & & &   \\
+$[[n,k,d]]$ & \parbox{3cm}{\centering Net Encoding \\ Rate $r$}   & 
+$\ell,m$ & $A$ & $B$ \\
+& & & & &   \\
+\hline
+\hline
+$[[72,12,6]]$ &  1/12 &   $6,6$ & $x^3+y+y^2$  & $y^3+x+x^2$ \\
+%\hline 
+%$[[98,6,12]]$ &  1/33 & $7\times 10^{-7}$&    $7,7$ & $x^3+y^2+y^5$ & $y^3+x^2+x^5$ \\
+\hline 
+$[[90,8,10]]$ & $1/23$  & $15,3$ & $x^9 + y + y^2$ & $1+ x^2 +x^7$ \\ 
+\hline
+$[[108,8,10]]$ &  1/27 &    $9,6$ &  $x^3+y+y^2$ & $y^3+x+x^2$  \\
+\hline 
+$[[144,12,12]]$ & $1/24$ &   $12,6$ &  $x^3+y+y^2$ & $y^3+x+x^2$ \\
+%\hline
+%$[[270,24,10]]$  & $1/23$ & &  $15,9$ &  $x^9 + y^3 + y^6$ & $1+x^2 +x^7$  \\
+\hline
+$[[288,12,18]]$ & $1/48$ &   $12,12$ & $x^3 + y^2 + y^7$  & $y^3 + x+x^2$\\
+%\hline
+%$[[378,10,\le 26]]$ & $1/76$ &  $(27,7)$ & $( 14 , 10 , 18 , 3 , 23 , 13 )$ & $( 0 , 1 , 3 , 3 , 2 , 5 )$ \\
+%\hline
+%$[[360,32,10]]$ & $1/23$ & &  
+%$15,12$ & $x^3+y^4+y^8$ & 
+%$1+x^{10}+x^{11}$\\
+\hline
+$[[360,12,\le 24]]$ & $1/60$ &  $30,6$ &  $x^9 + y + y^2$  &  $y^3 + x^{25}+x^{26}$\\
+%\hline
+%$[[450,40,10]]$ & $1/23$ & & $15,15$ &  $x^3+y+y^{11}$ & $y^3+x^4+x^{14}$  \\
+\hline
+$[[756,16,\le 34]]$ & $1/95$  & $21,18$ &
+$x^{3}+y^{10} + y^{17}$ & $y^5+x^3+x^{19}$\\
+% Obsolete code examples
+%\hline
+%$[[432,12,\le 24]]$ & %$1/72$ &  $18,12$ &  $x^3 %+ y^2 + y^7$  &  $y^3 + %x+x^2$\\
+%\hline
+%$[[450,40,10]]$ & $1/23$ & %& $15,15$ &  %$x^3+y+y^{11}$ & %$y^3+x^4+x^{14}$  \\
+%\hline
+%$[[784,24,\le 24]]$ & %$1/66$  & $28,14$ &
+%$x^{26}+y^6 + y^8$ & %$y^7+x^9+x^{20}$\\
+%%$[[450,8,d\le 28]]$ & %$1/113$ &   & $(15,15)$ & %$(3,1,2)$ & $(3,1,8)$ \\
+%\hline
+\end{tabular}
+\end{center}
+\caption{Small examples of Bivariate Bicycle LDPC codes and their parameters.  All codes have weight-6 checks, thickness-2 Tanner graph, and a depth-7 syndrome measurement circuit. 
+Code distance was computed by the mixed integer programming approach of
+Ref.~\cite{landahl2011fault}.
+ Notation $\le d$ indicates that only an upper bound on the code distance is known at the time of this writing.  We round $r$ down to the nearest inverse integer. 
+The codes have check matrices  $H^X=[A|B]$
+and $H^Z=[B^T|A^T]$ with  $A$ and $B$ defined in the last two columns.
+The matrices $x$, $y$ obey
+$x^\ell=y^m=1$ and $xy=yx$.}
+\label{table:codes}
+\end{table}
+
+\tab{codes} describes the polynomials $A$ and $B$ that give rise to examples of high-rate, high-distance  BB codes found by a numerical search. 
+This includes all codes from \tab{codes_intro} and two examples of higher distance codes. 
+To the best of our knowledge,
+all these examples are new. 
+The code $[[360,12,\le 24]]$  improves upon a code  $[[882,24,\le 24]]$ with weight-6 checks found by Panteleev and Kalachev in~\cite{panteleev2021degenerate} (assuming that our distance upper bound is  tight). Indeed, taking two independent copies of the 360-qubit code gives parameters $[[720,24,\le 24]]$.
+
+
+By construction, the  code $\qc$ has 
+weight-6 check operators and each qubit participates in six checks
+(three $X$-type plus three $Z$-type checks). 
+%Here we ignore possible cancellations in the sum Eq.~(\ref{AB}) that can reduce the weight below six.
+Accordingly, the  code $\qc$ has a degree-$6$ Tanner graph.
+Below we show that the Tanner graph  has thickness $\theta\le 2$, as desired, see \lem{thickness}. 
+
+We note that the recent work by Wang, Lin, and Pryadko~\cite{wang2023abelian,lin2023quantum}
+described examples of group-based codes closely related to the codes considered here. Some of the group-based codes with weight-8 checks found in~\cite{lin2023quantum} outperform our BB codes with weight-6 checks in terms of the parameters $n,k,d$.
+It remains to be seen whether group-based codes can achieve a similar or better level of error suppression for the circuit-based noise model.  
+
+In the rest of this section we establish some
+properties of BB LDPC codes.
+\begin{lemma}
+\label{lem:kd}
+The code $\qc$ has parameters $[[n,k,d]]$, where
+\[
+n = 2\ell m,\quad 
+k = 2\cdot\mathrm{dim}\left(\ker{A} \cap \ker{B}\right),
+\quad \mbox{and} \quad
+d= \min\bigl\{ |v|{:} \,\, v\in \ker{H^X}{\setminus} \rs{H^Z} \bigr\}.
+\]
+The code offers equal distance for $X$-type and $Z$-type errors.
+\end{lemma}
+\begin{proof}
+It is known~\cite{steane1996multiple,calderbank1996good} that 
+\[
+k = n - \rk{H^X}-\rk{H^Z}.
+\]
+We claim that $\rk{H^X}\,{=}\,\rk{H^Z}$.
+Indeed, define a self-inverse permutation matrix $C_\ell$ of size $\ell \,{\times}\, \ell$ such that the $i$-th column of $C_\ell$ has a single nonzero entry equal to one at the row $j=-i{\pmod \ell}$. Define $C_m$ similarly
+and let $C=C_\ell \otimes C_m$. Since $C_\ell S_\ell C_\ell = S_\ell^T$
+and $C_m S_m C_m = S_m^T$, one gets
+\be
+\label{ABC2}
+A^T = C AC \quad \mbox{and} \quad B^T = CBC.
+\ee
+Therefore one can write
+\[
+H^Z= [B^T|A^T] = [CBC |CAC] = C[A|B]\left[ \ba{cc} 0 & C  \\ C & 0\\ \ea \right]
+=CH^X\left[ \ba{cc} 0 & C  \\ C & 0\\ \ea \right].
+\]
+Thus $H^Z$ is obtained from $H^X$ by multiplying on the left and on the right by invertible matrices.
+This implies $\rk{H^X}=\rk{H^Z}$. Therefore
+\begin{align*}
+k& = n-2{\cdot}\rk{H^Z}=n-2{\left(\frac{n}2-\dim{(\ker{(H^Z)^T)})}\right)} = n - 2{\left(\frac{n}2-\dim{(\ker{A}\cap \ker{B})}\right)}\\
+&= 2\cdot\mathrm{dim}\left(\ker{A} \cap \ker{B}\right).
+\end{align*}
+Here we noted that $H^Z$ has size $(n/2)\,{\times}\, n$ and $\ker{(H^Z)^T)}=\ker{A}\cap \ker{B}$ since $H^Z=[B^T|A^T]$.
+
+It is known~\cite{steane1996multiple,calderbank1996good}  that 
+a CSS code with check matrices $H^X$ and $H^Z$ has distance
+$d\,{=}\,\min{(d^X,d^Z)}$, where 
+$d^X$ and $d^Z$ are the code distances for $X$-type and $Z$-type errors
+defined as
+\[
+d^X =  \min\bigl\{ |v|{:} \,\, v\in \ker{H^Z}{\setminus} \rs{H^X} \bigr\}
+\quad \mbox{and} \quad
+d^Z =  \min\bigl\{ |v|{:} \,\, v\in \ker{H^X}{\setminus} \rs{H^Z} \bigr\}.
+\]
+We claim that $d^Z\,{\le}\, d^X$.
+Indeed, let $X(f)\,{=}\,\prod_{j=1}^n X_j^{f_j}$ be a minimum weight logical $X$-type Pauli operator
+such that $|f|\,{=}\,d^X$. 
+Then $H^Z f\,{=}\,0$ and $f\,{\notin}\, \rs{H^X}$.
+Thus there exists a logical $Z$-type operator $Z(g)\,{=}\,\prod_{j=1}^n Z_j^{g_j}$ anti-commuting with $X(f)$. In other words, $H^X g\,{=}\,0$ and $f^T g \,{=}\, 1$. Here, $f$ and $g$ are length-$n$ binary vectors.
+Write $f\,{=}\,(\alpha,\beta)$ and $g\,{=}\,(\gamma, \delta)$, where $\alpha,\beta,\gamma,\delta$ are length-$(n/2)$ vectors.
+Conditions $H^Z f =0$ and $H^X g=0$ are equivalent to 
+\be
+\label{alpha_beta_gamma_delta}
+B^T \alpha = A^T \beta \quad \mbox{and} \quad A \gamma = B \delta.
+\ee
+Here and below all arithmetics is modulo two.
+Define length-$n$ vectors 
+\be
+e = (C\delta, C\gamma) \quad \mbox{and} \quad h=(C \beta, C\alpha).
+\ee
+From Eqs.~(\ref{ABC2},\ref{alpha_beta_gamma_delta}) one gets
+\[
+H^X h = [A|B]\left[\ba{c} C \beta \\ C \alpha\\ \ea\right]
+=AC\beta+BC\alpha = C(A^T \beta + B^T \alpha) = 0.
+\]
+Likewise, 
+\[
+H^Z e = [B^T|A^T]\left[\ba{c} C \delta \\ C \gamma\\ \ea\right]
+=B^T C\delta + A^T C\gamma = C(B \delta + A \gamma) = 0.
+\]
+Furthermore, 
+\[
+h^T e = \beta^T C C \delta + \alpha^T C C\gamma = \beta^T \delta + \alpha^T \gamma =f^T g=1.
+\]
+Thus $X(e)$ and $Z(h)$ are non-identity logical operators. 
+It follows that $d^Z\le |h|$. We get
+\[
+d^Z\le |h|=|C\beta|+|C\alpha|=|\beta|+|\alpha|=|f|=d^X.
+\]
+Thus $d^Z\le d^X$. Similar argument shows that $d^X\le d^Z$, that is, $d^X=d^Z$.
+\end{proof}
+\noindent
+We note that
+the equality $d^X=d^Z$ can also be established using the machinery of
+Ref.~\cite{panteleev2021quantum} 
+by viewing $\qc$ as a Lifted Product code.
+
+
+In the following, we partition the set of data qubits as $[n]\,{=}\,LR$, where $L$ and $R$ are the left and right blocks of $n/2=\ell m$ data qubits. Then, data qubits $L$ and $R$ and checks $X$ and $Z$ may each be labeled by integers $\mathbb{Z}_{\ell m}=\{0,1,\dots,\ell m-1\}$ which are indices into the matrices $A,B$. Alternatively, qubits and checks can be labeled by monomials from $\mathcal{M} =\{1,y,\dots,y^{m-1},x,xy,\dots,xy^{m-1},\dots,x^{\ell-1}y^{m-1}\}$ in this order, so that $i\in\mathbb{Z}_{\ell m}$ labels the same qubit or check as $x^{a_i}y^{i-ma_i}$ for $a_i=\text{floor}(i/m)$. Using the monomial labeling, $L$ data qubit $\alpha\in \mathcal{M}$ is part of $X$ checks $A^T_i\alpha$ and $Z$ checks $B_i\alpha$ for $i=1,2,3$. Similarly, $R$ data qubit $\beta\in \mathcal{M}$ is part of $X$ checks $B^T_i\beta$ and $Z$ checks $A_i\beta$. A unified notation assigns each qubit or check a label $q(T,\alpha)$ where $T\in\{L,R,X,Z\}$ denotes its type and $\alpha\in \mathcal{M}$ its monomial label\footnote{The monomial notations should not be confused with the matrix notations used earlier in this section. For example, multiplication of monomials such as $B_i\alpha$ is different from multiplying a vector $\alpha$ by a matrix $B_i$.}.
+
+
+\begin{figure}[ht]
+     \centering
+    \includegraphics[width=0.9\textwidth]{wheel_extraction.pdf}
+        \caption{ A). B) Two different grids over a torus defined using different subsets of $A_1,A_2,A_3,B_1,B_2,B_3$.  Edge labels indicate adjacency matrices that generate the respective edges. By extracting either horizontal or vertical strips from these grids, we obtain planar `wheel graphs' whose union contains all edges in the Tanner graph. The `A' wheels (dashed lines) cover $A_2,A_3,B_3$ and the `B' wheels (solid lines) cover $B_1,B_2,A_1$. To avoid clutter, each grid shows only a subset of edges present in the Tanner graph.}
+        \label{fig:wheel_extraction}
+\end{figure}
+
+
+\begin{figure}[ht]
+     \centering
+    \includegraphics[width=0.6\textwidth]{navigation.pdf}
+        \caption{A) ``Compass'' diagram that shows the direction in which matrices $A,B$ are applied to travel between different nodes.  B) The unit cell of the construction of a toric layout in the proof of \lem{toric_layout}.}
+        \label{fig:navigation}
+\end{figure}
+
+\begin{lemma}
+\label{lem:thickness}
+The Tanner graph $G$ of the code $\qc$ has thickness $\theta\,{\le}\, 2$. 
+A decomposition of $G$ into two planar layers can be computed in time $O(n)$. 
+Each planar layer of $G$ is a degree-3 graph.
+\end{lemma}
+\begin{proof}
+Let $G\,{=}\,(V,E)$ be the Tanner graph. 
+Partition $G$ into subgraphs $G_A\,{=}\,(V,E_A)$ and $G_B\,{=}\,(V,E_B)$ that describe CSS codes with check matrices
+\be
+\mbox{Tanner graph $G_A$:} \quad 
+ H^X_A=[A_2+A_3|B_3]  \quad \mbox{and} \quad  H^Z_A = [B_3^T|A_2^T+A_3^T]
+\ee
+\be
+\mbox{Tanner graph $G_B$:} \quad 
+H^X_B = [A_1 |B_1+B_2] \quad \mbox{and} \quad H^Z_B = [B_1^T+B_2^T|A_1^T].
+\ee
+Since $A=A_1+A_2+A_3$ and $B=B_1+B_2+B_3$,
+every edge of $G$ appears either in $G_A$ or $G_B$, where the two subgraphs are named by whether they contain more $A_i$ edges or more $B_i$ edges. 
+Then  $G_A$ and $G_B$ are regular degree-3 graphs (since $A_i$ and $B_j$ are permutation matrices).
+%Partition the set of data qubits as $[n]\,{=}\,LR$, where $L$ and $R$ are the left and right blocks of $n/2$ data qubits.
+
+Consider the graph $G_A$. 
+Each $X$-check vertex  is connected to
+a pair of data vertices $i_1,i_2\in L$ via the matrices $A_2, A_3$
+and a data vertex $i_3\in R$ via the matrix $B_3$.
+Each $Z$-check vertex is connected to a pair of data vertices $i_1,i_2\in R$ via the matrices $A_2^T, A_3^T$ and a data vertex $i_3\in L$
+via the matrix $B_3^T$.
+
+We claim that each connected component of $G_A$ can be represented by a ``wheel graph" illustrated in \fig{wheel_extraction}.
+A wheel graph consists of two disjoint cycles of the same length $p$
+ interconnected by $p$ radial edges.
+The outer cycle alternates between $X$-check 
+and $L$-data vertices.
+
+Edges of the outer cycle alternate between those generated by $A_3$ 
+(as one moves from a check  to a data vertex)
+and $A_2^T$ (as one moves from a data to a check vertex).
+The length of the outer cycle is equal to the order of the matrix $A_3 A_2^T$,
+that is, the smallest integer $p$ such that $(A_3 A_2^T)^p=I_{\ell m}$.
+For example, consider the code $[[144,12,12]]$ from \tab{codes}.
+Then $A=x^3+y+y^2$, $A_2=y$, and $A_3=y^2$.
+Thus $A_3 A_2^T = y^2 y^{-1} = y$ which has order $m =6$.
+The inner cycle of a wheel graph alternates between $Z$-check and $R$-data vertices.
+
+Edges of the inner cycle  alternate between those generated by $A_3^T$
+(as one moves from a check to a data vertex) and $A_2$ (as one moves from a data to a check vertex). 
+The length of the inner cycle is equal to the order of the matrix $A_3^T A_2$ which is just the transpose of $A_3A_3^T$ considered earlier. Thus both inner and outer cycles have the same length $m$. The two cycles are interconnected by $m$ radial edges as shown in \fig{wheel_extraction} A). 
+Radial edges are generated by the matrix $B_3$,
+as one moves  towards the center of the wheel. 
+The wheel graph contains $4$-cycles
+generated by tuples of edges $(B_3,A_2,B_3^T,A_2^T)$ and
+$(B_3^T,A_3,B_3,A_3^T)$.
+Commutativity between $A_i$ and $B_j$
+ensures that traversing any of these $4$-cycles implements the identity matrix, that is,
+the graph is well defined. 
+Clearly, the wheel graph is planar. Since $G_A$ is a disjoint union of wheel graphs, $G_A$ is planar. 
+The same argument shows that $G_B$ is planar: see \fig{wheel_extraction} B).
+\end{proof}
+
+We empirically observed that  BB codes reported in \tab{codes} have no weight-$4$ stabilizers.
+The presence of
+such stabilizers
+is known to have a negative impact on the performance
+of belief propagation decoders~\cite{panteleev2021degenerate}, which we use here.
+
+The definition of code $\qc$ does not guarantee that its Tanner graph is connected. Some choices of $A$ and $B$ lead to a code that is actually several separable code blocks. This manifests as a Tanner graph with several connected components. For instance, although all codes in \tab{codes} are connected, taking any of them with even $\ell$ and replacing every instance of $x$ with $x^2$ creates a code with two connected components.
+
+\begin{lemma} \label{lem:connected}
+The Tanner graph of the code $\qc$ is connected if and only if $S=\{A_iA_j^T:i,j\in\{1,2,3\}\}\cup\{B_iB_j^T:i,j\in\{1,2,3\}\}$ generates the group $\mathcal{M}$. The number of connected components in the Tanner graph is $\ell m/|\langle S\rangle|$, and all components are graph isomorphic to one another.
+\end{lemma}
+\begin{proof}
+% a simplified proof for the paper
+\fig{navigation} is helpful for following the arguments in this proof. We start by proving the reverse implication of the first statement. Note that there is a length 2 path in the Tanner graph from $L$ qubit $\alpha\in \mathcal{M}$ to $L$ qubit $A_iA_j^T\alpha$ and another length 2 path to $L$ qubit $B_iB_j^T\alpha$. These travel through $X$ and $Z$ checks, respectively. Thus, because the $A_iA_j^T$ and $B_iB_j^T$ generate $\mathcal{M}$, there is some path from $\alpha$ to any other $L$ qubit $\beta$. 
+A similar argument shows the existence of a path connecting any pair of R qubits. Since each $X$ check and each $Z$ check are connected to at least one $L$ qubit and at least one $R$ qubit, this implies that the entire Tanner graph is connected.
+The forward implication of the first statement follows after noticing that, for all $T\in\{L,R,X,Z\}$, the path from a type $T$ node to any other $T$ node is necessarily described as a product of elements from $S$. Connectivity of the Tanner graph implies the existence of all such paths, and so $S$ must generate $\mathcal{M}$. 
+
+If $S$ does not generate $\mathcal{M}$, it necessarily generates a subgroup $\langle S\rangle$ and nodes in connected components of the Tanner graph are labeled by elements of the cosets of this subgroup. This implies the theorem's second statement.
+\end{proof}
+
+For the next part, we establish some terminology. A spanning sub-graph of a graph $G$ is a sub-graph containing all the vertices of $G$. Also, the undirected Cayley graph of a finite Abelian group $\mathcal{G}$ (with identity element $0$) generated by set $S\subset\mathcal{G}$ is the graph with vertex set $\mathcal{G}$ and undirected edges $(g,g+s)$ for all $g\in\mathcal{G}$ and all $s\in S,s\neq0$. We say the Cayley graph of $\mathbb{Z}_{a}\times\mathbb{Z}_{b}$ when we mean the Cayley graph of $\mathbb{Z}_{a}\times\mathbb{Z}_{b}$ generated by $\{(1,0),(0,1)\}$. The order $\ord{g}$ of an element $g$ in a multiplicative group is the smallest positive integer such that $g^{\ord{g}}=1$. 
+
+\begin{dfn}
+Code $\qc$ is said to have a toric layout if its Tanner graph has a spanning sub-graph isomorphic to the Cayley graph of $\mathbb{Z}_{2\mu}\times\mathbb{Z}_{2\lambda}$ for some integers $\mu$ and $\lambda$.
+\end{dfn}
+
+Note that only codes with connected Tanner graphs can have a toric layout according to this definition. An example toric layout is depicted in \fig{2Dlayout}~B).
+
+\begin{lemma}\label{lem:toric_layout}
+A code $\qc$ has a toric layout if there exist $i,j,g,h\in\{1,2,3\}$ such that
+\begin{enumerate}[label=(\roman*)]
+\item $\langle A_iA_j^T,B_gB_h^T\rangle=\mathcal{M}$ and
+\item $\ord{A_iA_j^T}\ord{B_gB_h^T}=\ell m$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+We let $\mu=\ord{A_iA_j^T}$ and $\lambda=\ord{B_gB_h^T}$. We associate qubits and checks in the Tanner graph of $\qc$ with elements of $\mathcal{G}=\mathbb{Z}_{2\mu}\times\mathbb{Z}_{2\lambda}$. For $L$ qubit with label $\alpha\in \mathcal{M}$, because of (i), there is $(a,b)\in\mathbb{Z}_{\mu}\times\mathbb{Z}_{\lambda}$ such that $\alpha=(A_iA_j^T)^a(B_gB_h^T)^b$. Because of (ii) and the pigeonhole principle, this choice of $(a,b)$ is unique. We associate $L$ qubit $\alpha$ with $(2a,2b)\in\mathcal{G}$. Similarly, an $R$ qubit with label $\alpha A^T_jB_g$ is associated with $(2a+1,2b+1)\in\mathcal{G}$, $X$-check $\alpha A^T_j$ with $(2a+1,2b)$, and $Z$-check $\alpha B_g$ with $(2a,2b+1)$. Edges in the Tanner graph $A_i,A^T_j,B_g,$ and $B_h^T$ can now be drawn as in \fig{navigation} (B) and correspond to edges in the Cayley graph of $\mathcal{G}$. For instance, to get from $(2a+1,2b+1)$, an $R$ qubit, to $(2a+2,2b+1)$, a $Z$ check, we apply $A_i$, taking $R$ qubit labeled $\alpha A^T_jB_g$ to the $Z$ check labeled $(\alpha A^T_jB_g)A_i=\alpha(A_iA_j^T)B_g$.
+\end{proof}
+
+All codes in \tab{codes} have a toric layout with $\mu=m$ and $\lambda=\ell$. Most of these codes satisfy \lem{toric_layout} with $i=g=2$ and $j=h=3$. The exception is the $\llbracket90,8,10\rrbracket$ code, for which we can take $i=2,g=1$ and $j=h=3$.
+
+However, we also note two interesting cases. First, there are codes with connected Tanner graphs that do not satisfy the conditions for a toric layout given in \lem{toric_layout}. 
+One example of such a code is
+$\qc$
+with $\ell,m=28,14$,
+$A=x^{26}+y^6 + y^8$, and
+$B=y^7+x^9+x^{20}$
+which has parameters $[[784,24,\le 24]]$.
+Second, for a code satisfying the conditions of \lem{toric_layout}, it need not be the case that the set $\{\ord{A_iA_j^T},\ord{B_gB_h^T}\}$ and the set $\{\ell,m\}$ are equal. For example, the $[[432,4,\le22]]$ code with $\ell,m=18,12$ and $A=x+y^{11}+y^3$, $B=y^2+x^{15}+x$ only satisfies \lem{toric_layout} with $\mu,\lambda=36,6$ (take $i=g=1$ and $j=h=2$ for instance). 
+
+\newcommand{\maindocument}{}
+\input{supplemental_v2.tex}
+
+\section{Conclusion}
+\label{sec:conclusions}
+
+In summary, we offered a new perspective on how a fault-tolerant quantum memory 
+could be realized using  near-term quantum processors with a small qubit overhead.
+Our approach complements a concatenation-based scheme by 
+Pattison,  Krishna, and Preskill
+~\cite{pattison2023hierarchical}
+where each data qubit of a high-rate  LDPC code is additionally encoded by the surface code.
+ Although the  concatenation approach makes use of the high error threshold of the surface code and its geometric locality to address quantum
+hardware  limitations such as  a relatively high noise rate and  limited qubit connectivity,
+ the additional surface code encoding incurs a significant qubit overhead,
+partially negating the advantages offered by LDPC codes. 
+Here we have shown that the concatenation step can be avoided by introducing examples of high-rate LDPC codes which have nearly the same error threshold as the surface code itself. 
+Although these LDPC codes are not geometrically local, qubit connectivity required for 
+syndrome measurements is described by a thickness-two graph which can be implemented
+using two planar degree-3 layers of qubit couplers. 
+ This is a valid architectural solution for platforms based on superconducting qubits. Numerical simulations performed for the circuit-based noise model
+indicate that the proposed LDPC codes compare favorably with the surface code
+in the practically relevant range of error rates $p\ge 0.1\%$ 
+offering the same level of error suppression with nearly 15$\text{x}$ reduction in the
+qubit overhead.
+
+
+The key hardware challenges to enable the new codes with superconducting qubits are:
+\begin{enumerate}
+    \item the development of a low-loss second layer,
+    \item the development of qubits that can be coupled to 7 connections (6 buses and 1 control line), and
+    \item the development of long-range couplers.
+\end{enumerate} 
+
+These are all difficult to solve but not impossible. For the first challenge, we can imagine a small change to the packaging \cite{bravyi2022future} which was developed for the IBM Quantum Eagle processor \cite{chow2021}. The simplest would be to place the extra buses on the opposite side of the qubit chip. This would require the development of high Q through substrate vias (TSV) which would be part of the coupling buses and as such would require intensive microwave simulation to make sure these TSVs could support microwave propagation while not introducing large unwanted crosstalk.
+
+The second challenge is an extension of the number of couplers from the heavy hex lattice arrangement \cite{Nation2021} which is 4 (3 couplers and 1 control) to 7. The implication of this is that the cross-resonance gate, which has been the core gate used in large quantum systems for the past few years, would not be the path forward. This is due to the fact that the qubits in the cross-resonance gate are not tunable and as such for a large device with a large number of connections the probability of energy collisions (not just the qubit levels but also higher levels of the transmon) trends to one very fast \cite{Hertzberg2021}. This is because of frequency requirements for the gate to work properly and intrinsic device variability, which is fundamental to Josephson junction fabrication. However, with the tunable coupler \cite{PhysRevApplied.6.064007, PhysRevLett.127.080505}, which was used in the IBM Quantum Egret and is now being developed for the IBM Quantum Heron, this problem no longer exists as the qubits can be designed to be further apart. This new gate is also similar to the gates used by Google Quantum AI \cite{Arute2019}, which have shown that a square lattice arrangement is possible. Extending the coupling map to 7 connections will require significant microwave modeling; however, typical transmons have about 60fF of capacitance and each gate is around 5fF to get the appropriate coupling strengths to the buses, so it is fundamentally possible to develop this coupling map without changing the properties of the transmon qubits which have been shown to have larger coherence and are stable.
+
+The final challenge is the most difficult. For the buses that are short enough so that the fundamental mode can be used the standard circuit QED model holds. However, to demonstrate the 144-qubit code some of the buses will be long enough that we will require frequency engineering. One way to achieve this is with filtering resonators, and a proof of principle experiment was demonstrated in Ref.~\cite{McKay2015}.
+
+
+Our work leaves several open questions concerning BB LDPC codes and their applications. 
+\begin{enumerate}
+\item  What are the tradeoffs between the code parameters $n,k,d$ and can one achieve a constant non-zero encoding rate and a growing distance? 
+\item  Are there more general LDPC codes compatible with our syndrome measurement circuit(s)? We expect that the same circuit applies to any two-block LDPC code  based on an Abelian group~\cite{lin2023quantum,wang2023abelian}. However, our circuit analysis breaks down 
+for non-Abelian groups. 
+\item  Our work gives a depth-7 syndrome measurement circuit,  as measured by the number of $\cnotgate$ layers. Is it possible to reduce the circuit depth? Numerical experiments performed for the code $[[72,12,6]]$ indicate that this code may have no depth-6 syndrome measurement (SM) circuit~\cite{AlexanderPrivateComm}. 
+%Dmitri: computational experiment [55] was incomplete, i.e., searched only part of the search space. 
+
+\item We observed that a depth-7 SM circuit is not unique.
+A natural next step is 
+identifying a SM circuit that works best for a particular code.
+In addition, it may be possible to improve the circuit-level distance by
+using different SM circuits in different syndrome cycles.
+Even though some low-weight fault paths are not detectable by any single circuit, such fault paths may be detected if two circuits are used in tandem.
+
+
+\item How much would the error threshold change for a noise biased towards measurement errors? Note that measurements are  the dominant source of noise for superconducting qubits. Since the considered BB codes have a highly redundant set of check operators, one may expect that they offer extra protection against measurement errors. 
+\item The general-purpose BP-OSD decoder used here may not be fast enough to perform error correction in real time. Is there a faster decoder making use of the special structure of BB codes? 
+\item How to apply logical gates? While our work gives a fault-tolerant implementation of certain logical gates, these gates offer very limited computational power and are primarily useful for implementing memory capabilities. 
+\end{enumerate}
+
+
+\section*{Acknowledgements}
+The authors thank Ben Brown, Oliver Dial, Alexander Ivrii, Tomas Jochym-O'Connor, Yunseong Nam, Matthias Steffen, Kevin Tien, and John Blue for stimulating discussions at various stages of this project.  
+The authors acknowledge the IBM Research Cognitive Computing Cluster service for providing resources that have contributed to the research results reported within this paper.
+
+
+
+\begin{thebibliography}{10}
+	
+	\bibitem{nielsen2002quantum}
+	Michael~A. Nielsen and Isaac Chuang.
+	\newblock Quantum computation and quantum information, 2002.
+	
+	\bibitem{lloyd1996universal}
+	Seth Lloyd.
+	\newblock Universal quantum simulators.
+	\newblock {\em Science}, 273(5278):1073--1078, 1996.
+	
+	\bibitem{wang2008quantum}
+	Hefeng Wang, Sabre Kais, Al{\'a}n Aspuru-Guzik, and Mark~R. Hoffmann.
+	\newblock Quantum algorithm for obtaining the energy spectrum of molecular
+	systems.
+	\newblock {\em Physical Chemistry Chemical Physics}, 10(35):5388--5393, 2008.
+	
+	\bibitem{reiher2017elucidating}
+	Markus Reiher, Nathan Wiebe, Krysta~M. Svore, Dave Wecker, and Matthias Troyer.
+	\newblock Elucidating reaction mechanisms on quantum computers.
+	\newblock {\em Proceedings of the National Academy of Sciences},
+	114(29):7555--7560, 2017.
+	
+	\bibitem{alexeev2021quantum}
+	Yuri Alexeev, Dave Bacon, Kenneth~R. Brown, Robert Calderbank, Lincoln~D. Carr,
+	Frederic~T. Chong, Brian DeMarco, Dirk Englund, Edward Farhi, Bill Fefferman,
+	et~al.
+	\newblock Quantum computer systems for scientific discovery.
+	\newblock {\em PRX Quantum}, 2(1):017001, 2021.
+	
+	\bibitem{gambetta2017building}
+	Jay~M. Gambetta, Jerry~M. Chow, and Matthias Steffen.
+	\newblock Building logical qubits in a superconducting quantum computing
+	system.
+	\newblock {\em npj Quantum Information}, 3(1):2, 2017.
+	
+	\bibitem{mundada2023experimental}
+	Pranav~S. Mundada, Aaron Barbosa, Smarak Maity, Yulun Wang, T.~M. Stace, Thomas
+	Merkh, Felicity Nielson, Andre R.~R. Carvalho, Michael Hush, Michael~J.
+	Biercuk, and Yuval Baum.
+	\newblock Experimental benchmarking of an automated deterministic error
+	suppression workflow for quantum algorithms, 2023.
+	
+	\bibitem{de2021materials}
+	Nathalie~P. De~Leon, Kohei~M. Itoh, Dohun Kim, Karan~K. Mehta, Tracy~E.
+	Northup, Hanhee Paik, B.S. Palmer, Nitin Samarth, Sorawis Sangtawesin, and
+	David~W. Steuerman.
+	\newblock Materials challenges and opportunities for quantum computing
+	hardware.
+	\newblock {\em Science}, 372(6539):eabb2823, 2021.
+	
+	\bibitem{10.1063/1.3658630}
+	Antonio~D. Córcoles, Jerry~M. Chow, Jay~M. Gambetta, Chad Rigetti, J.~R.
+	Rozen, George~A. Keefe, Mary Beth~Rothwell, Mark~B. Ketchen, and M.~Steffen.
+	\newblock {Protecting superconducting qubits from radiation}.
+	\newblock {\em Applied Physics Letters}, 99(18):181906, 11 2011.
+	
+	\bibitem{vepsalainen2020impact}
+	Antti~P. Veps{\"a}l{\"a}inen, Amir~H. Karamlou, John~L. Orrell, Akshunna~S.
+	Dogra, Ben Loer, Francisca Vasconcelos, David~K. Kim, Alexander~J. Melville,
+	Bethany~M. Niedzielski, Jonilyn~L. Yoder, et~al.
+	\newblock Impact of ionizing radiation on superconducting qubit coherence.
+	\newblock {\em Nature}, 584(7822):551--556, 2020.
+	
+	\bibitem{PRXQuantum.4.020356}
+	Ted Thorbeck, Andrew Eddins, Isaac Lauer, Douglas~T. McClure, and Malcolm
+	Carroll.
+	\newblock Two-level-system dynamics in a superconducting qubit due to
+	background ionizing radiation.
+	\newblock {\em PRX Quantum}, 4:020356, Jun 2023.
+	
+	\bibitem{wu2018noise}
+	Yukai Wu, Sheng-Tao Wang, and L.-M. Duan.
+	\newblock Noise analysis for high-fidelity quantum entangling gates in an
+	anharmonic linear {P}aul trap.
+	\newblock {\em Physical Review A}, 97(6):062325, 2018.
+	
+	\bibitem{boguslawski2023raman}
+	Matthew~J. Boguslawski, Zachary~J. Wall, Samuel~R. Vizvary, Isam~Daniel Moore,
+	Michael Bareian, David~T.C. Allcock, David~J. Wineland, Eric~R. Hudson, and
+	Wesley~C. Campbell.
+	\newblock Raman scattering errors in stimulated-raman-induced logic gates in
+	ba+ 133.
+	\newblock {\em Physical Review Letters}, 131(6):063001, 2023.
+	
+	\bibitem{Houck2008}
+	A.~A. Houck, J.~A. Schreier, B.~R. Johnson, J.~M. Chow, Jens Koch, J.~M.
+	Gambetta, D.~I. Schuster, L.~Frunzio, M.~H. Devoret, S.~M. Girvin, and R.~J.
+	Schoelkopf.
+	\newblock Controlling the spontaneous emission of a superconducting transmon
+	qubit.
+	\newblock {\em Physical Review Letters}, 101:080502, 2008.
+	
+	\bibitem{shor1995scheme}
+	Peter~W. Shor.
+	\newblock Scheme for reducing decoherence in quantum computer memory.
+	\newblock {\em Physical Review A}, 52(4):R2493, 1995.
+	
+	\bibitem{aharonov1997fault}
+	Dorit Aharonov and Michael Ben-Or.
+	\newblock Fault-tolerant quantum computation with constant error.
+	\newblock In {\em Proceedings of the twenty-ninth Annual ACM Symposium on
+		Theory of Computing}, pages 176--188, 1997.
+	
+	\bibitem{kitaev1997quantum}
+	Alexei~Yu. Kitaev.
+	\newblock Quantum computations: algorithms and error correction.
+	\newblock {\em Russian Mathematical Surveys}, 52(6):1191, 1997.
+	
+	\bibitem{aliferis2005quantum}
+	Panos Aliferis, Daniel Gottesman, and John Preskill.
+	\newblock Quantum accuracy threshold for concatenated distance-3 codes.
+	\newblock {\em arXiv preprint quant-ph/0504218}, 2005.
+	
+	\bibitem{2003faulkitaevt}
+	Alexei Kitaev.
+	\newblock Fault-tolerant quantum computation by anyons.
+	\newblock {\em arXiv preprint quant-ph/9707021}, 1997.
+	
+	\bibitem{bravyi1998quantum}
+	Sergey~B. Bravyi and Alexei~Yu. Kitaev.
+	\newblock Quantum codes on a lattice with boundary.
+	\newblock {\em arXiv preprint quant-ph/9811052}, 1998.
+	
+	\bibitem{dennis2002topological}
+	Eric Dennis, Alexei Kitaev, Andrew Landahl, and John Preskill.
+	\newblock Topological quantum memory.
+	\newblock {\em Journal of Mathematical Physics}, 43(9):4452--4505, 2002.
+	
+	\bibitem{fowler2009high}
+	Austin~G. Fowler, Ashley~M. Stephens, and Peter Groszkowski.
+	\newblock High-threshold universal quantum computation on the surface code.
+	\newblock {\em Physical Review A}, 80(5):052312, 2009.
+	
+	\bibitem{takita2016demonstration}
+	Maika Takita, Antonio~D. C{\'o}rcoles, Easwar Magesan, Baleegh Abdo, Markus
+	Brink, Andrew Cross, Jerry~M. Chow, and Jay~M. Gambetta.
+	\newblock Demonstration of weight-four parity measurements in the surface code
+	architecture.
+	\newblock {\em Physical Review Letters}, 117(21):210505, 2016.
+	
+	\bibitem{marques2022logical}
+	J.~F. Marques, B.~M. Varbanov, M.~S. Moreira, Hany Ali, Nandini
+	Muthusubramanian, Christos Zachariadis, Francesco Battistel, Marc Beekman,
+	Nadia Haider, Wouter Vlothuizen, et~al.
+	\newblock Logical-qubit operations in an error-detecting surface code.
+	\newblock {\em Nature Physics}, 18(1):80--86, 2022.
+	
+	\bibitem{krinner2022realizing}
+	Sebastian Krinner, Nathan Lacroix, Ants Remm, Agustin Di~Paolo, Elie Genois,
+	Catherine Leroux, Christoph Hellings, Stefania Lazar, Francois Swiadek,
+	Johannes Herrmann, et~al.
+	\newblock Realizing repeated quantum error correction in a distance-three
+	surface code.
+	\newblock {\em Nature}, 605(7911):669--674, 2022.
+	
+	\bibitem{zhao2022realization}
+	Youwei Zhao, Yangsen Ye, He-Liang Huang, Yiming Zhang, Dachao Wu, Huijie Guan,
+	Qingling Zhu, Zuolin Wei, Tan He, Sirui Cao, et~al.
+	\newblock Realization of an error-correcting surface code with superconducting
+	qubits.
+	\newblock {\em Physical Review Letters}, 129(3):030501, 2022.
+	
+	\bibitem{google2023suppressing}
+	{Google Quantum AI}.
+	\newblock Suppressing quantum errors by scaling a surface code logical qubit.
+	\newblock {\em Nature}, 614(7949):676--681, 2023.
+	
+	\bibitem{gottesman2013fault}
+	Daniel Gottesman.
+	\newblock Fault-tolerant quantum computation with constant overhead.
+	\newblock {\em arXiv preprint arXiv:1310.2984}, 2013.
+	
+	\bibitem{tremblay2022constant}
+	Maxime~A. Tremblay, Nicolas Delfosse, and Michael~E. Beverland.
+	\newblock Constant-overhead quantum error correction with thin planar
+	connectivity.
+	\newblock {\em Physical Review Letters}, 129(5):050504, 2022.
+	
+	\bibitem{breuckmann2016constructions}
+	Nikolas~P. Breuckmann and Barbara~M. Terhal.
+	\newblock Constructions and noise threshold of hyperbolic surface codes.
+	\newblock {\em IEEE Transactions on Information Theory}, 62(6):3731--3744,
+	2016.
+	
+	\bibitem{higgott2021subsystem}
+	Oscar Higgott and Nikolas~P. Breuckmann.
+	\newblock Subsystem codes with high thresholds by gauge fixing and reduced
+	qubit overhead.
+	\newblock {\em Physical Review X}, 11(3):031039, 2021.
+	
+	\bibitem{higgott2023constructions}
+	Oscar Higgott and Nikolas~P. Breuckmann.
+	\newblock Constructions and performance of hyperbolic and semi-hyperbolic
+	floquet codes.
+	\newblock {\em arXiv preprint arXiv:2308.03750}, 2023.
+	
+	\bibitem{tillich2013quantum}
+	Jean-Pierre Tillich and Gilles Z{\'e}mor.
+	\newblock Quantum {LDPC} codes with positive rate and minimum distance
+	proportional to the square root of the blocklength.
+	\newblock {\em IEEE Transactions on Information Theory}, 60(2):1193--1202,
+	2013.
+	
+	\bibitem{breuckmann2021balanced}
+	Nikolas~P. Breuckmann and Jens~N. Eberhardt.
+	\newblock Balanced product quantum codes.
+	\newblock {\em IEEE Transactions on Information Theory}, 67(10):6653--6674,
+	2021.
+	
+	\bibitem{kovalev2013quantum}
+	Alexey~A. Kovalev and Leonid~P. Pryadko.
+	\newblock Quantum kronecker sum-product low-density parity-check codes with
+	finite rate.
+	\newblock {\em Physical Review A}, 88(1):012311, 2013.
+	
+	\bibitem{panteleev2021degenerate}
+	Pavel Panteleev and Gleb Kalachev.
+	\newblock Degenerate quantum {LDPC} codes with good finite length performance.
+	\newblock {\em Quantum}, 5:585, 2021.
+	
+	\bibitem{lin2023quantum}
+	Hsiang-Ku Lin and Leonid~P. Pryadko.
+	\newblock Quantum two-block group algebra codes.
+	\newblock {\em arXiv preprint arXiv:2306.16400}, 2023.
+	
+	\bibitem{wang2023abelian}
+	Renyu Wang, Hsiang-Ku Lin, and Leonid~P. Pryadko.
+	\newblock Abelian and non-{A}belian quantum two-block codes.
+	\newblock {\em arXiv preprint arXiv:2305.06890}, 2023.
+	
+	\bibitem{panteleev2022asymptotically}
+	Pavel Panteleev and Gleb Kalachev.
+	\newblock Asymptotically good quantum and locally testable classical {LDPC}
+	codes.
+	\newblock In {\em Proceedings of the 54th Annual ACM SIGACT Symposium on Theory
+		of Computing}, pages 375--388, 2022.
+	
+	\bibitem{leverrier2022quantum}
+	Anthony Leverrier and Gilles Z{\'e}mor.
+	\newblock Quantum {T}anner codes.
+	\newblock In {\em 2022 IEEE 63rd Annual Symposium on Foundations of Computer
+		Science (FOCS)}, pages 872--883. IEEE, 2022.
+	
+	\bibitem{baspin2022quantifying}
+	Nou{\'e}dyn Baspin and Anirudh Krishna.
+	\newblock Quantifying nonlocality: How outperforming local quantum codes is
+	expensive.
+	\newblock {\em Physical Review Letters}, 129(5):050505, 2022.
+	
+	\bibitem{bravyi2010tradeoffs}
+	Sergey Bravyi, David Poulin, and Barbara Terhal.
+	\newblock Tradeoffs for reliable quantum information storage in {2D} systems.
+	\newblock {\em Physical Review Letters}, 104(5):050503, 2010.
+	
+	\bibitem{mutzel1998thickness}
+	Petra Mutzel, Thomas Odenthal, and Mark Scharbrodt.
+	\newblock The thickness of graphs: a survey.
+	\newblock {\em Graphs and combinatorics}, 14:59--73, 1998.
+	
+	\bibitem{steane1996multiple}
+	Andrew Steane.
+	\newblock Multiple-particle interference and quantum error correction.
+	\newblock {\em Proceedings of the Royal Society of London. Series A:
+		Mathematical, Physical and Engineering Sciences}, 452(1954):2551--2577, 1996.
+	
+	\bibitem{calderbank1996good}
+	A.~Robert Calderbank and Peter~W. Shor.
+	\newblock Good quantum error-correcting codes exist.
+	\newblock {\em Physical Review A}, 54(2):1098, 1996.
+	
+	\bibitem{cohen2022lowoverhead}
+	Lawrence~Z. Cohen, Isaac~H. Kim, Stephen~D. Bartlett, and Benjamin~J. Brown.
+	\newblock Low-overhead fault-tolerant quantum computing using long-range
+	connectivity.
+	\newblock {\em Science Advances}, 8(20), 2022.
+	
+	\bibitem{delfosse2023spacetime}
+	Nicolas Delfosse and Adam Paetznick.
+	\newblock Spacetime codes of clifford circuits.
+	\newblock {\em arXiv preprint arXiv:2304.05943}, 2023.
+	
+	\bibitem{mcewen2023relaxing}
+	Matt McEwen, Dave Bacon, and Craig Gidney.
+	\newblock Relaxing hardware requirements for surface code circuits using
+	time-dynamics.
+	\newblock {\em Quantum}, 7:1172, 2023.
+	
+	\bibitem{higgott2023improved}
+	Oscar Higgott, Thomas~C. Bohdanowicz, Aleksander Kubica, Steven~T. Flammia, and
+	Earl~T. Campbell.
+	\newblock Improved decoding of circuit noise and fragile boundaries of tailored
+	surface codes.
+	\newblock {\em Physical Review X}, 13(3):031007, 2023.
+	
+	\bibitem{geher2023tangling}
+	Gyorgy~P. Geher, Ophelia Crawford, and Earl~T. Campbell.
+	\newblock Tangling schedules eases hardware connectivity requirements for
+	quantum error correction.
+	\newblock {\em arXiv preprint arXiv:2307.10147}, 2023.
+	
+	\bibitem{roffe2020decoding}
+	Joschka Roffe, David~R. White, Simon Burton, and Earl Campbell.
+	\newblock Decoding across the quantum low-density parity-check code landscape.
+	\newblock {\em Physical Review Research}, 2(4):043423, 2020.
+	
+	\bibitem{groszkowski2009high}
+	Peter Groszkowski, Austin Fowler, and Ashley~M. Stephens.
+	\newblock High-threshold surface code quantum computing: threshold calculation.
+	\newblock In {\em APS March Meeting Abstracts}, pages W17--002, 2009.
+	
+	\bibitem{bravyi2022future}
+	Sergey Bravyi, Oliver Dial, Jay~M. Gambetta, Dar{\'\i}o Gil, and Zaira Nazario.
+	\newblock The future of quantum computing with superconducting qubits.
+	\newblock {\em Journal of Applied Physics}, 132(16), 2022.
+	
+	\bibitem{panteleev2021quantum}
+	Pavel Panteleev and Gleb Kalachev.
+	\newblock Quantum {LDPC} codes with almost linear minimum distance.
+	\newblock {\em IEEE Transactions on Information Theory}, 68(1):213--229, 2021.
+	
+	\bibitem{landahl2011fault}
+	Andrew~J. Landahl, Jonas~T. Anderson, and Patrick~R. Rice.
+	\newblock Fault-tolerant quantum computing with color codes.
+	\newblock {\em arXiv preprint arXiv:1108.5738}, 2011.
+	
+	\bibitem{aaronson2004improved}
+	Scott Aaronson and Daniel Gottesman.
+	\newblock Improved simulation of stabilizer circuits.
+	\newblock {\em Physical Review A}, 70(5):052328, 2004.
+	
+	\bibitem{fowler2012topological}
+	Austin~G. Fowler, Adam~C. Whiteside, Angus~L. McInnes, and Alimohammad Rabbani.
+	\newblock Topological code autotune.
+	\newblock {\em Physical Review X}, 2(4):041003, 2012.
+	
+	\bibitem{higgott2023sparse}
+	Oscar Higgott and Craig Gidney.
+	\newblock Sparse blossom: correcting a million errors per core second with
+	minimum-weight matching.
+	\newblock {\em arXiv preprint arXiv:2303.15933}, 2023.
+	
+	\bibitem{berlekamp1978inherent}
+	Elwyn Berlekamp, Robert McEliece, and Henk Van~Tilborg.
+	\newblock On the inherent intractability of certain coding problems (corresp.).
+	\newblock {\em IEEE Transactions on Information Theory}, 24(3):384--386, 1978.
+	
+	\bibitem{Roffe_LDPC_Python_tools_2022}
+	Joschka Roffe.
+	\newblock {LDPC: Python tools for low density parity check codes}, 2022.
+	
+	\bibitem{bravyi2013simulation}
+	Sergey Bravyi and Alexander Vargo.
+	\newblock Simulation of rare events in quantum error correction.
+	\newblock {\em Physical Review A}, 88(6):062308, 2013.
+	
+	\bibitem{breuckmann2022foldtransversal}
+	Nikolas~P. Breuckmann and Simon Burton.
+	\newblock Fold-transversal {C}lifford gates for quantum codes.
+	\newblock {\em arXiv preprint arXiv:2202.06647}, 2022.
+	
+	\bibitem{pattison2023hierarchical}
+	Christopher~A. Pattison, Anirudh Krishna, and John Preskill.
+	\newblock Hierarchical memories: Simulating quantum {LDPC} codes with local
+	gates.
+	\newblock {\em arXiv preprint arXiv:2303.04798}, 2023.
+	
+	\bibitem{chow2021}
+	Jerry Chow, Oliver Dial, and Jay Gambetta.
+	\newblock {IBM} {Q}uantum breaks the 100‑qubit processor barrier, 2021.
+	
+	\bibitem{Nation2021}
+	Paul Nation, Hanhee Paik, Andrew Cross, and Zaira Nazario.
+	\newblock The {IBM} {Q}uantum heavy hex lattice, 2021.
+	
+	\bibitem{Hertzberg2021}
+	Jared~B. Hertzberg, Eric~J. Zhang, Sami Rosenblatt, Easwar Magesan, John~A.
+	Smolin, Jeng-Bang Yau, Vivekananda~P. Adiga, Martin Sandberg, Markus Brink,
+	Jerry~M. Chow, and Jason~S. Orcutt.
+	\newblock Laser-annealing josephson junctions for yielding scaled-up
+	superconducting quantum processors.
+	\newblock {\em npj Quantum Information}, 7:129, 2021.
+	
+	\bibitem{PhysRevApplied.6.064007}
+	David~C. McKay, Stefan Filipp, Antonio Mezzacapo, Easwar Magesan, Jerry~M.
+	Chow, and Jay~M. Gambetta.
+	\newblock Universal gate for fixed-frequency qubits via a tunable bus.
+	\newblock {\em Physical Review Applied}, 6:064007, Dec 2016.
+	
+	\bibitem{PhysRevLett.127.080505}
+	J.~Stehlik, D.~M. Zajac, D.~L. Underwood, T.~Phung, J.~Blair, S.~Carnevale,
+	D.~Klaus, G.~A. Keefe, A.~Carniol, M.~Kumph, Matthias Steffen, and O.~E.
+	Dial.
+	\newblock Tunable coupling architecture for fixed-frequency transmon
+	superconducting qubits.
+	\newblock {\em Physical Review Letters}, 127:080505, Aug 2021.
+	
+	\bibitem{Arute2019}
+	F.~Arute, K.~Arya, R.~Babbush, and et~al.
+	\newblock Quantum supremacy using a programmable superconducting processor.
+	\newblock {\em Nature}, 574:505--510, 2019.
+	
+	\bibitem{McKay2015}
+	David~C. McKay, Ravi Naik, Philip Reinhold, Lev~S. Bishop, and David~I.
+	Schuster.
+	\newblock High-contrast qubit interactions using multimode cavity qed.
+	\newblock {\em Physical Review Letters}, 114:080501, 2015.
+	
+	\bibitem{AlexanderPrivateComm}
+	Alexander Ivrii.
+	\newblock Private communication, 2023.
+	
+\end{thebibliography}
+
+
+\end{document}
