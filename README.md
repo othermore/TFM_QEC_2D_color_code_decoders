@@ -1,3 +1,5 @@
+[![Download full thesis](https://img.shields.io/badge/Download%20full%20thesis-2EA44F?style=for-the-badge&logo=github)](https://github.com/othermore/TFM_QEC_2D_color_code_decoders/releases/tag/latest)
+
 # 2D Topological Color Code Decoders
 
 This repository contains the code, data, and manuscript for a Master's Thesis presenting a comprehensive study on quantum error correction (QEC), specifically focused on 2D topological color codes. Leveraging state-of-the-art simulation tools such as `stim` and `sinter`, alongside specialized libraries like `ldpc` and `pymatching`, this project analyzes decoder performance on 4.8.8 lattice geometries. The study concludes with a comparative analysis of the decoding results and explores potential improvements for the error correction process.
