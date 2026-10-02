@@ -1,4 +1,4 @@
-[![Download full thesis](https://img.shields.io/badge/Download%20full%20thesis-2EA44F?style=for-the-badge&logo=github)](https://github.com/othermore/TFM_QEC_2D_color_code_decoders/releases/tag/latest)
+[![Download full thesis](https://img.shields.io/badge/Download%20full%20thesis-2EA44F?style=for-the-badge&logo=github)](https://github.com/othermore/TFM_QEC_2D_color_code_decoders/releases/tag/latest) [![Donate with GitHub Sponsors](https://img.shields.io/badge/Donate-GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/othermore)
 
 # 2D Topological Color Code Decoders
 
